@@ -1,0 +1,50 @@
+database:
+  info:
+    ######################################### MySQL数据库 #############################################
+    mysql:
+      driverClass: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://@${ip}:${port}/${database}?serverTimezone=UTC
+      # 查询所有schemata
+      databases: SELECT schema_name FROM information_schema.schemata
+      # 查询指定schema下数据表
+      tables: select table_name,table_comment from information_schema.tables where table_schema= ?
+      # 查询指定schema下指定数据表信息
+      tableInfo: > # >表示多行，但忽略换行符
+        select table_name,table_comment from information_schema.tables 
+        where table_schema= ? and table_name = ?
+      # 查询指定schema下指定数据表字段信息
+      detailedTableStructure: >
+        select column_name,column_type,column_comment,is_nullable,column_default, 
+        character_maximum_length,column_key,extra
+        from information_schema.columns where table_schema = ? and table_name = ?
+    
+
+    ######################################### Oracle数据库 #############################################
+    oracle:
+      driverClass: oracle.jdbc.OracleDriver
+      url: jdbc:oracle:thin:@${ip}:${port}:${database}
+      databases: SELECT USERNAME FROM ALL_USERS
+      tables: >
+        SELECT comm.TABLE_NAME, comm.COMMENTS FROM all_tables tab 
+        inner join all_tab_comments comm on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
+        WHERE tab.OWNER = ?
+
+      tableInfo: >
+        SELECT comm.TABLE_NAME, comm.COMMENTS FROM all_tables tab 
+        inner join all_tab_comments comm on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
+        WHERE tab.OWNER = ? and tab.TABLE_NAME = ?
+
+      detailedTableStructure: >
+        SELECT col.COLUMN_NAME,col.DATA_TYPE,comm.COMMENTS,col.NULLABLE,col.DATA_DEFAULT FROM all_tab_columns col 
+        inner join ALL_COL_COMMENTS comm on col.OWNER = comm.OWNER and col.TABLE_NAME = comm.TABLE_NAME 
+        WHERE comm.owner = ? AND comm.TABLE_NAME = ?
+    
+
+    ######################################### DB2数据库 #############################################
+    db2:
+      driverClass: com.ibm.db2.jcc.DB2Driver
+      url: jdbc:db2://${ip}:${port}/${database}
+      databases: SELECT SCHEMANAME FROM SYSCAT.SCHEMATA
+      tables: SELECT TABNAME,REMARKS FROM SYSCAT.TABLES WHERE TABSCHEMA = ?
+      tableInfo: SELECT TABNAME,REMARKS FROM SYSCAT.TABLES WHERE  TABSCHEMA=? AND TABNAME=?
+      detailedTableStructure: SELECT COLNAME,TYPENAME,REMARKS,NULLS,DEFAULT FROM SYSCAT.COLUMNS WHERE TABSCHEMA=? AND TABNAME=?

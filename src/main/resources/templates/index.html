@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>连接信息</title>
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/vue.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="/css/element.css">
+    <!-- 引入组件库 -->
+    <script src="/js/element.js"></script>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<div id="app">
+    <div class="container"
+         v-loading="loading"
+         element-loading-text="正在加载中..."
+         element-loading-spinner="el-icon-loading"
+         element-loading-background="rgba(0, 0, 0, 0.8)">
+        <el-card class="box-card">
+            <span class="title">数据库连接信息</span>
+            <form>
+                <table>
+                    <tr>
+                        <td><label for="databaseType">数据库类型：</label></td>
+                        <td>
+                            <el-select @change="changeDatabase" size="small" id="databaseType"
+                                       v-model="form.databaseType" placeholder="请选择">
+                                <el-option
+                                        v-for="item in options"
+                                        :key="item.label"
+                                        :label="item.label"
+                                        :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="ip">IP地址：</label></td>
+                        <td>
+                            <el-input size="small" v-model="form.ip" id="ip" placeholder="请输入IP地址" required></el-input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="port">端 &nbsp;口：</label></td>
+                        <td>
+                            <el-input size="small" v-model="form.port" id="port" placeholder="请输入端口号"
+                                      required></el-input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="database">{{database}}：</label></td>
+                        <td>
+                            <el-input size="small" v-model="form.database" id="database" placeholder="请输入数据库"
+                                      required></el-input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="username">用户名：</label></td>
+                        <td>
+                            <el-input size="small" v-model="form.username" id="username" placeholder="请输入用户名"
+                                      required></el-input>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><label for="password">密 &nbsp;码：</label></td>
+                        <td>
+                            <el-input size="small" v-model="form.password" id="password" placeholder="请输入密码"
+                                      required></el-input>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <el-button type="primary" size="medium" @click="testConnection">测试连接</el-button>
+                        </td>
+                        <td>
+                            <el-button type="primary" size="medium" @click="connection" id="connection">
+                                确认连接
+                            </el-button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </el-card>
+
+
+    </div>
+</div>
+
+<script th:inline="javascript">
+    // 创建一个新的 Vue 实例
+    new Vue({
+        el: '#app',
+        data: {
+            database: '数据库',
+            form: {
+                databaseType: 'mysql',
+                ip: '127.0.0.1',
+                port: 3306,
+                username: '',
+                password: '',
+                database: ''
+            },
+            options: [
+                {
+                    label: 'MySQL',
+                    value: 'mysql'
+                },
+                {
+                    label: 'Oracle',
+                    value: 'oracle'
+                },
+                {
+                    label: 'DB2',
+                    value: 'db2'
+                }
+            ],
+            loading: false,
+        },
+        mounted() {
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    this.connection();
+                }
+            });
+        },
+        methods: {
+            changeDatabase() {
+                if (this.form.databaseType === 'mysql') {
+                    this.form.port = 3306;
+                    this.database = '数据库'
+                } else if (this.form.databaseType === 'oracle') {
+                    this.form.port = 1521;
+                    this.database = 'SID'
+                } else {
+                    this.form.port = 50000;
+                    this.database = '数据库'
+                }
+            },
+            connection() {
+                this.loading = true
+                axios.post('/dataSource/connection', this.form).then(res => {
+                    if (res.data.code === 200) {
+                        this.showMessage('success', res.data.message)
+                        window.location.href = '/main';
+                    } else {
+                        this.showMessage('error', res.data.message)
+                    }
+                    this.loading = false
+                }).catch(err => {
+                    this.showMessage('error', err.message)
+                    this.loading = false
+                })
+            },
+            testConnection() {
+                this.loading = true
+                axios.post('/dataSource/connection', this.form).then(res => {
+                    if (res.data.code === 200) {
+                        this.showMessage('success', res.data.message)
+                    } else {
+                        this.showMessage('error', res.data.message)
+                    }
+                    this.loading = false
+                }).catch(err => {
+                    this.showMessage('error', err.message)
+                    this.loading = false
+                })
+            },
+            showMessage(type, message) {
+                this.$message({
+                    message: message,
+                    type: type,
+                });
+            },
+        }
+    });
+</script>
+</body>
+</html>
