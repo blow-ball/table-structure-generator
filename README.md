@@ -49,6 +49,6 @@ B/S 架构
 **注意：由于项目中预览功能用到了 word 转 pdf 功能，未找到免费的且转换后格式不变的工具，所以预览功能需依赖于本地 office 环境**
 
 
-#### exe下载
+#### windows下载
 **https://gitee.com/geqian618/table-structure-generator/raw/dev/exe/%E8%A1%A8%E7%BB%93%E6%9E%84%E7%94%9F%E6%88%90%E5%99%A8.7z**
 
