@@ -17,7 +17,7 @@ B/S 架构
 
 #### 项目演示
 
-**1. 数据库连接信息页面**
+**1. 数据库连接信息**
 
 ![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/connection.jpg)
 
@@ -35,7 +35,7 @@ B/S 架构
 
 
 
-**4. 选择字段**
+**4. 选择列名**
 
 ![image-20230719013433699](https://gitee.com/geqian618/resource/raw/master/images/select.jpg)
 
