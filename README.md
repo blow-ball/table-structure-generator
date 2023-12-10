@@ -23,13 +23,13 @@ B/S 架构
 
 
 
-**2. 预览文件**
+**2. 预览pdf文件**
 
 ![image-20230719013337074](https://gitee.com/geqian618/resource/raw/master/images/preview.jpg)
 
 
 
-**3. 下载打开文件**
+**3. word下载文件显示**
 
 ![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/download.jpg)
 
