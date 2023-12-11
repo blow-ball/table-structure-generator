@@ -125,14 +125,14 @@ public class GeneratorServiceImpl implements GeneratorService {
             for (TreeNode treeNode : treeNodes) {
                 String schemaName = treeNode.getValue();
                 wordBytesBuilder.addParagraphText("数据库 " + schemaName, tableDescConfig);
-                List<TreeNode> databaseDataList = dataList.stream().filter(data -> Objects.equals(data.getSchema(), schemaName)).collect(Collectors.toList());
+                List<TreeNode> treeNodeList = dataList.stream().filter(data -> Objects.equals(data.getSchema(), schemaName)).collect(Collectors.toList());
 
                 List<Future<TableInfo>> tableList = new ArrayList<>();
-                for (TreeNode databaseData : databaseDataList) {
+                for (TreeNode node : treeNodeList) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, databaseData.getValue());
-                                List<AbstractColumnContainer> tableColumnInfoList = tableMapper.getTableColumnInfoList(schemaName, databaseData.getValue());
+                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, node.getValue());
+                                List<AbstractColumnContainer> tableColumnInfoList = tableMapper.getTableColumnInfoList(schemaName, node.getValue());
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableColumnInfoList);
                                 return tableInfo;
