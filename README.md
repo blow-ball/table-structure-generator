@@ -50,5 +50,5 @@ B/S 架构
 
 
 #### windows下载
-**https://gitee.com/geqian618/table-structure-generator/raw/dev/exe/%E8%A1%A8%E7%BB%93%E6%9E%84%E7%94%9F%E6%88%90%E5%99%A8.7z**
+**链接：https://pan.baidu.com/s/1IeRvTXjhIqUCtklsvXMlhQ  提取码：elfz**
 
