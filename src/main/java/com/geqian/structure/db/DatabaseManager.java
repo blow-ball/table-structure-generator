@@ -13,15 +13,10 @@ public class DatabaseManager {
 
     private String driverClass;
     private String url;
-    private ColumnNameDefinition columnDefinition;
     private String databases;
     private String tables;
     private String tableInfo;
-    private String detailedTableStructure;
-
-    public DatabaseManager(ColumnNameDefinition columnDefinition) {
-        this.columnDefinition = columnDefinition;
-    }
+    private String tableStructure;
 
 
     public String getUrl(String database, String ip, int port) {

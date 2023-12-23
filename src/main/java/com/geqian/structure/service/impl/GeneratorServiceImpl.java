@@ -83,7 +83,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     public ResponseResult<ColumnsVo> getTableColumns() {
         ColumnsVo columnsVo = new ColumnsVo();
         String dbType = DruidConnectionManager.getDataSource().getDatabaseType();
-        Collection<Field> fields = ColumnContainerFactory.getColumnContainer(dbType).getColumnFieldMapping().values();
+        Collection<Field> fields = ColumnContainerFactory.getColumnContainer(dbType).getFields();
         List<LabelAndValue> labelAndValues = fields.stream()
                 .sorted(Comparator.comparingInt(field -> field.getAnnotation(TableField.class).order()))
                 .map(field -> new LabelAndValue(field.getAnnotation(TableField.class).value(), field.getName()))

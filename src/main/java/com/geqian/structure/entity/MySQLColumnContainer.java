@@ -1,11 +1,10 @@
 package com.geqian.structure.entity;
 
 import com.geqian.structure.annotation.BindColumnMethod;
-import com.geqian.structure.db.MySQLColumnNameDefinition;
 import com.geqian.structure.word.TableField;
 
 import java.lang.reflect.Field;
-import java.util.Map;
+import java.util.List;
 
 /**
  * 列字段信息
@@ -14,10 +13,6 @@ import java.util.Map;
  * @date 10:45 2023/1/5
  */
 public class MySQLColumnContainer extends AbstractColumnContainer {
-
-    public MySQLColumnContainer() {
-        super(new MySQLColumnNameDefinition());
-    }
 
     @BindColumnMethod("getColumnKey")
     @TableField(value = "键类型", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
@@ -57,8 +52,8 @@ public class MySQLColumnContainer extends AbstractColumnContainer {
     }
 
     @Override
-    public Map<String, Field> getColumnFieldMapping() {
-        return super.getColumnFieldMapping();
+    public List<Field> getFields() {
+        return super.getFields();
     }
 
 }

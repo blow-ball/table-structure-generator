@@ -1,7 +1,6 @@
 package com.geqian.structure.entity;
 
 import com.geqian.structure.annotation.BindColumnMethod;
-import com.geqian.structure.db.ColumnNameDefinition;
 import com.geqian.structure.db.DefaultColumnManager;
 import com.geqian.structure.word.TableField;
 import com.geqian.structure.word.WriteTableIntercepter;
@@ -9,7 +8,6 @@ import lombok.Data;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,13 +21,7 @@ import java.util.stream.Stream;
 @Data
 public abstract class AbstractColumnContainer implements WriteTableIntercepter {
 
-    protected static ColumnNameDefinition columnNameDefinition;
-
     protected static Map<String, Field> columnFieldMapping;
-
-    public AbstractColumnContainer(ColumnNameDefinition columnNameDefinition) {
-        AbstractColumnContainer.columnNameDefinition = columnNameDefinition;
-    }
 
     @BindColumnMethod("getColumnName")
     @TableField(value = "列名", order = 0)
@@ -73,24 +65,18 @@ public abstract class AbstractColumnContainer implements WriteTableIntercepter {
 
 
     @SneakyThrows(Exception.class)
-    public Map<String, Field> getColumnFieldMapping() {
-        if (columnFieldMapping == null) {
-            columnFieldMapping = new HashMap<>();
-            List<Field> fields = Stream.of(this.getClass().getSuperclass().getDeclaredFields()).collect(Collectors.toList());
-            fields.addAll(Arrays.asList(this.getClass().getDeclaredFields()));
-            Method[] methods = columnNameDefinition.getClass().getDeclaredMethods();
-            for (Field field : fields) {
-                for (Method method : methods) {
-                    BindColumnMethod columnMethod = field.getAnnotation(BindColumnMethod.class);
-                    if (columnMethod != null && columnMethod.value().equals(method.getName())) {
-                        field.setAccessible(true);
-                        columnFieldMapping.put((String) method.invoke(columnNameDefinition), field);
-                        break;
-                    }
-                }
-            }
-        }
-        return columnFieldMapping;
+    public List<Field> getFields() {
+
+        List<Field> parentFields = Stream.of(this.getClass().getSuperclass().getDeclaredFields())
+                .collect(Collectors.toList());
+
+        List<Field> fields = Stream.of(this.getClass().getDeclaredFields())
+                .collect(Collectors.toList());
+
+        parentFields.addAll(fields);
+        return parentFields.stream()
+                .filter(field -> field.isAnnotationPresent(TableField.class))
+                .collect(Collectors.toList());
     }
 
 }

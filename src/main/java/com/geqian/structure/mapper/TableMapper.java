@@ -1,6 +1,5 @@
 package com.geqian.structure.mapper;
 
-import com.geqian.structure.db.ColumnNameDefinition;
 import com.geqian.structure.db.CurrentDatabaseManager;
 import com.geqian.structure.db.DatabaseManager;
 import com.geqian.structure.db.DruidConnectionManager;
@@ -19,7 +18,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -42,12 +40,11 @@ public class TableMapper {
         try (Connection connection = DruidConnectionManager.getConnection()) {
             DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
             String sql = databaseManager.getDatabases();
-            ColumnNameDefinition columnDefinition = databaseManager.getColumnDefinition();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 String key = UUIDUtils.generateUUID();
-                String schemaName = resultSet.getString(columnDefinition.getSchemaName());
+                String schemaName = resultSet.getString("schemaName");
                 TreeNode treeNode = new TreeNode();
                 treeNode.setKey(key);
                 treeNode.setValue(schemaName);
@@ -84,14 +81,13 @@ public class TableMapper {
         try (Connection connection = DruidConnectionManager.getConnection()) {
             DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
             String sql = databaseManager.getTables();
-            ColumnNameDefinition columnDefinition = databaseManager.getColumnDefinition();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, schemaName);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 TreeNode treeNode = new TreeNode();
                 treeNode.setKey(UUIDUtils.generateUUID());
-                treeNode.setValue(resultSet.getString(columnDefinition.getTableName()));
+                treeNode.setValue(resultSet.getString("tableName"));
                 treeNode.setSchema(schemaName);
                 treeNode.setParentKey(parentKey);
                 tableList.add(treeNode);
@@ -125,7 +121,6 @@ public class TableMapper {
         try (Connection connection = DruidConnectionManager.getConnection()) {
             DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
             String sql = databaseManager.getTableInfo();
-            ColumnNameDefinition columnDefinition = databaseManager.getColumnDefinition();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, schemaName);
             preparedStatement.setString(2, tableName);
@@ -133,7 +128,7 @@ public class TableMapper {
             tableDefinition.setTableName(tableName);
             tableDefinition.setTableSchema(schemaName);
             while (resultSet.next()) {
-                String tableComment = resultSet.getString(columnDefinition.getTableComment());
+                String tableComment = resultSet.getString("tableComment");
                 tableDefinition.setTableComment(tableComment);
             }
         } catch (SQLException throwables) {
@@ -166,16 +161,18 @@ public class TableMapper {
         ResultSet resultSet = null;
         try (Connection connection = DruidConnectionManager.getConnection()) {
             DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
-            String sql = databaseManager.getDetailedTableStructure();
+            String sql = databaseManager.getTableStructure();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, schemaName);
             preparedStatement.setString(2, tableName);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 AbstractColumnContainer columnContainer = ColumnContainerFactory.getColumnContainer(databaseType);
-                Map<String, Field> columnFieldMapping = columnContainer.getColumnFieldMapping();
-                for (Map.Entry<String, Field> entry : columnFieldMapping.entrySet()) {
-                    entry.getValue().set(columnContainer, resultSet.getString(entry.getKey()));
+                List<Field> fields = columnContainer.getFields();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    String value = resultSet.getString(field.getName());
+                    field.set(columnContainer,value);
                 }
                 columnContainerList.add(columnContainer);
             }

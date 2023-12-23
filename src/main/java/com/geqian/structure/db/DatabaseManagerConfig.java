@@ -14,20 +14,20 @@ public class DatabaseManagerConfig {
     @Bean
     @ConfigurationProperties(prefix = "database.info.db2")
     public DatabaseManager db2(){
-        return new DatabaseManager(new DB2ColumnNameDefinition());
+        return new DatabaseManager();
     }
 
 
     @Bean
     @ConfigurationProperties(prefix = "database.info.mysql")
     public DatabaseManager mysql(){
-        return new DatabaseManager(new MySQLColumnNameDefinition());
+        return new DatabaseManager();
     }
 
 
     @Bean
     @ConfigurationProperties(prefix = "database.info.oracle")
     public DatabaseManager oracle(){
-        return new DatabaseManager(new OracleColumnNameDefinition());
+        return new DatabaseManager();
     }
 }
