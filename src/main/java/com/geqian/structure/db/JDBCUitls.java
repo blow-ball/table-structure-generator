@@ -83,16 +83,10 @@ public class JDBCUitls {
                 for (Map.Entry<String, Field> entry : columnFieldMapping.entrySet()) {
                     String columnName = entry.getKey();
                     Field field = entry.getValue();
-                    Object value;
                     try {
-                        value = resultSet.getObject(columnName);
+                        Object value = resultSet.getObject(columnName);
                         field.set(instance, value);
-                    } catch (SQLException e) {
-                        try {
-                            value = resultSet.getObject(field.getName());
-                            field.set(instance, value);
-                        } catch (SQLException ignored) {
-                        }
+                    } catch (SQLException ignored) {
                     }
                 }
                 results.add(instance);
