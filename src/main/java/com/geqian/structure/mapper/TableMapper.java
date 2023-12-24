@@ -39,7 +39,6 @@ public class TableMapper {
             treeNode.setLabel(schemaName);
             List<TreeNode> tables = getTables(schemaName, key);
             treeNode.setChildren(tables);
-
         }
         return treeNodeList;
     }
@@ -92,7 +91,7 @@ public class TableMapper {
      */
     @SneakyThrows(Exception.class)
     public List<? extends TableStructure> getTableStructureList(String schemaName, String tableName) {
-        String databaseType = DruidConnectionManager.getDataSource().getDatabaseType();
+        String databaseType = DruidConnectionManager.getConnectionInfo().getDatabaseType();
         Class<? extends TableStructure> classType = TableStructureFactory.getTableStructureType(databaseType);
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTableStructure();

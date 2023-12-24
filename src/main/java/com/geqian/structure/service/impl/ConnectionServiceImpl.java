@@ -1,7 +1,7 @@
 package com.geqian.structure.service.impl;
 
 import com.geqian.structure.common.ResponseResult;
-import com.geqian.structure.common.dto.DataSourceDto;
+import com.geqian.structure.common.dto.ConnectionInfoDto;
 import com.geqian.structure.db.DruidConnectionManager;
 import com.geqian.structure.service.ConnectionService;
 import org.springframework.stereotype.Service;
@@ -17,10 +17,10 @@ public class ConnectionServiceImpl implements ConnectionService {
 
 
     @Override
-    public ResponseResult<String> connection(DataSourceDto dataSourceDto) {
+    public ResponseResult<String> connection(ConnectionInfoDto connectionInfoDto) {
         try {
-            if (!Objects.equals(dataSourceDto, DruidConnectionManager.getDataSource())) {
-                DruidConnectionManager.setDataSource(dataSourceDto);
+            if (!Objects.equals(connectionInfoDto, DruidConnectionManager.getConnectionInfo())) {
+                DruidConnectionManager.setConnectionInfo(connectionInfoDto);
                 DruidConnectionManager.clearDatasource();
             }
             DruidConnectionManager.getConnection();

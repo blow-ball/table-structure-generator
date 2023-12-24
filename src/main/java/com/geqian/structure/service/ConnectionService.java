@@ -1,6 +1,6 @@
 package com.geqian.structure.service;
 
-import com.geqian.structure.common.dto.DataSourceDto;
+import com.geqian.structure.common.dto.ConnectionInfoDto;
 import com.geqian.structure.common.ResponseResult;
 
 /**
@@ -9,5 +9,5 @@ import com.geqian.structure.common.ResponseResult;
  */
 public interface ConnectionService {
 
-    ResponseResult<String> connection(DataSourceDto dataSourceDto);
+    ResponseResult<String> connection(ConnectionInfoDto dataSourceDto);
 }

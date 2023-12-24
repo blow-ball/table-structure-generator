@@ -93,7 +93,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         ColumnsVo columnsVo = new ColumnsVo();
 
-        String dbType = DruidConnectionManager.getDataSource().getDatabaseType();
+        String dbType = DruidConnectionManager.getConnectionInfo().getDatabaseType();
 
         Class<? extends TableStructure> classType = TableStructureFactory.getTableStructureType(dbType);
 

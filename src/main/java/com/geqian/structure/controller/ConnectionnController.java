@@ -1,6 +1,6 @@
 package com.geqian.structure.controller;
 
-import com.geqian.structure.common.dto.DataSourceDto;
+import com.geqian.structure.common.dto.ConnectionInfoDto;
 import com.geqian.structure.common.ResponseResult;
 import com.geqian.structure.service.ConnectionService;
 import org.springframework.stereotype.Controller;
@@ -35,7 +35,7 @@ public class ConnectionnController {
 
     @ResponseBody
     @PostMapping(value = "/dataSource/connection")
-    public ResponseResult<String> connection(@RequestBody DataSourceDto dataSourceDto) {
+    public ResponseResult<String> connection(@RequestBody ConnectionInfoDto dataSourceDto) {
         return connectionService.connection(dataSourceDto);
     }
 }

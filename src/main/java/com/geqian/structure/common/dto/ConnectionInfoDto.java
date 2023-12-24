@@ -7,11 +7,13 @@ import lombok.Data;
  * @author Administrator
  */
 @Data
-public class DataSourceDto {
+public class ConnectionInfoDto {
+
     private String ip;
     private Integer port;
     private String username;
     private String password;
     private String databaseType;
     private String database;
+
 }
