@@ -13,11 +13,13 @@ public class TreeNode {
 
     private String parentKey;
 
-    private String schema;
-
     private String key;
 
-    private String value;
+    private String label;
+
+    private String schemaName;
+
+    private String tableName;
 
     private List<TreeNode> children;
 }

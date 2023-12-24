@@ -29,9 +29,9 @@ public class GeneratorController {
     }
 
 
-    @GetMapping("/getTableColumns")
-    public ResponseResult<ColumnsVo> getTableColumns() {
-        return generatorService.getTableColumns();
+    @GetMapping("/getTableColumnInfo")
+    public ResponseResult<ColumnsVo> getTableColumnInfo() {
+        return generatorService.getTableColumnInfo();
     }
 
 

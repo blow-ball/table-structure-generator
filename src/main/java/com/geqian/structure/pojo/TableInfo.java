@@ -1,6 +1,6 @@
 package com.geqian.structure.pojo;
 
-import com.geqian.structure.entity.AbstractColumnContainer;
+import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableDefinition;
 import lombok.Data;
 
@@ -16,5 +16,5 @@ public class TableInfo {
 
     private TableDefinition tableDefinition;
 
-    private List<AbstractColumnContainer> dataList;
+    private List<? extends TableStructure> dataList;
 }

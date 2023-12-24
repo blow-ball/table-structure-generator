@@ -20,6 +20,6 @@ public interface GeneratorService {
 
     void download(TargetTableDto targetTableDto, HttpServletResponse response);
 
-    ResponseResult<ColumnsVo> getTableColumns();
+    ResponseResult<ColumnsVo> getTableColumnInfo();
 
 }

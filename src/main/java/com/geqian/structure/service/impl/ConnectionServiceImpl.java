@@ -6,7 +6,6 @@ import com.geqian.structure.db.DruidConnectionManager;
 import com.geqian.structure.service.ConnectionService;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.Objects;
 
 /**
@@ -25,10 +24,6 @@ public class ConnectionServiceImpl implements ConnectionService {
                 DruidConnectionManager.clearDatasource();
             }
             DruidConnectionManager.getConnection();
-        } catch (SQLException e) {
-            DruidConnectionManager.clearDatasource();
-            e.printStackTrace();
-            return ResponseResult.fail("请检查数据库连接信息是否有误！");
         } catch (Exception e) {
             DruidConnectionManager.clearDatasource();
             e.printStackTrace();

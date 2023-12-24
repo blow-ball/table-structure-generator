@@ -74,7 +74,7 @@
             defaultColumns: [],
             defaultProps: {
                 children: 'children',
-                label: 'value'
+                label: 'label'
             },
             pdf: '',
             loading: false,
@@ -95,7 +95,7 @@
                 })
             },
             getTableColums() {
-                axios.get('/generate/getTableColumns').then(res => {
+                axios.get('/generate/getTableColumnInfo').then(res => {
                     if (res.data.code === 200) {
                         this.allColumns =  res.data.data.allColumns;
                         this.defaultColumns =  res.data.data.defaultColumns;

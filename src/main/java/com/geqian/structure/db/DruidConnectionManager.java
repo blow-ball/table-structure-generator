@@ -22,39 +22,48 @@ public class DruidConnectionManager {
         DruidConnectionManager.dataSourceDto = dataSource;
     }
 
-    public static void initDataSource() throws Exception {
-        DatabaseManager databaseManager = DatabaseManagerFactory.getDatabaseManager(dataSourceDto.getDatabaseType());
-        Class.forName(databaseManager.getDriverClass());
-        String url = databaseManager.getUrl(dataSourceDto.getDatabase(), dataSourceDto.getIp(), dataSourceDto.getPort());
-        Properties properties = new Properties();
-        String threadSize = String.valueOf(Runtime.getRuntime().availableProcessors() + 1);
-        //初始化连接数量
-        properties.setProperty("initialSize", threadSize);
-        //最大连接数
-        properties.setProperty("maxActive", threadSize);
-        //最大等待时间
-        properties.setProperty("maxWait", "30000");
-        properties.setProperty("driverClassName", databaseManager.getDriverClass());
-        properties.setProperty("url", url);
-        properties.setProperty("username", dataSourceDto.getUsername());
-        properties.setProperty("password", dataSourceDto.getPassword());
-        dataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(properties);
-        // 失败后重连的次数
-        dataSource.setConnectionErrorRetryAttempts(0);
-        //请求失败之后中断
-        dataSource.setBreakAfterAcquireFailure(true);
-        CurrentDatabaseManager.setDatabaseManager(databaseManager);
+    public static void initDataSource() {
+        try {
+            DatabaseManager databaseManager = DatabaseManagerFactory.getDatabaseManager(dataSourceDto.getDatabaseType());
+            Class.forName(databaseManager.getDriverClass());
+            String url = databaseManager.getUrl(dataSourceDto.getDatabase(), dataSourceDto.getIp(), dataSourceDto.getPort());
+            Properties properties = new Properties();
+            String threadSize = String.valueOf(Runtime.getRuntime().availableProcessors() + 1);
+            //初始化连接数量
+            properties.setProperty("initialSize", threadSize);
+            //最大连接数
+            properties.setProperty("maxActive", threadSize);
+            //最大等待时间
+            properties.setProperty("maxWait", "30000");
+            properties.setProperty("driverClassName", databaseManager.getDriverClass());
+            properties.setProperty("url", url);
+            properties.setProperty("username", dataSourceDto.getUsername());
+            properties.setProperty("password", dataSourceDto.getPassword());
+            dataSource = (DruidDataSource) DruidDataSourceFactory.createDataSource(properties);
+            // 失败后重连的次数
+            dataSource.setConnectionErrorRetryAttempts(0);
+            //请求失败之后中断
+            dataSource.setBreakAfterAcquireFailure(true);
+            CurrentDatabaseManager.setDatabaseManager(databaseManager);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("初始化数据源失败," + e.getMessage());
+        }
     }
 
-    public static Connection getConnection() throws Exception {
-        if (dataSource == null) {
-            synchronized (DruidConnectionManager.class) {
-                if (dataSource == null) {
-                    initDataSource();
+    public static Connection getConnection() {
+        try {
+            if (dataSource == null) {
+                synchronized (DruidConnectionManager.class) {
+                    if (dataSource == null) {
+                        initDataSource();
+                    }
                 }
             }
+            return dataSource.getConnection();
+        } catch (Exception e) {
+            throw new RuntimeException("获取连接失败," + e.getMessage());
         }
-        return dataSource.getConnection();
     }
 
 

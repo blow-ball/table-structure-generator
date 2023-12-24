@@ -1,10 +1,6 @@
 package com.geqian.structure.entity;
 
-import com.geqian.structure.annotation.BindColumnMethod;
 import com.geqian.structure.word.TableField;
-
-import java.lang.reflect.Field;
-import java.util.List;
 
 /**
  * 列字段信息
@@ -12,17 +8,14 @@ import java.util.List;
  * @author geqian
  * @date 10:45 2023/1/5
  */
-public class MySQLColumnContainer extends AbstractColumnContainer {
+public class MySQLTableStructure extends TableStructure {
 
-    @BindColumnMethod("getColumnKey")
     @TableField(value = "键类型", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
     private String columnKey;
 
-    @BindColumnMethod("getLength")
     @TableField(value = "长度", order = 7, exclude = true, enums = "null-> ")
-    private String length;
+    private Long length;
 
-    @BindColumnMethod("getExtra")
     @TableField(value = "额外", order = 8, exclude = true)
     private String extra;
 
@@ -43,17 +36,13 @@ public class MySQLColumnContainer extends AbstractColumnContainer {
         this.extra = extra;
     }
 
-    public String getLength() {
+    public Long getLength() {
         return length;
     }
 
-    public void setLength(String length) {
+    public void setLength(Long length) {
         this.length = length;
     }
 
-    @Override
-    public List<Field> getFields() {
-        return super.getFields();
-    }
 
 }
