@@ -66,7 +66,9 @@ public class JDBCUitls {
             for (int i = 0; i < args.length; i++) {
                 //填充占位符
                 ps.setObject(i + 1, args[i]);
-                sql = sql.replaceFirst("\\?", String.valueOf(args[i]));
+                //sql占位符替换为具体值
+                int indexOf = sql.indexOf("?");
+                sql = sql.substring(0,indexOf) + args[i] + sql.substring(indexOf + 1);
             }
             //执行并获取结果集
             ResultSet resultSet = ps.executeQuery();
@@ -199,14 +201,12 @@ public class JDBCUitls {
         }
         try {
             for (int i = 0; i < metaData.getColumnCount(); i++) {
-                String columnAlias = metaData.getColumnLabel(i + 1);
-                String columnName = metaData.getColumnName(i + 1);
-                columnName = Objects.equals(columnAlias, columnName) ? columnName.toLowerCase(Locale.ROOT) : columnAlias;
+                String columnName = metaData.getColumnLabel(i + 1);
                 if (!columnFieldMapping.containsKey(columnName)) {
                     try {
                         String fieldName = underlineToSmallHump(columnName);
                         Field field = fieldMap.get(fieldName);
-                        if (field != null){
+                        if (field != null) {
                             columnFieldMapping.put(columnName, field);
                         }
                     } catch (Exception ignored) {

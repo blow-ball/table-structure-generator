@@ -8,16 +8,19 @@ database:
       databases: >
         SELECT schema_name as schemaName 
         FROM information_schema.schemata
+
       # 查询指定schema下数据表
       tables: >
         select table_name as tableName,table_comment as tableComment
         from information_schema.tables 
         where table_schema= ?
+
       # 查询指定schema下指定数据表信息
       tableInfo: > # >表示多行，但忽略换行符
         select table_name as tableName,table_comment as tableComment
         from information_schema.tables 
         where table_schema= ? and table_name = ?
+
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
         select column_name as columnName,column_type as columnType,
@@ -33,49 +36,52 @@ database:
       driverClass: oracle.jdbc.OracleDriver
       url: jdbc:oracle:thin:@${ip}:${port}:${database}
       databases: >
-        SELECT USERNAME as schemaName
+        SELECT USERNAME as "schemaName"
         FROM ALL_USERS
+
       tables: >
-        SELECT comm.TABLE_NAME as tableName, comm.COMMENTS as tableComment
+        SELECT comm.TABLE_NAME as "tableName",comm.COMMENTS as "tableComment"
         FROM all_tables tab 
         inner join all_tab_comments comm 
         on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
         WHERE tab.OWNER = ?
 
       tableInfo: >
-        SELECT comm.TABLE_NAME as tableName, comm.COMMENTS as tableComment
+        SELECT comm.TABLE_NAME as "tableName",comm.COMMENTS as "tableComment"
         FROM all_tables tab 
         inner join all_tab_comments comm 
         on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
         WHERE tab.OWNER = ? and tab.TABLE_NAME = ?
 
       tableStructure: >
-        SELECT col.COLUMN_NAME as columnName ,col.DATA_TYPE as columnType,
-        comm.COMMENTS as columnComment,col.NULLABLE as isNullable,
-        col.DATA_DEFAULT as columnDefault 
+        SELECT col.COLUMN_NAME as "columnName",col.DATA_TYPE as "columnType",
+        comm.COMMENTS as "columnComment",col.NULLABLE as "isNullable",
+        col.DATA_DEFAULT as "columnDefault" 
         FROM all_tab_columns col 
         inner join ALL_COL_COMMENTS comm 
         on col.OWNER = comm.OWNER and col.TABLE_NAME = comm.TABLE_NAME 
         WHERE comm.owner = ? AND comm.TABLE_NAME = ?
-    
 
     ######################################### DB2数据库 #############################################
     db2:
       driverClass: com.ibm.db2.jcc.DB2Driver
       url: jdbc:db2://${ip}:${port}/${database}
       databases: >
-        SELECT SCHEMANAME as schemaName 
+        SELECT SCHEMANAME as "schemaName" 
         FROM SYSCAT.SCHEMATA
+
       tables: >
-        SELECT TABNAME as tableName,REMARKS as tableComment
+        SELECT TABNAME as "tableName",REMARKS as "tableComment"
         FROM SYSCAT.TABLES WHERE TABSCHEMA = ?
+
       tableInfo: >
-        SELECT TABNAME as tableName,REMARKS as tableComment
+        SELECT TABNAME as "tableName",REMARKS as "tableComment"
         FROM SYSCAT.TABLES 
         WHERE TABSCHEMA=? AND TABNAME=?
+
       tableStructure: >
-        SELECT COLNAME as columnName,TYPENAME columnType,
-        REMARKS as columnComment,NULLS as isNullable,
-        DEFAULT as columnDefault
+        SELECT COLNAME as "columnName",TYPENAME "columnType",
+        REMARKS as "columnComment",NULLS as "isNullable",
+        DEFAULT as "columnDefault"
         FROM SYSCAT.COLUMNS 
         WHERE TABSCHEMA=? AND TABNAME=?
