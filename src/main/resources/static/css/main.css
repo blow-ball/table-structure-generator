@@ -71,8 +71,8 @@ html {
     line-height: 320px;
 }
 
-#container{
-   justify-content: flex-end;
+#container {
+    justify-content: flex-end;
 }
 
 #context {
@@ -100,6 +100,10 @@ iframe {
     height: 100%;
     display: block;
     background: transparent;
+}
+
+#app > .el-container {
+    overflow: hidden;
 }
 
 .el-container .box-card {

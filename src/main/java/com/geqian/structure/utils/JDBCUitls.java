@@ -1,6 +1,7 @@
-package com.geqian.structure.db;
+package com.geqian.structure.utils;
 
 import com.geqian.structure.annotation.Column;
+import com.geqian.structure.db.DruidConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,7 @@ public class JDBCUitls {
             throw new RuntimeException("查询数据发生错误,", e);
         } finally {
             closeResource(ps, connection);
-            log.info("==> {}", sql);
+            log.info("\n==> {}", sql);
         }
     }
 
@@ -166,7 +167,7 @@ public class JDBCUitls {
         } finally {
             //关闭资源
             closeResource(ps, connection);
-            log.info("==> {}", sql);
+            log.info("\n==> {}", sql);
         }
         return affectedRows;
     }

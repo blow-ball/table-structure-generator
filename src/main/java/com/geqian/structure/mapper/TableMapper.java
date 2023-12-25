@@ -3,7 +3,7 @@ package com.geqian.structure.mapper;
 import com.geqian.structure.db.CurrentDatabaseManager;
 import com.geqian.structure.db.DatabaseManager;
 import com.geqian.structure.db.DruidConnectionManager;
-import com.geqian.structure.db.JDBCUitls;
+import com.geqian.structure.utils.JDBCUitls;
 import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TableDefinition;
