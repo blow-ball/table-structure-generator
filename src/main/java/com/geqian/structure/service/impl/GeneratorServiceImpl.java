@@ -155,9 +155,9 @@ public class GeneratorServiceImpl implements GeneratorService {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
                                 TableInfo tableInfo = new TableInfo();
                                 TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> columnContainers = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
                                 tableInfo.setTableDefinition(tableDefinition);
-                                tableInfo.setDataList(columnContainers);
+                                tableInfo.setDataList(tableStructures);
                                 return tableInfo;
                             }
                     );

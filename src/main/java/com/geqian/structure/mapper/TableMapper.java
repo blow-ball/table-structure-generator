@@ -95,7 +95,11 @@ public class TableMapper {
         Class<? extends TableStructure> classType = TableStructureFactory.getTableStructureType(databaseType);
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTableStructure();
-        return JDBCUitls.selectList(sql, classType, schemaName, tableName);
+        List<? extends TableStructure> tableStructures = JDBCUitls.selectList(sql, classType, schemaName, tableName);
+        for (int i = 0; i < tableStructures.size(); i++) {
+            tableStructures.get(i).setNumber(i + 1);
+        }
+        return tableStructures;
     }
 
 }

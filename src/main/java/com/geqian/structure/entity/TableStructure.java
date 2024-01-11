@@ -22,19 +22,22 @@ import java.util.stream.Stream;
 @Data
 public abstract class TableStructure implements WriteTableIntercepter {
 
-    @TableField(value = "列名", order = 0)
+    @TableField(value = "序号", order = 0)
+    private Integer number;
+
+    @TableField(value = "列名", order = 2)
     private String columnName;
 
-    @TableField(value = "数据类型", order = 1)
+    @TableField(value = "数据类型", order = 3)
     private String columnType;
 
-    @TableField(value = "是否能为空", order = 2, exclude = true)
+    @TableField(value = "是否能为空", order = 4, exclude = true)
     private String isNullable;
 
-    @TableField(value = "默认值", order = 3, enums = "null->NULL", exclude = true)
+    @TableField(value = "默认值", order = 5, enums = "null->NULL", exclude = true)
     private String columnDefault;
 
-    @TableField(value = "备注", order = 4)
+    @TableField(value = "备注", order = 6)
     private String columnComment;
 
 
@@ -56,6 +59,5 @@ public abstract class TableStructure implements WriteTableIntercepter {
                 .filter(field -> field.isAnnotationPresent(TableField.class) && DefaultColumnManager.getDefaultColumns().contains(field.getName()))
                 .collect(Collectors.toList());
     }
-
 
 }
