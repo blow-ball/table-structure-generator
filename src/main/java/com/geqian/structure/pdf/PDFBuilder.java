@@ -622,10 +622,4 @@ public class PDFBuilder {
         return cell;
     }
 
-
-    public static void main(String[] args) {
-        PDFBuilder.create().addParagraph("标题11111111").asFile(new File("d:/desktop/haha.pdf"));
-    }
-
-
 }
