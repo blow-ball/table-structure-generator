@@ -6,20 +6,21 @@ import com.geqian.structure.common.dto.TargetTableDto;
 import com.geqian.structure.common.vo.ColumnsVo;
 import com.geqian.structure.db.DefaultColumnManager;
 import com.geqian.structure.db.DruidConnectionManager;
+import com.geqian.structure.entity.TableDefinition;
 import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
-import com.geqian.structure.entity.TableDefinition;
 import com.geqian.structure.entity.TreeNode;
 import com.geqian.structure.mapper.TableMapper;
-import com.geqian.structure.pojo.TableInfo;
+import com.geqian.structure.pdf.PDFBuilder;
+import com.geqian.structure.pdf.ParagraphConfig;
 import com.geqian.structure.pojo.LabelAndValue;
+import com.geqian.structure.pojo.TableInfo;
 import com.geqian.structure.service.GeneratorService;
 import com.geqian.structure.utils.ReflectionUtils;
-import com.geqian.structure.utils.WordToPdfUtils;
 import com.geqian.structure.word.ParagraphTextConfig;
 import com.geqian.structure.word.ParagraphTextConfigBuilder;
-import com.geqian.structure.word.TableField;
 import com.geqian.structure.word.WordBytesBuilder;
+import com.geqian.structure.word.WordTableField;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +30,16 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author geqian
@@ -64,9 +66,15 @@ public class GeneratorServiceImpl implements GeneratorService {
     @Override
     public void preview(TargetTableDto targetTableDto, HttpServletResponse response) {
 
-        byte[] wordBytes = buildWordDocument(targetTableDto);
+        byte[] pdfBytes = buildPdfDocument(targetTableDto);
 
-        byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
+        FileOutputStream fileOutputStream = new FileOutputStream("d:/desktop/demo.pdf");
+
+        fileOutputStream.write(pdfBytes);
+
+        fileOutputStream.close();
+
+        //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
         response.setHeader("content-type", "application/octet-stream");
         response.setHeader("filename", URLEncoder.encode("数据库表结构" + ".pdf", "UTF-8"));
         //文件设置为附件
@@ -100,13 +108,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         List<Field> fields = ReflectionUtils.getFieldAllContainSuperclass(classType, field -> true);
 
         List<LabelAndValue> labelAndValues = fields.stream()
-                .sorted(Comparator.comparingInt(field -> field.getAnnotation(TableField.class).order()))
-                .map(field -> new LabelAndValue(field.getAnnotation(TableField.class).value(), field.getName()))
+                .sorted(Comparator.comparingInt(field -> field.getAnnotation(WordTableField.class).order()))
+                .map(field -> new LabelAndValue(field.getAnnotation(WordTableField.class).value(), field.getName()))
                 .collect(Collectors.toList());
 
         List<String> defaultColumns = fields.stream()
-                .filter(field -> !field.getAnnotation(TableField.class).exclude())
-                .sorted(Comparator.comparingInt(field -> field.getAnnotation(TableField.class).order()))
+                .filter(field -> !field.getAnnotation(WordTableField.class).exclude())
+                .sorted(Comparator.comparingInt(field -> field.getAnnotation(WordTableField.class).order()))
                 .map(Field::getName)
                 .collect(Collectors.toList());
 
@@ -119,7 +127,6 @@ public class GeneratorServiceImpl implements GeneratorService {
 
 
     @SneakyThrows(Exception.class)
-
     public byte[] buildWordDocument(TargetTableDto targetTableDto) {
 
         DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
@@ -173,32 +180,69 @@ public class GeneratorServiceImpl implements GeneratorService {
                 }
             }
         }
-        return wordBytesBuilder.build();
+        return wordBytesBuilder.asBytes();
     }
 
 
-    /**
-     * 获取Class对象及父类Class对象全部属性，并堆属性进行条件过滤
-     *
-     * @param classType
-     * @param condition
-     * @return
-     */
-    private static Map<String, Field> getFieldMapContainSuperclass(Class<?> classType, Predicate<Field> condition) {
+    @SneakyThrows(Exception.class)
+    public byte[] buildPdfDocument(TargetTableDto targetTableDto) {
 
-        List<Class<?>> classes = new ArrayList<>();
+        DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
 
-        //遍历获取父类class
-        while (!Objects.equals(classType, Object.class)) {
-            classes.add(classType);
-            classType = classType.getSuperclass();
+        PDFBuilder pdfBuilder = PDFBuilder.create();
+
+        List<TreeNode> treeNodeList = targetTableDto.getDataList();
+
+        if (!CollectionUtils.isEmpty(treeNodeList)) {
+
+            //过滤出全部 Schema节点
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+
+            ParagraphConfig tableDescConfig = ParagraphConfig.create();
+
+            tableDescConfig.getFontConfig().setFontSize(20);
+
+            tableDescConfig.setFirstLineIndent(2.5f);
+
+            ParagraphConfig tableCellConfig = ParagraphConfig.create();
+
+            for (TreeNode schemaNode : schemaNodes) {
+                String schemaName = schemaNode.getSchemaName();
+
+                pdfBuilder.addParagraph("数据库 " + schemaName, tableDescConfig);
+
+                //过滤出指定 Schema节点下的全部 table节点
+                List<TreeNode> tableNodes = treeNodeList.stream()
+                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .collect(Collectors.toList());
+
+                List<Future<TableInfo>> futureList = new ArrayList<>();
+
+                for (TreeNode tableNode : tableNodes) {
+                    Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                TableInfo tableInfo = new TableInfo();
+                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                tableInfo.setTableDefinition(tableDefinition);
+                                tableInfo.setDataList(tableStructures);
+                                return tableInfo;
+                            }
+                    );
+                    futureList.add(future);
+                }
+
+                for (Future<TableInfo> future : futureList) {
+                    TableInfo tableInfo = future.get();
+                    TableDefinition tableDefinition = tableInfo.getTableDefinition();
+                    pdfBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment()) ? tableDefinition.getTableName() : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableDescConfig);
+                    pdfBuilder.addTable(tableInfo.getDataList(), tableCellConfig);
+                    pdfBuilder.addCarriageReturn();
+                    pdfBuilder.addCarriageReturn();
+                }
+            }
         }
-
-        return classes.stream()
-                .map(pojoClass -> Stream.of(pojoClass.getDeclaredFields()).filter(condition).collect(Collectors.toList()))
-                .flatMap(Collection::stream)
-                .peek(field -> field.setAccessible(true))
-                .collect(Collectors.toMap(Field::getName, Function.identity(), (oldVal, newVal) -> oldVal));
+        return pdfBuilder.asBytes();
     }
+
 
 }

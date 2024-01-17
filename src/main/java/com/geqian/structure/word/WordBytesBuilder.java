@@ -7,10 +7,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.*;
@@ -220,16 +217,20 @@ public class WordBytesBuilder {
 
             WriteTableable writeTableable = dataList.get(0);
 
-            NoHeaders noHeaders = writeTableable.getClass().getAnnotation(NoHeaders.class);
+            NoHeaders noTableHeader = writeTableable.getClass().getAnnotation(NoHeaders.class);
 
             //获取需要输出字段
             List<Field> fields = getFieldList(writeTableable);
 
-            int rows = Objects.isNull(noHeaders) ? dataList.size() + 1 : dataList.size();
+            int rows = Objects.isNull(noTableHeader) ? dataList.size() + 1 : dataList.size();
 
             int colums = fields.size();
 
             XWPFTable table = createTable(rows, colums);
+
+            if (writeTableable instanceof WordWriteTableIntercepter) {
+                ((WordWriteTableIntercepter) writeTableable).interceptTable(table);
+            }
 
             //加载枚举映射关系
             loadEnumMappings(fields);
@@ -240,197 +241,23 @@ public class WordBytesBuilder {
             //表格内容开始行数
             int startRow = 0;
 
-            if (Objects.isNull(noHeaders)) {
+            if (Objects.isNull(noTableHeader)) {
                 //获取表头
                 List<String> tableHeaders = getTableHeaders(fields);
+
+                if (writeTableable instanceof WordWriteTableIntercepter) {
+                    tableHeaders = ((WordWriteTableIntercepter) writeTableable).interceptWriteHeaders(writeTableable.getClass(), fields, tableHeaders);
+                }
 
                 //写入表头
                 writeTableHeaders(table, tableHeaders, writeTableable, fields, config);
 
                 startRow = 1;
             }
-
             //写入表格主体数据
             writeTableRows(table, startRow, dataList, fields, config);
         }
         return this;
-    }
-
-
-    /**
-     * 加载全部属性值转换器
-     *
-     * @param fields
-     */
-    private void loadConverters(List<Field> fields) {
-        this.converters = new HashMap<>();
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(TableField.class)) {
-                TableField annotation = field.getAnnotation(TableField.class);
-                if (annotation.converter() != NoConverter.class) {
-                    try {
-                        Converter converter = (Converter) annotation.converter().getConstructor().newInstance();
-                        this.converters.put(getFieldKey(field), converter);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**
-     * 获取类名+属性名
-     *
-     * @param field
-     * @return
-     */
-    private String getFieldKey(Field field) {
-        return field.getDeclaringClass().getName() + "." + field.getName();
-    }
-
-
-    /**
-     * 加载全部枚举映射关系
-     *
-     * @param fields
-     * @return
-     */
-    private void loadEnumMappings(List<Field> fields) {
-        this.enumMappings = new HashMap<>();
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(TableField.class)) {
-                TableField annotation = field.getAnnotation(TableField.class);
-                String[] enums = annotation.enums();
-                if (enums.length > 0) {
-                    appendEnumMapping(getFieldKey(field), enums);
-                }
-            }
-        }
-    }
-
-
-    /**
-     * 追加一组枚举映射关系
-     *
-     * @param fieldKey
-     * @param enums
-     */
-    private void appendEnumMapping(String fieldKey, String[] enums) {
-        for (String enumStr : enums) {
-            String[] splitArray = enumStr.split("->");
-            if (splitArray.length != 2) {
-                throw new IllegalArgumentException("The convert property format of TableField is：oldValue -> newValue");
-            }
-            this.enumMappings.put(fieldKey + ":" + splitArray[0].trim(), splitArray[1].trim());
-        }
-    }
-
-
-    /**
-     * 创建表格
-     *
-     * @param rows
-     * @param columns
-     * @return
-     */
-    private XWPFTable createTable(int rows, int columns) {
-        //创建表格
-        XWPFTable table = document.createTable(rows, columns);
-        //设置表格样式
-        setTableStyle(table);
-
-        return table;
-    }
-
-
-    /**
-     * 写入表头
-     *
-     * @param table
-     * @param tableHeaders
-     * @param config
-     */
-    private void writeTableHeaders(XWPFTable table, List<String> tableHeaders, WriteTableable obj, List<Field> fields, ParagraphTextConfig config) {
-        List<String> interceptedHeaders = obj instanceof WriteTableIntercepter
-                ? ((WriteTableIntercepter) obj).interceptWriteHeaders(obj.getClass(), fields, tableHeaders)
-                : tableHeaders;
-        for (int i = 0; i < interceptedHeaders.size(); i++) {
-            XWPFParagraph paragraph = table.getRow(0).getCell(i).getParagraphs().get(0);
-            addParagraphText(paragraph, interceptedHeaders.get(i), config);
-        }
-    }
-
-    /**
-     * 写入表格多行数据
-     *
-     * @param table
-     * @param dataList
-     * @param fields
-     * @param config
-     */
-    private void writeTableRows(XWPFTable table, int startRow, List<? extends WriteTableable> dataList, List<Field> fields, ParagraphTextConfig config) {
-
-        for (int i = 0; i < dataList.size(); i++) {
-            writeTableRow(table, i + startRow, dataList.get(i), fields, config);
-        }
-    }
-
-
-    /**
-     * 写入表格一行数据
-     *
-     * @param table
-     * @param rowIndex
-     * @param obj
-     * @param fieldList
-     * @param config
-     */
-    private void writeTableRow(XWPFTable table, int rowIndex, WriteTableable obj, List<Field> fieldList, ParagraphTextConfig config) {
-        for (int i = 0; i < fieldList.size(); i++) {
-            XWPFParagraph paragraph = table.getRow(rowIndex).getCell(i).getParagraphs().get(0);
-            String cellValue = getCellValue(obj, fieldList.get(i));
-            addParagraphText(paragraph, cellValue, config);
-        }
-    }
-
-    /**
-     * 获取单元格值
-     *
-     * @param obj
-     * @param field
-     * @return
-     */
-    private String getCellValue(WriteTableable obj, Field field) {
-        Object fieldValue;
-        try {
-            field.setAccessible(true);
-            fieldValue = field.get(obj);
-
-            //执行属性值枚举映射
-            Object enumValue = this.enumMappings.get(getFieldKey(field) + ":" + fieldValue);
-            if (enumValue != null) {
-                fieldValue = enumValue;
-            }
-
-            //执行属性值转换
-            Converter converter = this.converters.get(getFieldKey(field));
-            if (converter != null) {
-                fieldValue = converter.convert(fieldValue);
-            }
-
-            //执行属性值拦截
-            if (obj instanceof WriteTableIntercepter) {
-                fieldValue = ((WriteTableIntercepter) obj).interceptWriteFieldValue(obj, field, fieldValue);
-            }
-
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            fieldValue = "";
-        }
-
-        return String.valueOf(fieldValue);
     }
 
     /**
@@ -473,6 +300,244 @@ public class WordBytesBuilder {
 
 
     /**
+     * word文档转换为字节数组
+     *
+     * @return
+     * @throws Exception
+     */
+    public byte[] asBytes() {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            document.write(out);
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            //关闭word文档对象
+            close(document);
+        }
+    }
+
+
+    /**
+     * word文档写入文件
+     *
+     * @return
+     * @throws Exception
+     */
+    public void asFile(File file) {
+        try (OutputStream out = new FileOutputStream(file)) {
+            document.write(out);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            //关闭word文档对象
+            close(document);
+        }
+    }
+
+
+    /**
+     * word文档写入输出流
+     *
+     * @return
+     * @throws Exception
+     */
+    public void asStream(OutputStream out) {
+        try {
+            document.write(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //关闭word文档对象
+            close(document);
+            close(out);
+        }
+    }
+
+
+    /**
+     * 加载全部属性值转换器
+     *
+     * @param fields
+     */
+    private void loadConverters(List<Field> fields) {
+        this.converters = new HashMap<>();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(WordTableField.class)) {
+                WordTableField annotation = field.getAnnotation(WordTableField.class);
+                if (annotation.converter() != NoConverter.class) {
+                    try {
+                        Converter converter = (Converter) annotation.converter().getConstructor().newInstance();
+                        this.converters.put(getFieldKey(field), converter);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 获取类名+属性名
+     *
+     * @param field
+     * @return
+     */
+    private String getFieldKey(Field field) {
+        return field.getDeclaringClass().getName() + "." + field.getName();
+    }
+
+
+    /**
+     * 加载全部枚举映射关系
+     *
+     * @param fields
+     * @return
+     */
+    private void loadEnumMappings(List<Field> fields) {
+        this.enumMappings = new HashMap<>();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(WordTableField.class)) {
+                WordTableField annotation = field.getAnnotation(WordTableField.class);
+                String[] enums = annotation.enums();
+                if (enums.length > 0) {
+                    appendEnumMapping(getFieldKey(field), enums);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 追加一组枚举映射关系
+     *
+     * @param fieldKey
+     * @param enums
+     */
+    private void appendEnumMapping(String fieldKey, String[] enums) {
+        for (String enumStr : enums) {
+            String[] splitArray = enumStr.split("->");
+            if (splitArray.length != 2) {
+                throw new IllegalArgumentException("The convert property format of PdfTableField is：oldValue -> newValue");
+            }
+            this.enumMappings.put(fieldKey + ":" + splitArray[0].trim(), splitArray[1].trim());
+        }
+    }
+
+
+    /**
+     * 创建表格
+     *
+     * @param rows
+     * @param columns
+     * @return
+     */
+    private XWPFTable createTable(int rows, int columns) {
+        //创建表格
+        XWPFTable table = document.createTable(rows, columns);
+        //设置表格样式
+        setTableStyle(table);
+
+        return table;
+    }
+
+
+    /**
+     * 写入表头
+     *
+     * @param table
+     * @param tableHeaders
+     * @param config
+     */
+    private void writeTableHeaders(XWPFTable table, List<String> tableHeaders, WriteTableable obj, List<Field> fields, ParagraphTextConfig config) {
+
+        for (int i = 0; i < tableHeaders.size(); i++) {
+
+            XWPFTableCell cell = table.getRow(0).getCell(i);
+
+            XWPFParagraph paragraph = cell.getParagraphs().get(0);
+
+            addParagraphText(paragraph, tableHeaders.get(i), config);
+
+            if (obj instanceof WordWriteTableIntercepter) {
+                ((WordWriteTableIntercepter) obj).interceptHeaderCell(cell, paragraph, obj.getClass());
+            }
+        }
+    }
+
+    /**
+     * 写入表格多行数据
+     *
+     * @param table
+     * @param dataList
+     * @param fields
+     * @param config
+     */
+    private void writeTableRows(XWPFTable table, int startRow, List<? extends WriteTableable> dataList, List<Field> fields, ParagraphTextConfig config) {
+
+        for (int i = 0; i < dataList.size(); i++) {
+            writeTableRow(table, i + startRow, dataList.get(i), fields, config);
+        }
+    }
+
+
+    /**
+     * 写入表格一行数据
+     *
+     * @param table
+     * @param rowIndex
+     * @param obj
+     * @param fieldList
+     * @param config
+     */
+    private void writeTableRow(XWPFTable table, int rowIndex, WriteTableable obj, List<Field> fieldList, ParagraphTextConfig config) {
+        for (int i = 0; i < fieldList.size(); i++) {
+            XWPFTableCell cell = table.getRow(rowIndex).getCell(i);
+            XWPFParagraph paragraph = cell.getParagraphs().get(0);
+            String cellValue = getCellValue(obj, fieldList.get(i));
+            addParagraphText(paragraph, cellValue, config);
+            //拦截单元格
+            if (obj instanceof WordWriteTableIntercepter) {
+                ((WordWriteTableIntercepter) obj).interceptWriteCell(cell, paragraph, obj, fieldList.get(i));
+            }
+        }
+    }
+
+    /**
+     * 获取单元格值
+     *
+     * @param obj
+     * @param field
+     * @return
+     */
+    private String getCellValue(WriteTableable obj, Field field) {
+        Object fieldValue;
+        try {
+            field.setAccessible(true);
+            fieldValue = field.get(obj);
+
+            //执行属性值枚举映射
+            Object enumValue = this.enumMappings.get(getFieldKey(field) + ":" + fieldValue);
+            if (enumValue != null) {
+                fieldValue = enumValue;
+            }
+
+            //执行属性值转换
+            Converter converter = this.converters.get(getFieldKey(field));
+            if (converter != null) {
+                fieldValue = converter.convert(fieldValue);
+            }
+
+        } catch (IllegalAccessException e) {
+            fieldValue = "";
+        }
+
+        return String.valueOf(fieldValue);
+    }
+
+
+    /**
      * 设置表格样式
      *
      * @param table
@@ -493,6 +558,8 @@ public class WordBytesBuilder {
         borders.addNewRight().setVal(STBorder.SINGLE);
         borders.addNewInsideH().setVal(STBorder.SINGLE);
         borders.addNewInsideV().setVal(STBorder.SINGLE);
+
+
     }
 
     /**
@@ -505,7 +572,7 @@ public class WordBytesBuilder {
         //通过注解获取需要输出的属性别名
         return fieldList.stream()
                 .map(field -> {
-                    TableField annotation = field.getAnnotation(TableField.class);
+                    WordTableField annotation = field.getAnnotation(WordTableField.class);
                     return annotation != null && !Objects.equals("", annotation.value())
                             ? annotation.value()
                             : field.getName();
@@ -521,56 +588,41 @@ public class WordBytesBuilder {
      */
     private <T extends WriteTableable> List<Field> getFieldList(T obj) {
 
-        List<Field> fields = new ArrayList<>();
+        List<Class<?>> classes = new ArrayList<>();
 
         Class<?> classType = obj.getClass();
 
+        //遍历获取父类class
         while (!Objects.equals(classType, Object.class)) {
-            List<Field> fieldList = Stream.of(classType.getDeclaredFields())
-                    .filter(field -> field.isAnnotationPresent(TableField.class) && !field.getAnnotation(TableField.class).exclude())
-                    .collect(Collectors.toList());
-            fields.addAll(fieldList);
+            classes.add(classType);
             classType = classType.getSuperclass();
         }
 
-        if (obj instanceof WriteTableIntercepter) {
-            fields = ((WriteTableIntercepter) obj).interceptWriteFields(obj.getClass(), fields);
+        List<Field> fields = classes.stream()
+                .map(pojoClass -> Stream.of(pojoClass.getDeclaredFields()).collect(Collectors.toList()))
+                .flatMap(Collection::stream)
+                .filter(field -> field.isAnnotationPresent(WordTableField.class) && !field.getAnnotation(WordTableField.class).exclude())
+                .collect(Collectors.toList());
+
+        if (obj instanceof WordWriteTableIntercepter) {
+            fields = ((WordWriteTableIntercepter) obj).interceptWriteFields(obj.getClass(), fields);
         }
 
         return fields.stream().sorted((a, b) -> {
-            TableField before = a.getAnnotation(TableField.class);
-            TableField next = b.getAnnotation(TableField.class);
+            WordTableField before = a.getAnnotation(WordTableField.class);
+            WordTableField next = b.getAnnotation(WordTableField.class);
             return (before == null ? Integer.MAX_VALUE : before.order()) - (next == null ? Integer.MAX_VALUE : next.order());
         }).collect(Collectors.toList());
     }
 
 
     /**
-     * 构建 word字节数组
-     *
-     * @return
-     * @throws Exception
+     * 关闭资源
      */
-    public byte[] build() {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            document.write(out);
-            return out.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            //关闭word文档对象
-            closeDocument();
-        }
-    }
-
-
-    /**
-     * 关闭word文档对象
-     */
-    private void closeDocument() {
-        if (document != null) {
+    private void close(Closeable closeable) {
+        if (closeable != null) {
             try {
-                document.close();
+                closeable.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -23,7 +23,7 @@ database:
 
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
-        select column_name as columnName,column_type as columnType,
+        select column_name as columnName,data_type as columnType,
                column_comment as columnComment,is_nullable as isNullable,
                column_default as columnDefault,character_maximum_length as length,
                column_key as columnKey,extra as extra

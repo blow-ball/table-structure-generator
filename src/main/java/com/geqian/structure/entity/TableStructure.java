@@ -1,8 +1,10 @@
 package com.geqian.structure.entity;
 
 import com.geqian.structure.db.DefaultColumnManager;
-import com.geqian.structure.word.TableField;
-import com.geqian.structure.word.WriteTableIntercepter;
+import com.geqian.structure.pdf.PDFWriteTableIntercepter;
+import com.geqian.structure.pdf.PdfTableField;
+import com.geqian.structure.word.WordTableField;
+import com.geqian.structure.word.WordWriteTableIntercepter;
 import lombok.Data;
 
 import java.lang.reflect.Field;
@@ -20,24 +22,30 @@ import java.util.stream.Stream;
  * @date 10:45 2023/1/5
  */
 @Data
-public abstract class TableStructure implements WriteTableIntercepter {
+public abstract class TableStructure implements WordWriteTableIntercepter, PDFWriteTableIntercepter {
 
-    @TableField(value = "序号", order = 0)
+    @WordTableField(value = "序号", order = 0)
+    @PdfTableField(value = "序号", order = 0)
     private Integer number;
 
-    @TableField(value = "列名", order = 2)
+    @WordTableField(value = "列名", order = 2)
+    @PdfTableField(value = "列名", order = 2)
     private String columnName;
 
-    @TableField(value = "数据类型", order = 3)
+    @WordTableField(value = "数据类型", order = 3)
+    @PdfTableField(value = "数据类型", order = 3)
     private String columnType;
 
-    @TableField(value = "是否能为空", order = 4, exclude = true)
+    @WordTableField(value = "是否能为空", order = 4, exclude = true)
+    @PdfTableField(value = "是否能为空", order = 4, exclude = true)
     private String isNullable;
 
-    @TableField(value = "默认值", order = 5, enums = "null->NULL", exclude = true)
+    @WordTableField(value = "默认值", order = 5, enums = "null->NULL", exclude = true)
+    @PdfTableField(value = "默认值", order = 5, enums = "null->NULL", exclude = true)
     private String columnDefault;
 
-    @TableField(value = "备注", order = 6)
+    @WordTableField(value = "备注", order = 6)
+    @PdfTableField(value = "备注", order = 6)
     private String columnComment;
 
 
@@ -56,7 +64,26 @@ public abstract class TableStructure implements WriteTableIntercepter {
         return classes.stream()
                 .map(pojoClass -> Stream.of(pojoClass.getDeclaredFields()).collect(Collectors.toList()))
                 .flatMap(Collection::stream)
-                .filter(field -> field.isAnnotationPresent(TableField.class) && DefaultColumnManager.getDefaultColumns().contains(field.getName()))
+                .filter(field -> field.isAnnotationPresent(WordTableField.class) && DefaultColumnManager.getDefaultColumns().contains(field.getName()))
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<Field> interceptFields(Class<?> type, List<Field> fields) {
+        List<Class<?>> classes = new ArrayList<>();
+
+        Class<?> classType = type;
+
+        while (!Objects.equals(classType, Object.class)) {
+            classes.add(classType);
+            classType = classType.getSuperclass();
+        }
+
+        return classes.stream()
+                .map(pojoClass -> Stream.of(pojoClass.getDeclaredFields()).collect(Collectors.toList()))
+                .flatMap(Collection::stream)
+                .filter(field -> field.isAnnotationPresent(WordTableField.class) && DefaultColumnManager.getDefaultColumns().contains(field.getName()))
                 .collect(Collectors.toList());
     }
 
