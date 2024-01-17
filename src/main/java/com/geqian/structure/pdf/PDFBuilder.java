@@ -1,12 +1,12 @@
 package com.geqian.structure.pdf;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.log.Logger;
-import com.itextpdf.text.log.LoggerFactory;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -621,5 +621,11 @@ public class PDFBuilder {
         cell.setBorderWidth(0.5f);
         return cell;
     }
+
+
+    public static void main(String[] args) {
+        PDFBuilder.create().addParagraph("标题11111111").asFile(new File("d:/desktop/haha.pdf"));
+    }
+
 
 }
