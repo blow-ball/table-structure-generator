@@ -12,13 +12,11 @@ import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TreeNode;
 import com.geqian.structure.mapper.TableMapper;
 import com.geqian.structure.pdf.PDFBuilder;
-import com.geqian.structure.pdf.ParagraphConfig;
 import com.geqian.structure.pojo.LabelAndValue;
 import com.geqian.structure.pojo.TableInfo;
 import com.geqian.structure.service.GeneratorService;
 import com.geqian.structure.utils.ReflectionUtils;
-import com.geqian.structure.word.ParagraphTextConfig;
-import com.geqian.structure.word.ParagraphTextConfigBuilder;
+import com.geqian.structure.word.ParagraphConfig;
 import com.geqian.structure.word.WordBytesBuilder;
 import com.geqian.structure.word.WordTableField;
 import lombok.SneakyThrows;
@@ -133,16 +131,19 @@ public class GeneratorServiceImpl implements GeneratorService {
             //过滤出全部 Schema节点
             List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
 
-            ParagraphTextConfig tableDescConfig = ParagraphTextConfigBuilder.create()
+            ParagraphConfig tableDescConfig = ParagraphConfig.create();
+
+            tableDescConfig.getFontConfig()
                     .setFontFamily("Calibri")
                     .setFontSize(20);
 
-            ParagraphTextConfig tableCellConfig = ParagraphTextConfigBuilder.create()
-                    .setFontFamily("Calibri");
+            ParagraphConfig tableCellConfig = ParagraphConfig.create();
+
+            tableCellConfig.getFontConfig().setFontFamily("Calibri");
 
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
-                wordBytesBuilder.addParagraphText("数据库 " + schemaName, tableDescConfig);
+                wordBytesBuilder.addParagraph("数据库 " + schemaName, tableDescConfig);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
@@ -167,8 +168,10 @@ public class GeneratorServiceImpl implements GeneratorService {
                 for (Future<TableInfo> future : futureList) {
                     TableInfo tableInfo = future.get();
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
-                    wordBytesBuilder.addParagraphText(!StringUtils.hasText(tableDefinition.getTableComment()) ? tableDefinition.getTableName() : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableDescConfig.setFontSize(15));
-                    wordBytesBuilder.addTable(tableInfo.getDataList(), tableCellConfig.setFontSize(10));
+                    tableDescConfig.getFontConfig().setFontSize(15);
+                    wordBytesBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment()) ? tableDefinition.getTableName() : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableDescConfig);
+                    tableCellConfig.getFontConfig().setFontSize(10);
+                    wordBytesBuilder.addTable(tableInfo.getDataList(), tableCellConfig);
                     wordBytesBuilder.addCarriageReturn().addCarriageReturn();
                 }
             }
@@ -191,13 +194,13 @@ public class GeneratorServiceImpl implements GeneratorService {
             //过滤出全部 Schema节点
             List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
 
-            ParagraphConfig tableDescConfig = ParagraphConfig.create();
+            com.geqian.structure.pdf.ParagraphConfig tableDescConfig = com.geqian.structure.pdf.ParagraphConfig.create();
 
             tableDescConfig.getFontConfig().setFontSize(16);
 
             tableDescConfig.setFirstLineIndent(3f);
 
-            ParagraphConfig tableCellConfig = ParagraphConfig.create();
+            com.geqian.structure.pdf.ParagraphConfig tableCellConfig = com.geqian.structure.pdf.ParagraphConfig.create();
 
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
@@ -236,6 +239,5 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
         return pdfBuilder.asBytes();
     }
-
 
 }

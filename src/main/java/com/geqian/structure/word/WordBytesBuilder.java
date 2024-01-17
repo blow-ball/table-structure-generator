@@ -78,16 +78,16 @@ public class WordBytesBuilder {
      *
      * @return
      */
-    public WordBytesBuilder addTitle(String text, ParagraphTextConfig config) {
+    public WordBytesBuilder addTitle(String text, ParagraphConfig config) {
         //创建段落
         XWPFParagraph paragraph = document.createParagraph();
         if (config == null) {
-            config = new ParagraphTextConfig();
-            config.setBlod(true);
+            config = ParagraphConfig.create();
+            config.getFontConfig().setFontBold(true);
             config.setAlignment(ParagraphAlignment.CENTER);
-            config.setFontSize(25);
+            config.getFontConfig().setFontSize(25);
         }
-        addParagraphText(paragraph, text, config);
+        addParagraph(paragraph, text, config);
         return this;
     }
 
@@ -96,8 +96,8 @@ public class WordBytesBuilder {
      *
      * @return
      */
-    public WordBytesBuilder addParagraphText(String text) {
-        addParagraphText(text, new ParagraphTextConfig());
+    public WordBytesBuilder addParagraph(String text) {
+        addParagraph(text, ParagraphConfig.create());
         return this;
     }
 
@@ -107,10 +107,10 @@ public class WordBytesBuilder {
      *
      * @return
      */
-    public WordBytesBuilder addParagraphText(String text, ParagraphTextConfig config) {
+    public WordBytesBuilder addParagraph(String text, ParagraphConfig config) {
         //创建段落
         XWPFParagraph paragraph = document.createParagraph();
-        addParagraphText(paragraph, text, config);
+        addParagraph(paragraph, text, config);
         return this;
     }
 
@@ -119,7 +119,7 @@ public class WordBytesBuilder {
      *
      * @return
      */
-    public void addParagraphText(XWPFParagraph paragraph, String text, ParagraphTextConfig config) {
+    public void addParagraph(XWPFParagraph paragraph, String text, ParagraphConfig config) {
         // 设置对齐方式 paragraph.setAlignment(ParagraphAlignment.CENTER);
         paragraph.setAlignment(config.getAlignment());
         //创建段落文本
@@ -128,15 +128,15 @@ public class WordBytesBuilder {
         //文本
         run.setText(text);
         // 粗体 run.setBold(true);
-        run.setBold(config.isBlod());
+        run.setBold(config.getFontConfig().isFontBold());
         // 斜体 run.setItalic(true);
-        run.setItalic(config.isItalic());
+        run.setItalic(config.getFontConfig().isFontItalic());
         //字体大小
-        run.setFontSize(config.getFontSize());
+        run.setFontSize(config.getFontConfig().getFontSize());
         // 颜色 run.setColor("00ff00");
-        run.setColor(config.getColor());
+        run.setColor(config.getFontConfig().getFontColor());
         // 字体 run.setFontFamily("Courier");
-        run.setFontFamily(config.getFontFamily());
+        run.setFontFamily(config.getFontConfig().getFontFamily());
         //设置首行缩进
         setFirstLineIndent(paragraph, config.getFirstLineIndent());
         if (Objects.equals(true, config.isCarriageReturn())) {
@@ -203,7 +203,7 @@ public class WordBytesBuilder {
      * @param dataList 数据列表
      */
     public WordBytesBuilder addTable(List<? extends WriteTableable> dataList) {
-        return addTable(dataList, new ParagraphTextConfig());
+        return addTable(dataList, ParagraphConfig.create());
     }
 
     /**
@@ -211,7 +211,7 @@ public class WordBytesBuilder {
      *
      * @param dataList 数据列表
      */
-    public WordBytesBuilder addTable(List<? extends WriteTableable> dataList, ParagraphTextConfig config) {
+    public WordBytesBuilder addTable(List<? extends WriteTableable> dataList, ParagraphConfig config) {
 
         if (dataList != null && !(dataList = dataList.stream().filter(Objects::nonNull).collect(Collectors.toList())).isEmpty()) {
 
@@ -266,7 +266,7 @@ public class WordBytesBuilder {
      * @param tableRows 数据列表
      */
     public WordBytesBuilder writeTableRows(Object[][] tableRows) {
-        return writeTableRows(tableRows, new ParagraphTextConfig());
+        return writeTableRows(tableRows, ParagraphConfig.create());
     }
 
 
@@ -275,7 +275,7 @@ public class WordBytesBuilder {
      *
      * @param rows 数据列表
      */
-    public WordBytesBuilder writeTableRows(Object[][] rows, ParagraphTextConfig config) {
+    public WordBytesBuilder writeTableRows(Object[][] rows, ParagraphConfig config) {
         int row;
         int column;
         if (rows != null && (rows = Stream.of(rows).filter(Objects::nonNull).toArray(Object[][]::new)).length > 0) {
@@ -290,7 +290,7 @@ public class WordBytesBuilder {
                 for (int i = 0; i < row; i++) {
                     for (int j = 0; j < rows[i].length; j++) {
                         XWPFParagraph paragraph = table.getRow(i).getCell(j).getParagraphs().get(0);
-                        addParagraphText(paragraph, String.valueOf(rows[i][j]), config);
+                        addParagraph(paragraph, String.valueOf(rows[i][j]), config);
                     }
                 }
             }
@@ -450,7 +450,7 @@ public class WordBytesBuilder {
      * @param tableHeaders
      * @param config
      */
-    private void writeTableHeaders(XWPFTable table, List<String> tableHeaders, WriteTableable obj, List<Field> fields, ParagraphTextConfig config) {
+    private void writeTableHeaders(XWPFTable table, List<String> tableHeaders, WriteTableable obj, List<Field> fields, ParagraphConfig config) {
 
         for (int i = 0; i < tableHeaders.size(); i++) {
 
@@ -458,7 +458,7 @@ public class WordBytesBuilder {
 
             XWPFParagraph paragraph = cell.getParagraphs().get(0);
 
-            addParagraphText(paragraph, tableHeaders.get(i), config);
+            addParagraph(paragraph, tableHeaders.get(i), config);
 
             if (obj instanceof WordWriteTableIntercepter) {
                 ((WordWriteTableIntercepter) obj).interceptHeaderCell(cell, paragraph, obj.getClass());
@@ -474,7 +474,7 @@ public class WordBytesBuilder {
      * @param fields
      * @param config
      */
-    private void writeTableRows(XWPFTable table, int startRow, List<? extends WriteTableable> dataList, List<Field> fields, ParagraphTextConfig config) {
+    private void writeTableRows(XWPFTable table, int startRow, List<? extends WriteTableable> dataList, List<Field> fields, ParagraphConfig config) {
 
         for (int i = 0; i < dataList.size(); i++) {
             writeTableRow(table, i + startRow, dataList.get(i), fields, config);
@@ -491,12 +491,12 @@ public class WordBytesBuilder {
      * @param fieldList
      * @param config
      */
-    private void writeTableRow(XWPFTable table, int rowIndex, WriteTableable obj, List<Field> fieldList, ParagraphTextConfig config) {
+    private void writeTableRow(XWPFTable table, int rowIndex, WriteTableable obj, List<Field> fieldList, ParagraphConfig config) {
         for (int i = 0; i < fieldList.size(); i++) {
             XWPFTableCell cell = table.getRow(rowIndex).getCell(i);
             XWPFParagraph paragraph = cell.getParagraphs().get(0);
             String cellValue = getCellValue(obj, fieldList.get(i));
-            addParagraphText(paragraph, cellValue, config);
+            addParagraph(paragraph, cellValue, config);
             //拦截单元格
             if (obj instanceof WordWriteTableIntercepter) {
                 ((WordWriteTableIntercepter) obj).interceptWriteCell(cell, paragraph, obj, fieldList.get(i));
