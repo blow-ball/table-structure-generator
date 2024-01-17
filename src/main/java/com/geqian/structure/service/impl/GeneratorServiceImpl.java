@@ -30,7 +30,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -67,12 +66,6 @@ public class GeneratorServiceImpl implements GeneratorService {
     public void preview(TargetTableDto targetTableDto, HttpServletResponse response) {
 
         byte[] pdfBytes = buildPdfDocument(targetTableDto);
-
-        FileOutputStream fileOutputStream = new FileOutputStream("d:/desktop/demo.pdf");
-
-        fileOutputStream.write(pdfBytes);
-
-        fileOutputStream.close();
 
         //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
         response.setHeader("content-type", "application/octet-stream");
@@ -200,9 +193,9 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             ParagraphConfig tableDescConfig = ParagraphConfig.create();
 
-            tableDescConfig.getFontConfig().setFontSize(20);
+            tableDescConfig.getFontConfig().setFontSize(16);
 
-            tableDescConfig.setFirstLineIndent(2.5f);
+            tableDescConfig.setFirstLineIndent(3f);
 
             ParagraphConfig tableCellConfig = ParagraphConfig.create();
 
