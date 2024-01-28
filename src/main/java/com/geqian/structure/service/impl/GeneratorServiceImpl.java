@@ -75,7 +75,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @SneakyThrows(Exception.class)
     @Override
-    public void download(TargetTableDto targetTableDto, HttpServletResponse response) {
+    public void downloadWord(TargetTableDto targetTableDto, HttpServletResponse response) {
 
         byte[] wordBytes = buildWordDocument(targetTableDto);
 

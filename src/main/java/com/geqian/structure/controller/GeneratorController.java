@@ -41,9 +41,15 @@ public class GeneratorController {
     }
 
 
-    @PostMapping("/download")
-    public void download(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
-        generatorService.download(targetTableDto, response);
+    @PostMapping("/pdf/downloadPdf")
+    public void downloadPdf(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
+        generatorService.preview(targetTableDto, response);
+    }
+
+
+    @PostMapping("/word/downloadWord")
+    public void downloadWord(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
+        generatorService.downloadWord(targetTableDto, response);
     }
 
 }

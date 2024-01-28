@@ -1,5 +1,6 @@
 package com.geqian.structure.word;
 
+
 public class FontConfig {
     //文字大小
     private Integer fontSize = 12;
@@ -13,7 +14,7 @@ public class FontConfig {
     private boolean fontBold = false;
 
 
-    public static FontConfig create(){
+    public static FontConfig create() {
         return new FontConfig();
     }
 

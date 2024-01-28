@@ -7,6 +7,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -575,7 +576,7 @@ public class PDFBuilder {
 
 
     /**
-     * 创建中文字体
+     * 创建认字体
      *
      * @return
      */
@@ -583,6 +584,7 @@ public class PDFBuilder {
         int fontSize = config.getFontSize();
         BaseColor fontColor = config.getFontColor();
         int fontStyle = config.getFontStyle();
+        String fontFamily = config.getFontFamily();
         /**
          * ① fontname:字体
          * ② encoding:编码方式
@@ -597,6 +599,13 @@ public class PDFBuilder {
          *      UNDEFINED	中划线
          *      DEFAULTSIZE	下划线并中划线
          */
+        try {
+            if (fontFamily != null) {
+                BaseFont baseFont = BaseFont.createFont(fontFamily, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+                return new Font(baseFont, fontSize, fontStyle, fontColor);
+            }
+        } catch (Exception ignored) {
+        }
         return FontFactory.getFont("STSongStd-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED, fontSize, fontStyle, fontColor);
     }
 
@@ -620,5 +629,6 @@ public class PDFBuilder {
         cell.setBorderWidth(0.5f);
         return cell;
     }
+
 
 }

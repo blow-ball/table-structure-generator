@@ -11,7 +11,7 @@ public class FontConfig {
 
     private int fontStyle = Font.NORMAL;
 
-    private String fontFamily;
+    private String fontFamily = "fonts/simsun.ttc,0";
 
 
     public int getFontSize() {
