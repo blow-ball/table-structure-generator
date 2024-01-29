@@ -195,13 +195,16 @@ public class GeneratorServiceImpl implements GeneratorService {
             //过滤出全部 Schema节点
             List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
 
-            com.geqian.structure.pdf.ParagraphConfig tableDescConfig = com.geqian.structure.pdf.ParagraphConfig.create();
+            com.geqian.structure.pdf.ParagraphConfig tableDescConfig = com.geqian.structure.pdf.ParagraphConfig.create().setFirstLineIndent(2.4f);
 
-            tableDescConfig.getFontConfig().setFontSize(16).setFontStyle(Font.BOLD);
-
-            tableDescConfig.setFirstLineIndent(3f);
+            tableDescConfig.getFontConfig().setFontSize(20).setFontStyle(Font.BOLD);
 
             com.geqian.structure.pdf.ParagraphConfig tableCellConfig = com.geqian.structure.pdf.ParagraphConfig.create();
+
+            tableCellConfig.getFontConfig().setFontSize(16);
+
+            tableCellConfig.setFirstLineIndent(3f);
+
 
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
@@ -231,7 +234,11 @@ public class GeneratorServiceImpl implements GeneratorService {
                 for (Future<TableInfo> future : futureList) {
                     TableInfo tableInfo = future.get();
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
-                    pdfBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment()) ? tableDefinition.getTableName() : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableDescConfig);
+                    tableCellConfig.getFontConfig().setFontSize(16);
+                    pdfBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
+                            ? tableDefinition.getTableName()
+                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableCellConfig);
+                    tableCellConfig.getFontConfig().setFontSize(10);
                     pdfBuilder.addTable(tableInfo.getDataList(), tableCellConfig);
                     pdfBuilder.addCarriageReturn();
                     pdfBuilder.addCarriageReturn();
