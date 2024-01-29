@@ -195,15 +195,13 @@ public class GeneratorServiceImpl implements GeneratorService {
             //过滤出全部 Schema节点
             List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
 
-            com.geqian.structure.pdf.ParagraphConfig tableDescConfig = com.geqian.structure.pdf.ParagraphConfig.create().setFirstLineIndent(2.4f);
+            com.geqian.structure.pdf.ParagraphConfig tableDescConfig = com.geqian.structure.pdf.ParagraphConfig.create();
 
             tableDescConfig.getFontConfig().setFontSize(20).setFontStyle(Font.BOLD);
 
             com.geqian.structure.pdf.ParagraphConfig tableCellConfig = com.geqian.structure.pdf.ParagraphConfig.create();
 
             tableCellConfig.getFontConfig().setFontSize(16);
-
-            tableCellConfig.setFirstLineIndent(3f);
 
 
             for (TreeNode schemaNode : schemaNodes) {
