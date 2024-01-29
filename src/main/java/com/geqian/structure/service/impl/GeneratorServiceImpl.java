@@ -19,6 +19,7 @@ import com.geqian.structure.utils.ReflectionUtils;
 import com.geqian.structure.word.ParagraphConfig;
 import com.geqian.structure.word.WordBytesBuilder;
 import com.geqian.structure.word.WordTableField;
+import com.itextpdf.text.Font;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,7 +197,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             com.geqian.structure.pdf.ParagraphConfig tableDescConfig = com.geqian.structure.pdf.ParagraphConfig.create();
 
-            tableDescConfig.getFontConfig().setFontSize(16);
+            tableDescConfig.getFontConfig().setFontSize(16).setFontStyle(Font.BOLD);
 
             tableDescConfig.setFirstLineIndent(3f);
 
