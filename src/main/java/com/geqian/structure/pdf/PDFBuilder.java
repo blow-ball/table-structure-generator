@@ -48,8 +48,7 @@ public class PDFBuilder {
     private PDFBuilder() {
         try {
             this.document = new Document(PageSize.A4);
-            float pageWidth = PageSize.A4.getWidth();
-            float padding = pageWidth * 0.15f;
+            float padding = PageSize.A4.getWidth() * 0.15f;
             // 设置左右填充为页面宽度的 10%
             document.setMargins(padding, padding, 36, 36);
             this.out = new ByteArrayOutputStream();
