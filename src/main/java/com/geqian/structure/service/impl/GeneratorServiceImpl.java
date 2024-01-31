@@ -23,6 +23,7 @@ import com.geqian.structure.pojo.TableInfo;
 import com.geqian.structure.service.GeneratorService;
 import com.geqian.structure.utils.ReflectionUtils;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -202,7 +203,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
 
-        PDFBuilder pdfBuilder = PDFBuilder.create();
+        PDFBuilder pdfBuilder = PDFBuilder.create(PageSize.A4, 90, 90, 36, 36);
 
         List<TreeNode> treeNodeList = targetTableDto.getDataList();
 
