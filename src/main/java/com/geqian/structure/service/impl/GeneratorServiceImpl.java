@@ -29,14 +29,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -68,11 +66,13 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         byte[] pdfBytes = buildPdfDocument(targetTableDto);
 
+        String filename = "表结构" + new Date().getTime() + "pdf";
+
         //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
         response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode("数据库表结构" + ".pdf", "UTF-8"));
+        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
         //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("数据库表结构" + ".pdf", "UTF-8"));
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
         IoUtil.write(response.getOutputStream(), true, pdfBytes);
     }
 
@@ -82,10 +82,12 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         byte[] wordBytes = buildWordDocument(targetTableDto);
 
+        String filename = "表结构" + new Date().getTime() + "docx";
+
         response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode("数据库表结构" + ".docx", "UTF-8"));
+        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
         //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("数据库表结构" + ".docx", "UTF-8"));
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
         IoUtil.write(response.getOutputStream(), true, wordBytes);
     }
 
@@ -94,10 +96,12 @@ public class GeneratorServiceImpl implements GeneratorService {
     public void downloadMarkdown(TargetTableDto targetTableDto, HttpServletResponse response) {
 
         byte[] mdBytes = buildMdDocument(targetTableDto);
+        String filename = "表结构" + new Date().getTime() + "md";
+
         response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode("数据库表结构" + ".md", "UTF-8"));
+        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
         //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("数据库表结构" + ".md", "UTF-8"));
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
         IoUtil.write(response.getOutputStream(), true, mdBytes);
     }
 
