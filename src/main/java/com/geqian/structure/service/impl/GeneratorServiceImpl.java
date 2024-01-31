@@ -66,7 +66,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         byte[] pdfBytes = buildPdfDocument(targetTableDto);
 
-        String filename = "表结构" + new Date().getTime() + "pdf";
+        String filename = "表结构" + new Date().getTime() + ".pdf";
 
         //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
         response.setHeader("content-type", "application/octet-stream");
@@ -82,7 +82,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         byte[] wordBytes = buildWordDocument(targetTableDto);
 
-        String filename = "表结构" + new Date().getTime() + "docx";
+        String filename = "表结构" + new Date().getTime() + ".docx";
 
         response.setHeader("content-type", "application/octet-stream");
         response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
@@ -96,7 +96,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     public void downloadMarkdown(TargetTableDto targetTableDto, HttpServletResponse response) {
 
         byte[] mdBytes = buildMdDocument(targetTableDto);
-        String filename = "表结构" + new Date().getTime() + "md";
+        String filename = "表结构" + new Date().getTime() + ".md";
 
         response.setHeader("content-type", "application/octet-stream");
         response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
