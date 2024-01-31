@@ -22,4 +22,5 @@ public interface GeneratorService {
 
     ResponseResult<ColumnsVo> getTableColumnInfo();
 
+    void downloadMarkdown(TargetTableDto targetTableDto, HttpServletResponse response);
 }

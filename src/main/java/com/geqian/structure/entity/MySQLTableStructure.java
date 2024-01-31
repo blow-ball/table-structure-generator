@@ -1,7 +1,6 @@
 package com.geqian.structure.entity;
 
-import com.geqian.structure.pdf.PdfTableField;
-import com.geqian.structure.word.WordTableField;
+import com.geqian.document4j.common.annotation.TableField;
 
 /**
  * 列字段信息
@@ -11,16 +10,13 @@ import com.geqian.structure.word.WordTableField;
  */
 public class MySQLTableStructure extends TableStructure {
 
-    @WordTableField(value = "键类型", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
-    @PdfTableField(value = "键类型", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
+    @TableField(value = "键类型", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
     private String columnKey;
 
-    @WordTableField(value = "长度", order = 7, exclude = true, enums = "null-> ")
-    @PdfTableField(value = "长度", order = 7, exclude = true, enums = "null-> ")
+    @TableField(value = "长度", order = 7, exclude = true, enums = "null-> ")
     private Long length;
 
-    @WordTableField(value = "额外", order = 8, exclude = true)
-    @PdfTableField(value = "额外", order = 8, exclude = true)
+    @TableField(value = "额外", order = 8, exclude = true)
     private String extra;
 
 

@@ -52,4 +52,10 @@ public class GeneratorController {
         generatorService.downloadWord(targetTableDto, response);
     }
 
+
+    @PostMapping("/markdown/downloadMarkdown")
+    public void downloadMd(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
+        generatorService.downloadMarkdown(targetTableDto, response);
+    }
+
 }

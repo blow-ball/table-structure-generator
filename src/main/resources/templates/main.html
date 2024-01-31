@@ -43,6 +43,7 @@
                             <el-button @click="preview" type="text">预览文档</el-button>
                             <el-button @click="downloadWord" type="text">下载word文档</el-button>
                             <el-button @click="downloadPdf" type="text">下载pdf文档</el-button>
+                            <el-button @click="downloadMarkdown" type="text">下载markdown文档</el-button>
                         </div>
                         <iframe id="iframe" :src="pdf"></iframe>
                         <div id="overIframeDiv"></div>
@@ -173,6 +174,39 @@
                 axios({
                     method: 'post',
                     url: '/generate/pdf/downloadPdf',
+                    responseType: 'blob', // 指定响应类型为二进制流
+                    data: {dataList: this.getCheckedNodes(), contentType: this.contentType, defaultColumns: this.defaultColumns}
+                }).then(res => {
+                    if (res.status === 200){
+                        let blob = new Blob([res.data])
+                        let url = window.URL.createObjectURL(blob)
+                        let downloadElement = document.createElement('a')
+                        downloadElement.style.display = 'none'
+                        downloadElement.href = url
+                        downloadElement.setAttribute('download', decodeURIComponent(res.headers['filename']))
+                        document.body.appendChild(downloadElement)
+                        downloadElement.click()
+                        document.body.removeChild(downloadElement) // 下载完成移除元素
+                        window.URL.revokeObjectURL(url) // 释放掉blob对象
+                        this.showMessage("success", "下载成功!")
+                    } else {
+                        this.showMessage("error", "下载失败!")
+                    }
+                    this.loading = false
+                }).catch(err => {
+                    this.showMessage("error", err.message)
+                    this.loading = false
+                });
+            },
+            downloadMarkdown() {
+                if (this.getCheckedNodes().length === 0) {
+                    this.showMessage("error", "当前未选中任何数据表!")
+                    return;
+                }
+                this.loading = true
+                axios({
+                    method: 'post',
+                    url: '/generate/markdown/downloadMarkdown',
                     responseType: 'blob', // 指定响应类型为二进制流
                     data: {dataList: this.getCheckedNodes(), contentType: this.contentType, defaultColumns: this.defaultColumns}
                 }).then(res => {
