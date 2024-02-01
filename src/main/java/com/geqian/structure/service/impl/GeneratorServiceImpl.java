@@ -5,9 +5,9 @@ import com.geqian.document4j.common.annotation.TableField;
 import com.geqian.document4j.md.MarkDownBuilder;
 import com.geqian.document4j.md.MarkDownConfig;
 import com.geqian.document4j.pdf.PDFBuilder;
-import com.geqian.document4j.pdf.PdfParagraphConfig;
+import com.geqian.document4j.pdf.PdfStyle;
 import com.geqian.document4j.word.WordBuilder;
-import com.geqian.document4j.word.WordParagraphConfig;
+import com.geqian.document4j.word.WordStyle;
 import com.geqian.structure.common.ResponseResult;
 import com.geqian.structure.common.dto.TargetTableDto;
 import com.geqian.structure.common.vo.ColumnsVo;
@@ -22,7 +22,6 @@ import com.geqian.structure.pojo.LabelAndValue;
 import com.geqian.structure.pojo.TableInfo;
 import com.geqian.structure.service.GeneratorService;
 import com.geqian.structure.utils.ReflectionUtils;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -151,17 +150,15 @@ public class GeneratorServiceImpl implements GeneratorService {
             //过滤出全部 Schema节点
             List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
 
-            WordParagraphConfig tableDescConfig = WordParagraphConfig.create();
-
-            tableDescConfig.setFontFamily("Calibri").setFontSize(20);
-
-            WordParagraphConfig tableCellConfig = WordParagraphConfig.create();
-
-            tableCellConfig.setFontFamily("Calibri");
+            WordStyle.Font calibri = WordStyle.Font.fontFamily("Calibri");
+            WordStyle.Font titleFontSize = WordStyle.Font.fontSize(20);
+            WordStyle.Font tableNameFontSize = WordStyle.Font.fontSize(15);
+            WordStyle.Font cellFontSize = WordStyle.Font.fontSize(10);
 
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
-                wordBuilder.addParagraphText("数据库 " + schemaName, tableDescConfig);
+
+                wordBuilder.addParagraph("数据库 " + schemaName, calibri, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
@@ -186,10 +183,8 @@ public class GeneratorServiceImpl implements GeneratorService {
                 for (Future<TableInfo> future : futureList) {
                     TableInfo tableInfo = future.get();
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
-                    tableDescConfig.setFontSize(15);
-                    wordBuilder.addParagraphText(!StringUtils.hasText(tableDefinition.getTableComment()) ? tableDefinition.getTableName() : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableDescConfig);
-                    tableCellConfig.setFontSize(10);
-                    wordBuilder.addTable(tableInfo.getDataList(), tableCellConfig);
+                    wordBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment()) ? tableDefinition.getTableName() : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), calibri, tableNameFontSize);
+                    wordBuilder.addTable(tableInfo.getDataList(), calibri, cellFontSize);
                     wordBuilder.addCarriageReturn().addCarriageReturn();
                 }
             }
@@ -212,19 +207,19 @@ public class GeneratorServiceImpl implements GeneratorService {
             //过滤出全部 Schema节点
             List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
 
-            PdfParagraphConfig tableDescConfig = PdfParagraphConfig.create();
+            PdfStyle.Font bold = PdfStyle.Font.BOLD;
 
-            tableDescConfig.setFontSize(20).setFontStyle(Font.BOLD);
+            PdfStyle.Font titleFontSize = PdfStyle.Font.fontSize(20);
 
-            PdfParagraphConfig tableCellConfig = PdfParagraphConfig.create();
+            PdfStyle.Font tableNameFontSize = PdfStyle.Font.fontSize(15);
 
-            tableCellConfig.setFontSize(16);
+            PdfStyle.Font cellFontSize = PdfStyle.Font.fontSize(10);
 
 
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
 
-                pdfBuilder.addParagraph("数据库 " + schemaName, tableDescConfig);
+                pdfBuilder.addParagraph("数据库 " + schemaName, bold,titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
@@ -249,12 +244,12 @@ public class GeneratorServiceImpl implements GeneratorService {
                 for (Future<TableInfo> future : futureList) {
                     TableInfo tableInfo = future.get();
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
-                    tableCellConfig.setFontSize(16);
+
                     pdfBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableCellConfig);
-                    tableCellConfig.setFontSize(10);
-                    pdfBuilder.addTable(tableInfo.getDataList(), tableCellConfig);
+                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableNameFontSize);
+
+                    pdfBuilder.addTable(tableInfo.getDataList(), cellFontSize);
                     pdfBuilder.addCarriageReturn();
                     pdfBuilder.addCarriageReturn();
                 }
