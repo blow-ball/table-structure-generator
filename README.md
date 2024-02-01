@@ -6,7 +6,7 @@
 
 #### 技术栈
 
-- SpringBoot + Vue2 + Element ui 基础框架
+- SpringBoot + Vue2 + Element ui 基础环境搭建
 - Apache poi 生成word
 - itextpdf 实现生成pdf文档
 
