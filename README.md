@@ -19,25 +19,30 @@ B/S 架构
 
 **1. 数据库连接信息**
 
-![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/connection.jpg)
+![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/连接信息.jpg)
+
+
+**2. 选择导出列名**
+
+![image-20230719013433699](https://gitee.com/geqian618/resource/raw/master/images/选择列名.jpg)
 
 
 
-**2. 预览pdf文件**
+**3. 下载pdf文档**
 
-![image-20230719013337074](https://gitee.com/geqian618/resource/raw/master/images/preview.jpg)
-
-
-
-**3. word下载文件显示**
-
-![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/download.jpg)
+![image-20230719013337074](https://gitee.com/geqian618/resource/raw/master/images/pdf文档.jpg)
 
 
 
-**4. 选择列名**
+**4. 下载word文档**
 
-![image-20230719013433699](https://gitee.com/geqian618/resource/raw/master/images/select.jpg)
+![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/word文档.jpg)
+
+
+**5. 下载markdown文档**
+
+![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/markdown文档.jpg)
+
 
 
 
