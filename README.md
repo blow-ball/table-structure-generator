@@ -23,30 +23,30 @@ B/S 架构
 
 **1. 数据库连接信息**
 
-![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/连接信息.png)</br>
+![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/连接信息.png)  
 
 
 
 **2. 选择导出列名**
 
-![image-20230719013433699](https://gitee.com/geqian618/resource/raw/master/images/选择列名.png)
+![image-20230719013433699](https://gitee.com/geqian618/resource/raw/master/images/选择列名.png)  
 
 
 
 **3. 下载pdf文档**
 
-![image-20230719013337074](https://gitee.com/geqian618/resource/raw/master/images/pdf文档.png)
+![image-20230719013337074](https://gitee.com/geqian618/resource/raw/master/images/pdf文档.png)  
 
 
 
 **4. 下载word文档**
 
-![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/word文档.png)
+![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/word文档.png)  
 
 
 **5. 下载markdown文档**
 
-![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/markdown文档.png)
+![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/markdown文档.png)  
 
 
 
@@ -54,7 +54,7 @@ B/S 架构
 
 #### 使用说明
 
-**默认访问地址：http://localhost:8080/**
+**默认访问地址：http://localhost:8080/**  
 
 
 
