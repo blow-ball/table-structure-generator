@@ -151,6 +151,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
 
             WordStyle.Font calibri = WordStyle.Font.fontFamily("Calibri");
+            WordStyle.Font bold = WordStyle.Font.BOLD;
             WordStyle.Font titleFontSize = WordStyle.Font.fontSize(20);
             WordStyle.Font tableNameFontSize = WordStyle.Font.fontSize(15);
             WordStyle.Font cellFontSize = WordStyle.Font.fontSize(10);
@@ -158,7 +159,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
 
-                wordBuilder.addParagraph("数据库 " + schemaName, calibri, titleFontSize);
+                wordBuilder.addParagraph("数据库 " + schemaName, calibri, bold, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
@@ -219,7 +220,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
 
-                pdfBuilder.addParagraph("数据库 " + schemaName, bold,titleFontSize);
+                pdfBuilder.addParagraph("数据库 " + schemaName, bold, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
