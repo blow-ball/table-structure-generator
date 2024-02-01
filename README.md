@@ -19,7 +19,7 @@ B/S 架构
 
 **1. 数据库连接信息**
 
-![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/连接信息.png)
+![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/连接信息.png)</br></br>
 
 
 **2. 选择导出列名**
