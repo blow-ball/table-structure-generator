@@ -3,7 +3,7 @@ package com.geqian.structure.service.impl;
 import cn.hutool.core.io.IoUtil;
 import com.geqian.document4j.common.annotation.TableField;
 import com.geqian.document4j.md.MarkDownBuilder;
-import com.geqian.document4j.md.MarkDownConfig;
+import com.geqian.document4j.md.MarkDownStyle;
 import com.geqian.document4j.pdf.PDFBuilder;
 import com.geqian.document4j.pdf.PdfStyle;
 import com.geqian.document4j.word.WordBuilder;
@@ -278,7 +278,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                 String schemaName = schemaNode.getSchemaName();
 
-                markDownBuilder.title("数据库 " + schemaName, MarkDownConfig.Level.THIRD);
+                markDownBuilder.title("数据库 " + schemaName, MarkDownStyle.Level.THIRD);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
@@ -305,8 +305,8 @@ public class GeneratorServiceImpl implements GeneratorService {
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
                     markDownBuilder.text(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), MarkDownConfig.FontStyle.BOLD);
-                    markDownBuilder.table(tableInfo.getDataList(), MarkDownConfig.Alignment.LEFT);
+                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), MarkDownStyle.FontStyle.BOLD);
+                    markDownBuilder.table(tableInfo.getDataList(), MarkDownStyle.Alignment.LEFT);
                     markDownBuilder.blankRow();
                     markDownBuilder.blankRow();
                 }
