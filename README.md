@@ -27,6 +27,9 @@
 ![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/连接信息.png)  
 
 
+**文档预览**
+![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/文档预览.png)
+
 
 **2. 选择导出列名**
 
