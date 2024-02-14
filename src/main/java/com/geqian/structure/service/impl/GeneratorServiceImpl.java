@@ -220,7 +220,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
 
-                pdfBuilder.addParagraph("数据库 " + schemaName, bold, titleFontSize);
+                pdfBuilder.addParagraph("数据库名称 " + schemaName, bold, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
@@ -278,7 +278,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                 String schemaName = schemaNode.getSchemaName();
 
-                markDownBuilder.title("数据库 " + schemaName, MarkDownStyle.Level.THIRD);
+                markDownBuilder.title("数据库名称 " + schemaName, MarkDownStyle.Level.THIRD);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
