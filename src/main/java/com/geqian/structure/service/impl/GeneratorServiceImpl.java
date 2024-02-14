@@ -159,7 +159,7 @@ public class GeneratorServiceImpl implements GeneratorService {
             for (TreeNode schemaNode : schemaNodes) {
                 String schemaName = schemaNode.getSchemaName();
 
-                wordBuilder.addParagraph("数据库 " + schemaName, calibri, bold, titleFontSize);
+                wordBuilder.addParagraph("数据库名称 " + schemaName, calibri, bold, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
