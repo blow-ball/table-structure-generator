@@ -216,7 +216,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             PdfStyle.Font cellFontSize = PdfStyle.Font.fontSize(10);
 
-            PdfStyle.Paragraph linedSpacing = PdfStyle.Paragraph.lineSpacing(1.3f);
+            PdfStyle.Paragraph paragraphSpacing = PdfStyle.Paragraph.paragraphSpacing(1.3f);
 
 
             for (TreeNode schemaNode : schemaNodes) {
@@ -250,7 +250,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                     pdfBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableNameFontSize, linedSpacing);
+                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableNameFontSize, paragraphSpacing);
 
                     pdfBuilder.addTable(tableInfo.getDataList(), cellFontSize);
                     pdfBuilder.addCarriageReturn();
