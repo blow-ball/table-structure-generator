@@ -1,4 +1,7 @@
-# 数据库表结构生成工具
+<div style="display: flex;align-items: center; justify-content: center">
+    <img style="display: inline;" src="src/main/resources/static/icon/favicon.ico" width="35"  />
+    <span style="font-size: 30px;font-weight: bold"> 数据库表结构生成工具 </span>
+</div>
 
 ## 开发缘由
 
