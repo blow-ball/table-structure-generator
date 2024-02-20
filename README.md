@@ -24,33 +24,33 @@
 
 **1. 数据库连接信息**
 
-![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/连接信息.png)  
+![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/table-structure/连接信息.png)  
 
 
 **2. 文档预览**
-![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/文档预览.png)
+![image-20230719021014570](https://gitee.com/geqian618/resource/raw/master/images/table-structure/文档预览.png)
 
 
 **3. 选择导出列名**
 
-![image-20230719013433699](https://gitee.com/geqian618/resource/raw/master/images/选择列名.png)  
+![image-20230719013433699](https://gitee.com/geqian618/resource/raw/master/images/table-structure/选择列名.png)  
 
 
 
 **4. 下载pdf文档**
 
-![image-20230719013337074](https://gitee.com/geqian618/resource/raw/master/images/pdf文档.png)  
+![image-20230719013337074](https://gitee.com/geqian618/resource/raw/master/images/table-structure/pdf文档.png)  
 
 
 
 **5. 下载word文档**
 
-![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/word文档.png)  
+![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/table-structure/word文档.png)  
 
 
 **6. 下载markdown文档**
 
-![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/markdown文档.png)  
+![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/table-structure/markdown文档.png)  
 <br>
 <br>
 
