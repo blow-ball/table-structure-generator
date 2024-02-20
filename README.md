@@ -1,4 +1,4 @@
-# <img src="src/main/resources/static/icon/favicon.ico"  width="30" /> 数据库表结构生成工具
+# <img src="https://gitee.com/geqian618/resource/raw/master/images/table-structure/favicon.ico"  width="30" /> 数据库表结构生成工具
 
 ## 开发缘由
 
