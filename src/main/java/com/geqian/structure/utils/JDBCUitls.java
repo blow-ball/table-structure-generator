@@ -88,7 +88,7 @@ public class JDBCUitls {
                     Object value = resultSet.getObject(columnName);
                     try {
                         field.set(instance, value);
-                    } catch (Exception e) {
+                    } catch (IllegalArgumentException e) {
                         field.set(instance, Convert.convert(field.getType(), value));
                     }
                 }
