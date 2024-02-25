@@ -85,11 +85,13 @@ public class JDBCUitls {
                 for (Map.Entry<String, Field> entry : columnFieldMapping.entrySet()) {
                     String columnName = entry.getKey();
                     Field field = entry.getValue();
-                    Object value = resultSet.getObject(columnName);
+                    Object value = null;
                     try {
+                        value = resultSet.getObject(columnName);
                         field.set(instance, value);
                     } catch (IllegalArgumentException e) {
                         field.set(instance, Convert.convert(field.getType(), value));
+                    } catch (Exception ignore){
                     }
                 }
                 results.add(instance);
@@ -184,30 +186,29 @@ public class JDBCUitls {
      */
     private static Map<String, Field> columnFieldMapping(Class<?> objectClass, ResultSetMetaData metaData) {
 
-        Map<String, Field> columnFieldMapping = new HashMap<>();
+        Map<String, Field> columnFieldMapping = new LinkedHashMap<>();
 
         Map<String, Field> fieldMap = getFieldMapContainSuperclass(objectClass, field -> true);
 
         Collection<Field> fields = fieldMap.values();
 
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(Column.class)) {
-                String columnName = field.getAnnotation(Column.class).name();
-                columnFieldMapping.put(columnName, field);
-            }
-        }
         try {
             for (int i = 0; i < metaData.getColumnCount(); i++) {
                 String columnName = metaData.getColumnLabel(i + 1);
-                if (!columnFieldMapping.containsKey(columnName)) {
-                    try {
-                        String fieldName = underlineToSmallHump(columnName);
-                        Field field = fieldMap.get(fieldName);
-                        if (field != null) {
-                            columnFieldMapping.put(columnName, field);
-                        }
-                    } catch (Exception ignored) {
+                try {
+                    String fieldName = underlineToSmallHump(columnName);
+                    Field field = fieldMap.get(fieldName);
+                    if (field != null) {
+                        columnFieldMapping.put(columnName, field);
                     }
+                } catch (Exception ignored) {
+                }
+            }
+
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(Column.class)) {
+                    String columnName = field.getAnnotation(Column.class).name();
+                    columnFieldMapping.put(columnName, field);
                 }
             }
             return columnFieldMapping;
