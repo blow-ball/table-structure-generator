@@ -64,6 +64,7 @@
 
 
 ## windows下载
-链接：https://pan.baidu.com/s/183mDvLbMB00zVOvrAjM1-g    
-提取码：qz66
+
+链接：https://pan.baidu.com/s/14I-YSPfD0X6nNizGPEZFwQ
+提取码：g1oh
 
