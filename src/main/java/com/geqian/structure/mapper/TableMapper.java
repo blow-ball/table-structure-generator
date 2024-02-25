@@ -3,7 +3,7 @@ package com.geqian.structure.mapper;
 import com.geqian.structure.db.CurrentDatabaseManager;
 import com.geqian.structure.db.DatabaseManager;
 import com.geqian.structure.db.DruidConnectionManager;
-import com.geqian.structure.utils.JDBCUitls;
+import com.geqian.structure.utils.JDBCUtils;
 import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TableDefinition;
@@ -30,7 +30,7 @@ public class TableMapper {
     public List<TreeNode> getTableTree() {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getDatabases();
-        List<TreeNode> treeNodeList = JDBCUitls.selectList(sql, TreeNode.class);
+        List<TreeNode> treeNodeList = JDBCUtils.selectList(sql, TreeNode.class);
         for (TreeNode treeNode : treeNodeList) {
             String schemaName = treeNode.getSchemaName();
             String key = UUIDUtils.generateUUID();
@@ -55,7 +55,7 @@ public class TableMapper {
     public List<TreeNode> getTables(String schemaName, String parentKey) {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTables();
-        List<TreeNode> tableNodeList = JDBCUitls.selectList(sql, TreeNode.class, schemaName);
+        List<TreeNode> tableNodeList = JDBCUtils.selectList(sql, TreeNode.class, schemaName);
         for (TreeNode treeNode : tableNodeList) {
             treeNode.setKey(UUIDUtils.generateUUID());
             treeNode.setSchemaName(schemaName);
@@ -77,7 +77,7 @@ public class TableMapper {
     public TableDefinition getTableInfo(String schemaName, String tableName) {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTableInfo();
-        return JDBCUitls.selectOne(sql, TableDefinition.class, schemaName, tableName);
+        return JDBCUtils.selectOne(sql, TableDefinition.class, schemaName, tableName);
     }
 
 
@@ -95,7 +95,7 @@ public class TableMapper {
         Class<? extends TableStructure> classType = TableStructureFactory.getTableStructureType(databaseType);
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTableStructure();
-        List<? extends TableStructure> tableStructures = JDBCUitls.selectList(sql, classType, schemaName, tableName);
+        List<? extends TableStructure> tableStructures = JDBCUtils.selectList(sql, classType, schemaName, tableName);
         for (int i = 0; i < tableStructures.size(); i++) {
             tableStructures.get(i).setNumber(i + 1);
         }
