@@ -1,5 +1,6 @@
 package com.geqian.structure.utils;
 
+import cn.hutool.core.convert.Convert;
 import com.geqian.structure.annotation.Column;
 import com.geqian.structure.db.DruidConnectionManager;
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class JDBCUitls {
                 ps.setObject(i + 1, args[i]);
                 //sql占位符替换为具体值
                 int indexOf = sql.indexOf("?");
-                sql = sql.substring(0,indexOf) + args[i] + sql.substring(indexOf + 1);
+                sql = sql.substring(0, indexOf) + args[i] + sql.substring(indexOf + 1);
             }
             //执行并获取结果集
             ResultSet resultSet = ps.executeQuery();
@@ -84,10 +85,11 @@ public class JDBCUitls {
                 for (Map.Entry<String, Field> entry : columnFieldMapping.entrySet()) {
                     String columnName = entry.getKey();
                     Field field = entry.getValue();
+                    Object value = resultSet.getObject(columnName);
                     try {
-                        Object value = resultSet.getObject(columnName);
                         field.set(instance, value);
-                    } catch (SQLException ignored) {
+                    } catch (Exception e) {
+                        field.set(instance, Convert.convert(field.getType(), value));
                     }
                 }
                 results.add(instance);
@@ -289,6 +291,5 @@ public class JDBCUitls {
                 .peek(field -> field.setAccessible(true))
                 .collect(Collectors.toMap(Field::getName, Function.identity(), (oldVal, newVal) -> oldVal));
     }
-
 
 }
