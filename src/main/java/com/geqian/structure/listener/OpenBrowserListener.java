@@ -18,27 +18,43 @@ import java.net.URISyntaxException;
 @ConditionalOnProperty(name = "spring.application.start.openBrowser", havingValue = "true")
 public class OpenBrowserListener implements ApplicationListener<ContextRefreshedEvent> {
 
-    @Value("${spring.application.start.access-url}")
-    private String accessUrl;
+    @Value("${server.port}")
+    private String port;
+    @Value("${spring.application.start.access-ip}")
+    private String accessIp;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         // 在Spring Boot应用启动后自动打开浏览器访问8080端口
-        openBrowser(accessUrl);
+        openBrowser(accessIp+port);
     }
 
     private void openBrowser(String url) {
         try {
-            //Desktop.isDesktopSupported()判断操作系统是否支持Desktop类，如果支持，则使用Desktop.browse方法直接打开浏览器访问URL；
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                // 如果支持Desktop类，则使用它来打开URL
                 Desktop.getDesktop().browse(new URI(url));
             } else {
-                //如果不支持，Runtime.getRuntime().exec("cmd /c start " + url)用于执行cmd /c start命令来打开默认浏览器访问指定的URL
+                // 非Windows环境的处理
+                String os = System.getProperty("os.name").toLowerCase();
                 Runtime runtime = Runtime.getRuntime();
-                runtime.exec("cmd /c start " + url);
+                if (os.contains("win")) {
+                    // Windows环境
+                    runtime.exec("cmd /c start " + url);
+                } else if (os.contains("mac")) {
+                    // Mac环境
+                    runtime.exec("open " + url);
+                } else if (os.contains("nix") || os.contains("nux")) {
+                    // Unix/Linux环境
+                    runtime.exec("xdg-open " + url);
+                } else {
+                    // 其他情况，输出无法打开浏览器的信息
+                    System.out.println("无法打开浏览器，请手动访问: " + url);
+                }
             }
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
+
 }
