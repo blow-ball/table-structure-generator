@@ -30,17 +30,17 @@ public class OpenBrowserListener implements ApplicationListener<ContextRefreshed
     @Value("${server.servlet.context-path:}")
     private String contextPath;
 
-    @Value("${spring.application.start.access-url:}")
+    @Value("${spring.application.start.openBrowser.access-url:}")
     private String accessUrl;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
-            if (accessUrl.isEmpty()) {
-                accessUrl = "http://" + getNetworkIp() + ":" + port + contextPath;
-            }
+            String url = accessUrl.isEmpty()
+                    ? "http://" + getNetworkIp() + ":" + port + contextPath
+                    : accessUrl;
             // 在 Spring Boot 应用启动后自动打开浏览器访问 url
-            openBrowser(accessUrl);
+            openBrowser(url);
         } catch (UnknownHostException e) {
             log.error("获取服务网络ip地址时发生异常", e);
         }
