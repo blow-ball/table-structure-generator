@@ -96,7 +96,7 @@
                     this.loading = false
                 })
             },
-            getTableColums() {
+            getTableColumns() {
                 axios.get('/generate/getTableColumnInfo').then(res => {
                     if (res.data.code === 200) {
                         this.allColumns =  res.data.data.allColumns;
@@ -279,7 +279,7 @@
         },
         mounted: function () {
             this.getTableTree();
-            this.getTableColums();
+            this.getTableColumns();
             this.initChangeBoxWidthEvent()
         }
     });
