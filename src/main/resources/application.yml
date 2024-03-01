@@ -113,6 +113,7 @@ database:
         SELECT
             cols.column_name as "columnName",cols.data_type as "columnType",
             cols.column_default as "columnDefault",cols.is_nullable as "isNullable",
+            character_maximum_length as length,
             (SELECT pg_catalog.col_description(c.oid, cols.ordinal_position::int)
              FROM pg_catalog.pg_class c
              WHERE c.relname = cols.table_name) AS "columnComment"

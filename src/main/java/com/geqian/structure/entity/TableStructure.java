@@ -6,6 +6,7 @@ import com.geqian.document4j.pdf.PDFTableIntercepter;
 import com.geqian.document4j.word.WordTableIntercepter;
 import com.geqian.structure.db.DefaultColumnManager;
 import lombok.Data;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +44,7 @@ public abstract class TableStructure implements WordTableIntercepter, PDFTableIn
     private String columnDefault;
 
 
-    @TableField(value = "备注", order = 6)
+    @TableField(value = "备注", order = 6, enums = "null-> ")
     private String columnComment;
 
 
