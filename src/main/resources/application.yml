@@ -85,3 +85,36 @@ database:
         DEFAULT as "columnDefault"
         FROM SYSCAT.COLUMNS 
         WHERE TABSCHEMA=? AND TABNAME=?
+
+    #########################################  Postgresql 数据库 #############################################
+    postgresql:
+      driverClass: org.postgresql.Driver
+      url: jdbc:postgresql://${ip}:${port}/${database}
+      databases: >
+        SELECT schema_name AS "schemaName" FROM information_schema.schemata;
+
+      tables: >
+        SELECT
+        table_name as "tableName",
+        obj_description(pg_class.oid) AS "tableComment"
+        FROM information_schema.tables
+        JOIN pg_class ON information_schema.tables.table_name = pg_class.relname
+        WHERE table_schema = ? AND table_type = 'BASE TABLE'
+
+      tableInfo: >
+        SELECT
+        table_name as "tableName",
+        obj_description(pg_class.oid) AS "tableComment"
+        FROM information_schema.tables
+        JOIN pg_class ON information_schema.tables.table_name = pg_class.relname
+        WHERE table_schema = ? and table_name = ? and table_type = 'BASE TABLE'
+
+      tableStructure: >
+        SELECT
+            cols.column_name as "columnName",cols.data_type as "columnType",
+            cols.column_default as "columnDefault",cols.is_nullable as "isNullable",
+            (SELECT pg_catalog.col_description(c.oid, cols.ordinal_position::int)
+             FROM pg_catalog.pg_class c
+             WHERE c.relname = cols.table_name) AS "columnComment"
+        FROM information_schema.columns cols
+        WHERE cols.table_schema = ? AND cols.table_name = ?

@@ -30,4 +30,12 @@ public class DatabaseManagerConfig {
     public DatabaseManager oracle(){
         return new DatabaseManager();
     }
+
+
+    @Bean
+    @ConfigurationProperties(prefix = "database.info.postgresql")
+    public DatabaseManager postgresql(){
+        return new DatabaseManager();
+    }
+
 }

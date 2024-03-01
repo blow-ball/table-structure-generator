@@ -121,6 +121,10 @@
                 {
                     label: 'DB2',
                     value: 'db2'
+                },
+                {
+                    label: 'PostgreSQL',
+                    value: 'postgresql'
                 }
             ],
             loading: false,
@@ -140,6 +144,9 @@
                 } else if (this.form.databaseType === 'oracle') {
                     this.form.port = 1521;
                     this.database = 'SID'
+                } else if (this.form.databaseType === 'postgresql'){
+                    this.form.port = 5432;
+                    this.database = '数据库'
                 } else {
                     this.form.port = 50000;
                     this.database = '数据库'

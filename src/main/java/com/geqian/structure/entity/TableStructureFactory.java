@@ -17,6 +17,7 @@ public class TableStructureFactory {
         tableStructureMap.put("mysql", () -> MySQLTableStructure.class);
         tableStructureMap.put("oracle", () -> OracleTableStructure.class);
         tableStructureMap.put("db2", () -> DB2TableStructure.class);
+        tableStructureMap.put("postgresql", () -> PostgreSqlTableStructure.class);
     }
 
     /**
