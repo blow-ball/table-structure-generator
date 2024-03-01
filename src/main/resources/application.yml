@@ -3,7 +3,7 @@ database:
     ######################################### MySQL数据库 #############################################
     mysql:
       driverClass: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://@${ip}:${port}/${database}?serverTimezone=UTC
+      url: jdbc:mysql://@${ip}:${port}/${database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&ueSSL=false
       # 查询所有schemata
       databases: >
         SELECT schema_name as schemaName 
