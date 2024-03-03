@@ -9,6 +9,7 @@
     <script src="/js/vue.js"></script>
     <!-- 引入样式 -->
     <link rel="stylesheet" href="/css/element.css">
+    <link rel="stylesheet" href="/css/normalize.css">
     <!-- 引入组件库 -->
     <script src="/js/element.js"></script>
 
@@ -53,6 +54,7 @@
         </el-container>
     </el-container>
     <el-dialog
+            :lock-scroll="false"
             title="选择列名"
             :visible.sync="dialogVisible"
             width="550px">
