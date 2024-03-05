@@ -41,7 +41,7 @@ html {
 #dragHandle {
     position: absolute;
     top: 0;
-    width: 2px;
+    width: 1px;
     height: 100%;
     background-color: #ccc;
     cursor: col-resize; /* 设置鼠标样式为水平调整 */
