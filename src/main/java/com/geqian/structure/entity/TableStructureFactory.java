@@ -23,6 +23,7 @@ public class TableStructureFactory {
 
 
     private static void init() {
+
         PackageScanner packageScanner = new PackageScanner();
 
         Predicate<String> typeFilter = className -> {
@@ -32,7 +33,6 @@ public class TableStructureFactory {
                 return false;
             }
         };
-
         List<String> classes = packageScanner.scanPackage("com.geqian.structure.entity", typeFilter);
         if (!CollectionUtils.isEmpty(classes)) {
             tableStructureMap = new HashMap<>();
@@ -54,7 +54,8 @@ public class TableStructureFactory {
      * @return
      */
     public static Class<? extends TableStructure> getTableStructureType(String dbType) {
-        return tableStructureMap == null ? tableStructureMap.get("default").get() : tableStructureMap.get(dbType.toLowerCase()).get();
+        Class<? extends TableStructure> type = tableStructureMap.get(dbType.toLowerCase()).get();
+        return type == null ? tableStructureMap.get("default").get() : type;
     }
 
 
