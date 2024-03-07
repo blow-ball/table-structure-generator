@@ -60,6 +60,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         return ResponseResult.success(tableMapper.getTableTree());
     }
 
+
+    @SneakyThrows(Exception.class)
+    @Override
+    public void downloadPdf(TargetTableDto targetTableDto, HttpServletResponse response) {
+        preview(targetTableDto, response);
+    }
+
     @SneakyThrows(Exception.class)
     @Override
     public void preview(TargetTableDto targetTableDto, HttpServletResponse response) {

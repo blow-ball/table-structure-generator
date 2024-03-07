@@ -116,7 +116,7 @@ iframe {
 }
 
 
-.box-card .tool .el-button {
+.box-card .tool .el-button,svg {
     padding: 0;
     margin: 0;
     margin-right: 20px;

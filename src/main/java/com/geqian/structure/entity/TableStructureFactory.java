@@ -1,7 +1,12 @@
 package com.geqian.structure.entity;
 
+import com.geqian.structure.utils.PackageScanner;
+import org.springframework.util.CollectionUtils;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -10,14 +15,36 @@ import java.util.function.Supplier;
  */
 public class TableStructureFactory {
 
-    private static final Map<String, Supplier<Class<? extends TableStructure>>> tableStructureMap;
+    private static Map<String, Supplier<Class<? extends TableStructure>>> tableStructureMap;
 
     static {
-        tableStructureMap = new HashMap<>();
-        tableStructureMap.put("mysql", () -> MySQLTableStructure.class);
-        tableStructureMap.put("oracle", () -> OracleTableStructure.class);
-        tableStructureMap.put("db2", () -> DB2TableStructure.class);
-        tableStructureMap.put("postgresql", () -> PostgreSqlTableStructure.class);
+        init();
+    }
+
+
+    private static void init() {
+        PackageScanner packageScanner = new PackageScanner();
+
+        Predicate<String> typeFilter = className -> {
+            try {
+                return Class.forName(className).getSuperclass() == TableStructure.class;
+            } catch (ClassNotFoundException e) {
+                return false;
+            }
+        };
+
+        List<String> classes = packageScanner.scanPackage("com.geqian.structure.entity", typeFilter);
+        if (!CollectionUtils.isEmpty(classes)) {
+            tableStructureMap = new HashMap<>();
+            for (String className : classes) {
+                try {
+                    Class<? extends TableStructure> type = (Class<? extends TableStructure>) Class.forName(className);
+                    String key = type.getSimpleName().replace("TableStructure", "").toLowerCase();
+                    tableStructureMap.put(key, () -> type);
+                } catch (ClassNotFoundException ignored) {
+                }
+            }
+        }
     }
 
     /**
@@ -27,7 +54,8 @@ public class TableStructureFactory {
      * @return
      */
     public static Class<? extends TableStructure> getTableStructureType(String dbType) {
-        return tableStructureMap.get(dbType).get();
+        return tableStructureMap == null ? tableStructureMap.get("default").get() : tableStructureMap.get(dbType.toLowerCase()).get();
     }
+
 
 }

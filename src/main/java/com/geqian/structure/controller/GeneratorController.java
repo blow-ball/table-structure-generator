@@ -43,7 +43,7 @@ public class GeneratorController {
 
     @PostMapping("/pdf/downloadPdf")
     public void downloadPdf(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
-        generatorService.preview(targetTableDto, response);
+        generatorService.downloadPdf(targetTableDto, response);
     }
 
 

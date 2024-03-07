@@ -46,6 +46,27 @@
                             <el-button @click="downloadWord" type="text">下载word文档</el-button>
                             <el-button @click="downloadPdf" type="text">下载pdf文档</el-button>
                             <el-button @click="downloadMarkdown" type="text">下载markdown文档</el-button>
+
+                            <el-tooltip class="item" effect="dark" content="前往Gitee" placement="bottom">
+                                <a href="https://gitee.com/geqian618/table-structure-generator">
+                                    <svg t="1709805331298" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                         xmlns="http://www.w3.org/2000/svg" p-id="4226" width="25" height="25">
+                                        <path d="M512 512m-494.933333 0a494.933333 494.933333 0 1 0 989.866666 0 494.933333 494.933333 0 1 0-989.866666 0Z"
+                                              fill="#C71D23" p-id="4227"></path>
+                                        <path d="M762.538667 457.045333h-281.088a24.4736 24.4736 0 0 0-24.439467 24.405334v61.098666c-0.034133 13.5168 10.922667 24.439467 24.405333 24.439467h171.1104c13.5168 0 24.439467 10.922667 24.439467 24.439467v12.219733a73.3184 73.3184 0 0 1-73.3184 73.3184h-232.209067a24.439467 24.439467 0 0 1-24.439466-24.439467v-232.174933a73.3184 73.3184 0 0 1 73.3184-73.3184h342.152533c13.482667 0 24.405333-10.922667 24.439467-24.439467l0.034133-61.098666a24.405333 24.405333 0 0 0-24.405333-24.439467H420.352a183.296 183.296 0 0 0-183.296 183.296V762.538667c0 13.482667 10.922667 24.439467 24.405333 24.439466h360.516267a164.9664 164.9664 0 0 0 165.000533-165.000533v-140.526933a24.439467 24.439467 0 0 0-24.439466-24.439467z"
+                                              fill="#FFFFFF" p-id="4228"></path>
+                                    </svg>
+                                </a>
+                            </el-tooltip>
+                            <el-tooltip class="item" effect="dark" content="前往Github" placement="bottom">
+                                <a href="https://github.com/2254324470/table-structure-generator">
+                                    <svg t="1709805572886" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                         xmlns="http://www.w3.org/2000/svg" p-id="4228" width="25" height="25">
+                                        <path d="M64 512c0 195.2 124.8 361.6 300.8 422.4 22.4 6.4 19.2-9.6 19.2-22.4v-76.8c-134.4 16-140.8-73.6-150.4-89.6-19.2-32-60.8-38.4-48-54.4 32-16 64 3.2 99.2 57.6 25.6 38.4 76.8 32 105.6 25.6 6.4-22.4 19.2-44.8 35.2-60.8-144-22.4-201.6-108.8-201.6-211.2 0-48 16-96 48-131.2-22.4-60.8 0-115.2 3.2-121.6 57.6-6.4 118.4 41.6 124.8 44.8 32-9.6 70.4-12.8 112-12.8 41.6 0 80 6.4 112 12.8 12.8-9.6 67.2-48 121.6-44.8 3.2 6.4 25.6 57.6 6.4 118.4 32 38.4 48 83.2 48 131.2 0 102.4-57.6 188.8-201.6 214.4 22.4 22.4 38.4 54.4 38.4 92.8v112c0 9.6 0 19.2 16 19.2C832 876.8 960 710.4 960 512c0-246.4-201.6-448-448-448S64 265.6 64 512z"
+                                              fill="#040000" p-id="4229"></path>
+                                    </svg>
+                                </a>
+                            </el-tooltip>
                         </div>
                         <iframe id="iframe" :src="pdf"></iframe>
                         <div id="overIframeDiv"></div>
@@ -60,7 +81,9 @@
             :visible.sync="dialogVisible"
             width="550px">
         <el-checkbox-group v-model="defaultColumns">
-            <el-checkbox class="checkbox" :key="item.value" v-for="item of allColumns" :label="item.value">{{item.label}}</el-checkbox>
+            <el-checkbox class="checkbox" :key="item.value" v-for="item of allColumns" :label="item.value">
+                {{item.label}}
+            </el-checkbox>
         </el-checkbox-group>
         <span slot="footer" class="dialog-footer">
     <el-button size="small" @click="dialogVisible = false">取 消</el-button>
@@ -92,7 +115,7 @@
                     if (res.data.code === 200) {
                         this.data = res.data.data
                     } else {
-                        this.showMessage("error","数据加载失败")
+                        this.showMessage("error", "数据加载失败")
                     }
                     this.loading = false
                 }).catch(err => {
@@ -102,13 +125,13 @@
             getTableColumns() {
                 axios.get('/generate/getTableColumnInfo').then(res => {
                     if (res.data.code === 200) {
-                        this.allColumns =  res.data.data.allColumns;
-                        this.defaultColumns =  res.data.data.defaultColumns;
+                        this.allColumns = res.data.data.allColumns;
+                        this.defaultColumns = res.data.data.defaultColumns;
                     } else {
-                        this.showMessage("error","数据加载失败!")
+                        this.showMessage("error", "数据加载失败!")
                     }
                 }).catch(err => {
-                    this.showMessage("error","数据加载失败!")
+                    this.showMessage("error", "数据加载失败!")
                 })
             },
             preview() {
@@ -123,7 +146,7 @@
                     responseType: 'arraybuffer', // 指定响应类型为二进制流
                     data: {dataList: this.getCheckedNodes(), defaultColumns: this.defaultColumns}
                 }).then(res => {
-                    if (res.status === 200){
+                    if (res.status === 200) {
                         const blob = new Blob([res.data], {type: "application/pdf"});
                         this.pdf = URL.createObjectURL(blob);
                     } else {
@@ -145,9 +168,13 @@
                     method: 'post',
                     url: '/generate/word/downloadWord',
                     responseType: 'blob', // 指定响应类型为二进制流
-                    data: {dataList: this.getCheckedNodes(), contentType: this.contentType, defaultColumns: this.defaultColumns}
+                    data: {
+                        dataList: this.getCheckedNodes(),
+                        contentType: this.contentType,
+                        defaultColumns: this.defaultColumns
+                    }
                 }).then(res => {
-                    if (res.status === 200){
+                    if (res.status === 200) {
                         let blob = new Blob([res.data])
                         let url = window.URL.createObjectURL(blob)
                         let downloadElement = document.createElement('a')
@@ -178,9 +205,13 @@
                     method: 'post',
                     url: '/generate/pdf/downloadPdf',
                     responseType: 'blob', // 指定响应类型为二进制流
-                    data: {dataList: this.getCheckedNodes(), contentType: this.contentType, defaultColumns: this.defaultColumns}
+                    data: {
+                        dataList: this.getCheckedNodes(),
+                        contentType: this.contentType,
+                        defaultColumns: this.defaultColumns
+                    }
                 }).then(res => {
-                    if (res.status === 200){
+                    if (res.status === 200) {
                         let blob = new Blob([res.data])
                         let url = window.URL.createObjectURL(blob)
                         let downloadElement = document.createElement('a')
@@ -211,9 +242,13 @@
                     method: 'post',
                     url: '/generate/markdown/downloadMarkdown',
                     responseType: 'blob', // 指定响应类型为二进制流
-                    data: {dataList: this.getCheckedNodes(), contentType: this.contentType, defaultColumns: this.defaultColumns}
+                    data: {
+                        dataList: this.getCheckedNodes(),
+                        contentType: this.contentType,
+                        defaultColumns: this.defaultColumns
+                    }
                 }).then(res => {
-                    if (res.status === 200){
+                    if (res.status === 200) {
                         let blob = new Blob([res.data])
                         let url = window.URL.createObjectURL(blob)
                         let downloadElement = document.createElement('a')
@@ -252,7 +287,7 @@
                     type: type,
                 });
             },
-            initChangeBoxWidthEvent(){
+            initChangeBoxWidthEvent() {
                 let dragHandle = document.getElementById("dragHandle");
                 let startX, startWidth;
                 dragHandle.addEventListener("mousedown", function (e) {

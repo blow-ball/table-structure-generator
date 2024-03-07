@@ -2,6 +2,10 @@ package com.geqian.structure.utils;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
@@ -59,5 +63,38 @@ public class SpringContextUtils implements ApplicationContextAware {
     public static <T> Map<String, T> getBeansOfType(Class<T> clazz) throws NoSuchBeanDefinitionException {
         return applicationContext.getBeansOfType(clazz);
     }
+
+
+    /**
+     * 注册bean
+     *
+     * @param beanName
+     * @param type
+     */
+    public static void registerBean(String beanName, Class<?> type) {
+        AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+        if (beanFactory instanceof BeanDefinitionRegistry) {
+            BeanDefinitionRegistry beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
+            BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(type);
+            AbstractBeanDefinition beanDefinition = beanDefinitionBuilder.getBeanDefinition();
+            if (!beanDefinitionRegistry.containsBeanDefinition(beanName)) {
+                beanDefinitionRegistry.registerBeanDefinition(beanName, beanDefinition);
+            }
+        }
+    }
+
+    /**
+     * 移除bean
+     *
+     * @param beanName
+     */
+    public static void removeBean(String beanName) {
+        AutowireCapableBeanFactory beanFactory = applicationContext.getAutowireCapableBeanFactory();
+        if (beanFactory instanceof BeanDefinitionRegistry) {
+            BeanDefinitionRegistry beanDefinitionRegistry = (BeanDefinitionRegistry) beanFactory;
+            beanDefinitionRegistry.removeBeanDefinition(beanName);
+        }
+    }
+
 
 }

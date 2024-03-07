@@ -12,6 +12,7 @@ import com.geqian.structure.utils.UUIDUtils;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -93,13 +94,16 @@ public class TableMapper {
     public List<? extends TableStructure> getTableStructureList(String schemaName, String tableName) {
         String databaseType = DruidConnectionManager.getConnectionInfo().getDatabaseType();
         Class<? extends TableStructure> classType = TableStructureFactory.getTableStructureType(databaseType);
-        DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
-        String sql = databaseManager.getTableStructure();
-        List<? extends TableStructure> tableStructures = JDBCUtils.selectList(sql, classType, schemaName, tableName);
-        for (int i = 0; i < tableStructures.size(); i++) {
-            tableStructures.get(i).setNumber(i + 1);
+        if (classType != null){
+            DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
+            String sql = databaseManager.getTableStructure();
+            List<? extends TableStructure> tableStructures = JDBCUtils.selectList(sql, classType, schemaName, tableName);
+            for (int i = 0; i < tableStructures.size(); i++) {
+                tableStructures.get(i).setNumber(i + 1);
+            }
+            return tableStructures;
         }
-        return tableStructures;
+        return Collections.emptyList();
     }
 
 }
