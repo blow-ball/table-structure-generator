@@ -65,6 +65,6 @@
 
 ## windows下载
 
-链接：https://pan.baidu.com/s/14I-YSPfD0X6nNizGPEZFwQ
-提取码：g1oh
+链接：https://pan.baidu.com/s/1XgEMOwAxNGvFjt46v1-Aow
+提取码：ywap
 
