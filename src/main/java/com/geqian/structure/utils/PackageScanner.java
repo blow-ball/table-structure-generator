@@ -1,9 +1,15 @@
 package com.geqian.structure.utils;
 
-import java.io.File;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.SystemPropertyUtils;
+
 import java.io.IOException;
-import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class PackageScanner {
@@ -18,34 +24,31 @@ public class PackageScanner {
         return scanPackage(Collections.singletonList(packageName), typeFilter);
     }
 
+
     /**
      * @param packageNames 扫描的包
-     * @param typeFilter   过滤器
+     * @param typeFilter  过滤器
      * @return
      */
     public List<String> scanPackage(List<String> packageNames, Predicate<String> typeFilter) {
-        // 获取当前线程的 classLoader
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         List<String> classNames = new ArrayList<>();
         for (String packageName : packageNames) {
-            // 将包名转换为文件路径
-            String path = packageName.replace('.', '/');
-            Enumeration<URL> resources;
+            //将包名转换为资源路径
+            String packagePath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX + resolveBasePackage(packageName) + "/" + "**/*.class";
             try {
-                // 获取 path 对应的所有资源的 URL
-                resources = classLoader.getResources(path);
+                Resource[] resources = resolver.getResources(packagePath);
+                for (Resource resource : resources) {
+                    if (resource.isReadable()) {
+                        String filename = resource.getFilename();
+                        String className = packageName + "." + filename.substring(0, filename.length() - 6);
+                        if (typeFilter == null || typeFilter.test(className)) {
+                            classNames.add(className);
+                        }
+                    }
+                }
             } catch (IOException e) {
                 return Collections.emptyList();
-            }
-            List<File> directories = new ArrayList<>();
-            // 枚举 URL 集合的元素，将 URL 转换为文件，并添加到 directories 集合中
-            while (resources.hasMoreElements()) {
-                URL resource = resources.nextElement();
-                directories.add(new File(resource.getFile()));
-            }
-            // 遍历 dirs 中的文件夹和类文件
-            for (File directory : directories) {
-                classNames.addAll(findClasses(packageName, directory, typeFilter));
             }
         }
         return classNames;
@@ -53,33 +56,13 @@ public class PackageScanner {
 
 
     /**
-     * 扫描指定文件夹下的类文件，返回类名列表
+     * 解析基础包路径
      *
-     * @param packageName
-     * @param directory
+     * @param basePackage
      * @return
      */
-    private List<String> findClasses(String packageName, File directory, Predicate<String> typeFilter) {
-        List<String> classNames = new ArrayList<>();
-        if (!directory.exists()) {
-            return classNames;
-        }
-        File[] files = directory.listFiles();
-        if (files != null && files.length > 0) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    // 如果是文件夹，则递归查找其中的类文件
-                    classNames.addAll(findClasses(packageName + "." + file.getName(), file, typeFilter));
-                } else if (file.getName().endsWith(".class")) {
-                    int indexOf = file.getName().length() - 6;
-                    // 如果是类文件，则获取完整类名（包含包名）
-                    String className = packageName + '.' + file.getName().substring(0, indexOf);
-                    if (typeFilter == null || typeFilter.test(className)) {
-                        classNames.add(className);
-                    }
-                }
-            }
-        }
-        return classNames;
+    private static String resolveBasePackage(String basePackage) {
+        return ClassUtils.convertClassNameToResourcePath(SystemPropertyUtils.resolvePlaceholders(basePackage));
     }
+
 }
