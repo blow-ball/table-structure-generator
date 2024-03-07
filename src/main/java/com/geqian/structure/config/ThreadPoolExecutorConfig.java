@@ -17,8 +17,8 @@ public class ThreadPoolExecutorConfig {
         return new ThreadPoolExecutor(
                 Runtime.getRuntime().availableProcessors() + 1,
                 Runtime.getRuntime().availableProcessors() + 1,
-                60,
-                TimeUnit.SECONDS,
+                10,
+                TimeUnit.MINUTES,
                 new LinkedBlockingDeque<>(),
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy()
