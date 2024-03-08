@@ -22,10 +22,10 @@ database:
 
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
-        select column_name as columnName,data_type as columnType,
-               column_comment as columnComment,is_nullable as isNullable,
-               column_default as columnDefault,character_maximum_length as length,
-               column_key as columnKey,extra as extra
+        select column_name as columnName, data_type as columnType,
+               column_comment as columnComment, is_nullable as isNullable,
+               column_default as columnDefault, character_maximum_length as length,
+               column_key as columnKey, extra as extra
         from information_schema.columns 
         where table_schema = ? and table_name = ?
     
@@ -104,7 +104,7 @@ database:
 
       tableStructure: >
         SELECT cols.column_name as "columnName", cols.data_type as "columnType",
-            cols.column_default as "columnDefault",cols.is_nullable as "isNullable",
+            cols.column_default as "columnDefault", cols.is_nullable as "isNullable",
             character_maximum_length as length,
             (SELECT pg_catalog.col_description(c.oid, cols.ordinal_position::int)
              FROM pg_catalog.pg_class c
