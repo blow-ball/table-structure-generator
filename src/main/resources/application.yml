@@ -6,18 +6,17 @@ database:
       url: jdbc:mysql://@${ip}:${port}/${database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&ueSSL=false
       # 查询所有schemata
       databases: >
-        SELECT schema_name as schemaName 
-        FROM information_schema.schemata
+        SELECT schema_name as schemaName FROM information_schema.schemata
 
-      # 查询指定schema下数据表
+      # 查询指定schema下所有表
       tables: >
-        select table_name as tableName,table_comment as tableComment
+        select table_name as tableName, table_comment as tableComment
         from information_schema.tables 
-        where table_schema= ?
+        where table_schema = ?
 
-      # 查询指定schema下指定数据表信息
+      # 查询指定schema下指定表信息
       tableInfo: > # >表示多行，但忽略换行符
-        select table_name as tableName,table_comment as tableComment
+        select table_name as tableName, table_comment as tableComment
         from information_schema.tables 
         where table_schema= ? and table_name = ?
 
@@ -36,26 +35,25 @@ database:
       driverClass: oracle.jdbc.OracleDriver
       url: jdbc:oracle:thin:@${ip}:${port}:${database}
       databases: >
-        SELECT USERNAME as "schemaName"
-        FROM ALL_USERS
+        SELECT USERNAME as "schemaName" FROM ALL_USERS
 
       tables: >
-        SELECT comm.TABLE_NAME as "tableName",comm.COMMENTS as "tableComment"
+        SELECT comm.TABLE_NAME as "tableName", comm.COMMENTS as "tableComment"
         FROM all_tables tab 
         inner join all_tab_comments comm 
         on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
         WHERE tab.OWNER = ?
 
       tableInfo: >
-        SELECT comm.TABLE_NAME as "tableName",comm.COMMENTS as "tableComment"
+        SELECT comm.TABLE_NAME as "tableName", comm.COMMENTS as "tableComment"
         FROM all_tables tab 
         inner join all_tab_comments comm 
         on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
         WHERE tab.OWNER = ? and tab.TABLE_NAME = ?
 
       tableStructure: >
-        SELECT col.COLUMN_NAME as "columnName",col.DATA_TYPE as "columnType",
-        comm.COMMENTS as "columnComment",col.NULLABLE as "isNullable",
+        SELECT col.COLUMN_NAME as "columnName", col.DATA_TYPE as "columnType",
+        comm.COMMENTS as "columnComment", col.NULLABLE as "isNullable",
         col.DATA_DEFAULT as "columnDefault" 
         FROM all_tab_columns col 
         inner join ALL_COL_COMMENTS comm 
@@ -67,21 +65,20 @@ database:
       driverClass: com.ibm.db2.jcc.DB2Driver
       url: jdbc:db2://${ip}:${port}/${database}
       databases: >
-        SELECT SCHEMANAME as "schemaName" 
-        FROM SYSCAT.SCHEMATA
+        SELECT SCHEMANAME as "schemaName" FROM SYSCAT.SCHEMATA
 
       tables: >
-        SELECT TABNAME as "tableName",REMARKS as "tableComment"
+        SELECT TABNAME as "tableName", REMARKS as "tableComment"
         FROM SYSCAT.TABLES WHERE TABSCHEMA = ?
 
       tableInfo: >
-        SELECT TABNAME as "tableName",REMARKS as "tableComment"
+        SELECT TABNAME as "tableName", REMARKS as "tableComment"
         FROM SYSCAT.TABLES 
         WHERE TABSCHEMA=? AND TABNAME=?
 
       tableStructure: >
-        SELECT COLNAME as "columnName",TYPENAME "columnType",
-        REMARKS as "columnComment",NULLS as "isNullable",
+        SELECT COLNAME as "columnName", TYPENAME "columnType",
+        REMARKS as "columnComment", NULLS as "isNullable",
         DEFAULT as "columnDefault"
         FROM SYSCAT.COLUMNS 
         WHERE TABSCHEMA=? AND TABNAME=?
@@ -94,24 +91,19 @@ database:
         SELECT schema_name AS "schemaName" FROM information_schema.schemata;
 
       tables: >
-        SELECT 
-          table_name as "tableName",
-          obj_description(pg_class.oid) AS "tableComment"
+        SELECT table_name as "tableName", obj_description(pg_class.oid) AS "tableComment"
         FROM information_schema.tables
         JOIN pg_class ON information_schema.tables.table_name = pg_class.relname
         WHERE table_schema = ? AND table_type = 'BASE TABLE'
 
       tableInfo: >
-        SELECT 
-          table_name as "tableName",
-          obj_description(pg_class.oid) AS "tableComment"
+        SELECT table_name as "tableName", obj_description(pg_class.oid) AS "tableComment"
         FROM information_schema.tables
         JOIN pg_class ON information_schema.tables.table_name = pg_class.relname
         WHERE table_schema = ? and table_name = ? and table_type = 'BASE TABLE'
 
       tableStructure: >
-        SELECT
-            cols.column_name as "columnName",cols.data_type as "columnType",
+        SELECT cols.column_name as "columnName", cols.data_type as "columnType",
             cols.column_default as "columnDefault",cols.is_nullable as "isNullable",
             character_maximum_length as length,
             (SELECT pg_catalog.col_description(c.oid, cols.ordinal_position::int)
