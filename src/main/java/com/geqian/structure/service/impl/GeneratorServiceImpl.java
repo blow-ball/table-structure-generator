@@ -314,8 +314,8 @@ public class GeneratorServiceImpl implements GeneratorService {
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
                     markDownBuilder.text(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), MarkDownStyle.FontStyle.BOLD);
-                    markDownBuilder.table(tableInfo.getDataList(), MarkDownStyle.Alignment.LEFT);
+                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), MarkDownStyle.Font.BOLD);
+                    markDownBuilder.table(tableInfo.getDataList(), MarkDownStyle.CellAlignment.LEFT);
                     markDownBuilder.blankRow();
                     markDownBuilder.blankRow();
                 }

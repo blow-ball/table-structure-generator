@@ -1,9 +1,9 @@
 package com.geqian.structure.entity;
 
 import com.geqian.document4j.common.annotation.TableField;
-import com.geqian.document4j.md.MarkdownTableIntercepter;
-import com.geqian.document4j.pdf.PDFTableIntercepter;
-import com.geqian.document4j.word.WordTableIntercepter;
+import com.geqian.document4j.md.MarkdownTableInterceptor;
+import com.geqian.document4j.pdf.PDFTableInterceptor;
+import com.geqian.document4j.word.WordTableInterceptor;
 import com.geqian.structure.db.DefaultColumnManager;
 import lombok.Data;
 
@@ -22,7 +22,7 @@ import java.util.stream.Stream;
  * @date 10:45 2023/1/5
  */
 @Data
-public abstract class TableStructure implements WordTableIntercepter, PDFTableIntercepter, MarkdownTableIntercepter {
+public abstract class TableStructure implements WordTableInterceptor, PDFTableInterceptor, MarkdownTableInterceptor {
 
     @TableField(value = "序号", order = 0)
     private Integer number;
@@ -36,7 +36,7 @@ public abstract class TableStructure implements WordTableIntercepter, PDFTableIn
     private String columnType;
 
 
-    @TableField(value = "是否能为空", order = 4, exclude = true)
+    @TableField(value = "允许空值", order = 4, exclude = true)
     private String isNullable;
 
 
