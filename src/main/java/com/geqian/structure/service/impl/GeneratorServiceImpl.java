@@ -2,6 +2,8 @@ package com.geqian.structure.service.impl;
 
 import cn.hutool.core.io.IoUtil;
 import com.geqian.document4j.common.annotation.TableField;
+import com.geqian.document4j.html.HTMLBuilder;
+import com.geqian.document4j.html.HTMLStyle;
 import com.geqian.document4j.md.MarkDownBuilder;
 import com.geqian.document4j.md.MarkDownStyle;
 import com.geqian.document4j.pdf.PDFBuilder;
@@ -90,6 +92,21 @@ public class GeneratorServiceImpl implements GeneratorService {
         byte[] wordBytes = buildWordDocument(targetTableDto);
 
         String filename = "表结构" + new Date().getTime() + ".docx";
+
+        response.setHeader("content-type", "application/octet-stream");
+        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+        //文件设置为附件
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+        IoUtil.write(response.getOutputStream(), true, wordBytes);
+    }
+
+    @SneakyThrows(Exception.class)
+    @Override
+    public void downloadHtml(TargetTableDto targetTableDto, HttpServletResponse response) {
+
+        byte[] wordBytes = buildHtmlDocument(targetTableDto);
+
+        String filename = "表结构" + new Date().getTime() + ".html";
 
         response.setHeader("content-type", "application/octet-stream");
         response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
@@ -287,7 +304,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                 String schemaName = schemaNode.getSchemaName();
 
-                markDownBuilder.title("数据库名称 " + schemaName, MarkDownStyle.Level.THIRD);
+                markDownBuilder.title("数据库名称 " + schemaName, MarkDownStyle.Title.THIRD);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
@@ -323,6 +340,68 @@ public class GeneratorServiceImpl implements GeneratorService {
             }
         }
         return markDownBuilder.asBytes();
+    }
+
+
+    @SneakyThrows(Exception.class)
+    public byte[] buildHtmlDocument(TargetTableDto targetTableDto) {
+
+        DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
+
+        HTMLBuilder htmlBuilder = HTMLBuilder.create("20%", "20%");
+
+        HTMLStyle.Font bold = HTMLStyle.Font.BOLD;
+        HTMLStyle.Font schemaNameFontSize = HTMLStyle.Font.fontsize(25);
+        HTMLStyle.Font tableNameFontSize = HTMLStyle.Font.fontsize(20);
+
+        List<TreeNode> treeNodeList = targetTableDto.getDataList();
+
+        if (!CollectionUtils.isEmpty(treeNodeList)) {
+
+            //过滤出全部 Schema节点
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+
+            for (TreeNode schemaNode : schemaNodes) {
+
+                String schemaName = schemaNode.getSchemaName();
+
+                htmlBuilder.addParagraph("数据库名称 " + schemaName, bold, schemaNameFontSize);
+
+                //过滤出指定 Schema节点下的全部 table节点
+                List<TreeNode> tableNodes = treeNodeList.stream()
+                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .collect(Collectors.toList());
+
+                List<Future<TableInfo>> futureList = new ArrayList<>();
+
+                for (TreeNode tableNode : tableNodes) {
+                    Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                TableInfo tableInfo = new TableInfo();
+                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                tableInfo.setTableDefinition(tableDefinition);
+                                tableInfo.setDataList(tableStructures);
+                                return tableInfo;
+                            }
+                    );
+                    futureList.add(future);
+                }
+
+                for (Future<TableInfo> future : futureList) {
+                    TableInfo tableInfo = future.get();
+                    TableDefinition tableDefinition = tableInfo.getTableDefinition();
+                    htmlBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
+                            ? tableDefinition.getTableName()
+                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), bold, tableNameFontSize);
+                    htmlBuilder.addTable(tableInfo.getDataList());
+                    htmlBuilder.blankRow();
+                    htmlBuilder.blankRow();
+                }
+                htmlBuilder.blankRow();
+                htmlBuilder.blankRow();
+            }
+        }
+        return htmlBuilder.asBytes();
     }
 
 }

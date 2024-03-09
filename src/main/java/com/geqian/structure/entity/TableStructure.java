@@ -1,6 +1,7 @@
 package com.geqian.structure.entity;
 
 import com.geqian.document4j.common.annotation.TableField;
+import com.geqian.document4j.html.HTMLTableInterceptor;
 import com.geqian.document4j.md.MarkdownTableInterceptor;
 import com.geqian.document4j.pdf.PDFTableInterceptor;
 import com.geqian.document4j.word.WordTableInterceptor;
@@ -22,7 +23,7 @@ import java.util.stream.Stream;
  * @date 10:45 2023/1/5
  */
 @Data
-public abstract class TableStructure implements WordTableInterceptor, PDFTableInterceptor, MarkdownTableInterceptor {
+public abstract class TableStructure implements WordTableInterceptor, PDFTableInterceptor, MarkdownTableInterceptor, HTMLTableInterceptor {
 
     @TableField(value = "序号", order = 0)
     private Integer number;
@@ -62,6 +63,11 @@ public abstract class TableStructure implements WordTableInterceptor, PDFTableIn
 
     @Override
     public List<Field> interceptMdFields(Class<?> type, List<Field> fields) {
+        return getFields(type);
+    }
+
+    @Override
+    public List<Field> interceptHtmlFields(List<Field> fields, Class<?> type) {
         return getFields(type);
     }
 

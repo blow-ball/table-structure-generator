@@ -22,6 +22,8 @@ public interface GeneratorService {
 
     void downloadWord(TargetTableDto targetTableDto, HttpServletResponse response);
 
+    void downloadHtml(TargetTableDto targetTableDto, HttpServletResponse response);
+
     ResponseResult<ColumnsVo> getTableColumnInfo();
 
     void downloadMarkdown(TargetTableDto targetTableDto, HttpServletResponse response);
