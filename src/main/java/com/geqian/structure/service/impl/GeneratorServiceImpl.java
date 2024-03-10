@@ -349,11 +349,11 @@ public class GeneratorServiceImpl implements GeneratorService {
         DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
 
         HTMLBuilder htmlBuilder = HTMLBuilder.create("2%", "2%", "20%", "20%");
+        htmlBuilder.setInnerCssStyle("table{font-size:12px}");
 
         HTMLStyle.Font bold = HTMLStyle.Font.BOLD;
         HTMLStyle.Font schemaNameFontSize = HTMLStyle.Font.fontsize("25px");
         HTMLStyle.Font tableNameFontSize = HTMLStyle.Font.fontsize("20px");
-        HTMLStyle.Font cellFontSize = HTMLStyle.Font.fontsize("12px");
         HTMLStyle.Common paddingBottom = HTMLStyle.Common.paddingBottom("10px");
 
         List<TreeNode> treeNodeList = targetTableDto.getDataList();
@@ -395,7 +395,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     htmlBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
                             : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), bold, tableNameFontSize, paddingBottom);
-                    htmlBuilder.addTable(tableInfo.getDataList(), cellFontSize);
+                    htmlBuilder.addTable(tableInfo.getDataList());
                     htmlBuilder.blankRow();
                     htmlBuilder.blankRow();
                 }
