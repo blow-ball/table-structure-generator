@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  */
 
 @Controller
-public class ConnectionnController {
+public class ConnectionController {
 
     @Resource
     private ConnectionService connectionService;

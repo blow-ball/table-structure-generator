@@ -348,11 +348,13 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
 
-        HTMLBuilder htmlBuilder = HTMLBuilder.create("20%", "20%");
+        HTMLBuilder htmlBuilder = HTMLBuilder.create("2%", "2%", "20%", "20%");
 
         HTMLStyle.Font bold = HTMLStyle.Font.BOLD;
-        HTMLStyle.Font schemaNameFontSize = HTMLStyle.Font.fontsize(25);
-        HTMLStyle.Font tableNameFontSize = HTMLStyle.Font.fontsize(20);
+        HTMLStyle.Font schemaNameFontSize = HTMLStyle.Font.fontsize("25px");
+        HTMLStyle.Font tableNameFontSize = HTMLStyle.Font.fontsize("20px");
+        HTMLStyle.Font cellFontSize = HTMLStyle.Font.fontsize("12px");
+        HTMLStyle.Common paddingBottom = HTMLStyle.Common.paddingBottom("10px");
 
         List<TreeNode> treeNodeList = targetTableDto.getDataList();
 
@@ -365,7 +367,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                 String schemaName = schemaNode.getSchemaName();
 
-                htmlBuilder.addParagraph("数据库名称 " + schemaName, bold, schemaNameFontSize);
+                htmlBuilder.addParagraph("数据库名称 " + schemaName, bold, schemaNameFontSize, paddingBottom);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
@@ -392,8 +394,8 @@ public class GeneratorServiceImpl implements GeneratorService {
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
                     htmlBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), bold, tableNameFontSize);
-                    htmlBuilder.addTable(tableInfo.getDataList());
+                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), bold, tableNameFontSize, paddingBottom);
+                    htmlBuilder.addTable(tableInfo.getDataList(), cellFontSize);
                     htmlBuilder.blankRow();
                     htmlBuilder.blankRow();
                 }
