@@ -28,6 +28,7 @@ database:
                column_key as columnKey, extra as extra
         from information_schema.columns 
         where table_schema = ? and table_name = ?
+        order by ordinal_position;
     
 
     ######################################### Oracle数据库 #############################################
