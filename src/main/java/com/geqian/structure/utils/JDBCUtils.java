@@ -55,10 +55,10 @@ public class JDBCUtils {
         PreparedStatement ps = null;
 
         // 替换字符串映射
-        List<Map.Entry<String, String>> replaceSymbols = findExpressions(sql, "\\$\\{(\\d+)}", 0, 1);
+        List<Map.Entry<String, String>> replaceSymbols = findExpressions(sql, "(\\$\\{(\\d+)})", 1, 2);
 
         // 占位符字符串映射
-        List<Map.Entry<String, String>> placeholders = findExpressions(sql, "\\#\\{(\\d+)}", 0, 1);
+        List<Map.Entry<String, String>> placeholders = findExpressions(sql, "(\\#\\{(\\d+)})", 1, 2);
 
         // 处理替换字符串
         for (Map.Entry<String, String> entry : replaceSymbols) {
@@ -170,10 +170,10 @@ public class JDBCUtils {
         int affectedRows = 0;
 
         // 替换字符串映射
-        List<Map.Entry<String, String>> replaceSymbols = findExpressions(sql, "\\$\\{(\\d+)}", 0, 1);
+        List<Map.Entry<String, String>> replaceSymbols = findExpressions(sql, "(\\$\\{(\\d+)})", 1, 2);
 
         // 占位符字符串映射
-        List<Map.Entry<String, String>> placeholders = findExpressions(sql, "\\#\\{(\\d+)}", 0, 1);
+        List<Map.Entry<String, String>> placeholders = findExpressions(sql, "(\\#\\{(\\d+)})", 1, 2);
 
 
         // 处理替换字符串
@@ -377,6 +377,4 @@ public class JDBCUtils {
         // 进行替换
         return original.substring(0, index) + replacement + original.substring(index + search.length());
     }
-
-
 }
