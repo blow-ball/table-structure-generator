@@ -48,7 +48,7 @@ public class TableStructureFactory {
     }
 
     /**
-     * 创建一个列信息存储容器
+     * 通过数据库类型，获取实体类class对象
      *
      * @param dbType
      * @return
