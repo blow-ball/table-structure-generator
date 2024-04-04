@@ -3,7 +3,9 @@ database:
     ######################################### MySQL数据库 #############################################
     mysql:
       driverClass: com.mysql.cj.jdbc.Driver
+
       url: jdbc:mysql://@${ip}:${port}/${database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&ueSSL=false
+
       # 查询所有schemata
       databases: >
         SELECT schema_name as schemaName FROM information_schema.schemata
@@ -34,7 +36,9 @@ database:
     ######################################### Oracle数据库 #############################################
     oracle:
       driverClass: oracle.jdbc.OracleDriver
+
       url: jdbc:oracle:thin:@${ip}:${port}:${database}
+
       databases: >
         SELECT USERNAME as "schemaName" FROM ALL_USERS
 
@@ -64,7 +68,9 @@ database:
     ######################################### DB2数据库 #############################################
     db2:
       driverClass: com.ibm.db2.jcc.DB2Driver
+
       url: jdbc:db2://${ip}:${port}/${database}
+
       databases: >
         SELECT SCHEMANAME as "schemaName" FROM SYSCAT.SCHEMATA
 
@@ -86,8 +92,11 @@ database:
 
     #########################################  Postgresql 数据库 #############################################
     postgresql:
+
       driverClass: org.postgresql.Driver
+
       url: jdbc:postgresql://${ip}:${port}/${database}
+
       databases: >
         SELECT schema_name AS "schemaName" FROM information_schema.schemata;
 
@@ -115,7 +124,9 @@ database:
 
     #########################################  sqlserver 数据库 #############################################
     sqlserver:
+
       driverClass: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
       url: jdbc:sqlserver://${ip}:${port};DatabaseName=${database}
 
       databases: >
