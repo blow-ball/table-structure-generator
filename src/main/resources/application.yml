@@ -12,13 +12,13 @@ database:
       tables: >
         select table_name as tableName, table_comment as tableComment
         from information_schema.tables 
-        where table_schema = ?
+        where table_schema = #{0}
 
       # 查询指定schema下指定表信息
       tableInfo: > # >表示多行，但忽略换行符
         select table_name as tableName, table_comment as tableComment
         from information_schema.tables 
-        where table_schema= ? and table_name = ?
+        where table_schema= #{0} and table_name = #{1}
 
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
@@ -27,7 +27,7 @@ database:
                column_default as columnDefault, character_maximum_length as length,
                column_key as columnKey, extra as extra
         from information_schema.columns 
-        where table_schema = ? and table_name = ?
+        where table_schema = #{0} and table_name = #{1}
         order by ordinal_position;
     
 
@@ -43,14 +43,14 @@ database:
         FROM all_tables tab 
         inner join all_tab_comments comm 
         on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
-        WHERE tab.OWNER = ?
+        WHERE tab.OWNER = #{0}
 
       tableInfo: >
         SELECT comm.TABLE_NAME as "tableName", comm.COMMENTS as "tableComment"
         FROM all_tables tab 
         inner join all_tab_comments comm 
         on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
-        WHERE tab.OWNER = ? and tab.TABLE_NAME = ?
+        WHERE tab.OWNER = #{0} and tab.TABLE_NAME = #{1}
 
       tableStructure: >
         SELECT col.COLUMN_NAME as "columnName", col.DATA_TYPE as "columnType",
@@ -59,7 +59,7 @@ database:
         FROM all_tab_columns col 
         inner join ALL_COL_COMMENTS comm 
         on col.OWNER = comm.OWNER and col.TABLE_NAME = comm.TABLE_NAME 
-        WHERE comm.owner = ? AND comm.TABLE_NAME = ?
+        WHERE comm.owner = #{0} AND comm.TABLE_NAME = #{1}
 
     ######################################### DB2数据库 #############################################
     db2:
@@ -70,19 +70,19 @@ database:
 
       tables: >
         SELECT TABNAME as "tableName", REMARKS as "tableComment"
-        FROM SYSCAT.TABLES WHERE TABSCHEMA = ?
+        FROM SYSCAT.TABLES WHERE TABSCHEMA = #{0}
 
       tableInfo: >
         SELECT TABNAME as "tableName", REMARKS as "tableComment"
         FROM SYSCAT.TABLES 
-        WHERE TABSCHEMA=? AND TABNAME=?
+        WHERE TABSCHEMA= #{0} AND TABNAME= #{1}
 
       tableStructure: >
         SELECT COLNAME as "columnName", TYPENAME "columnType",
         REMARKS as "columnComment", NULLS as "isNullable",
         DEFAULT as "columnDefault"
         FROM SYSCAT.COLUMNS 
-        WHERE TABSCHEMA=? AND TABNAME=?
+        WHERE TABSCHEMA= #{0} AND TABNAME= #{0}
 
     #########################################  Postgresql 数据库 #############################################
     postgresql:
@@ -95,13 +95,13 @@ database:
         SELECT table_name as "tableName", obj_description(pg_class.oid) AS "tableComment"
         FROM information_schema.tables
         JOIN pg_class ON information_schema.tables.table_name = pg_class.relname
-        WHERE table_schema = ? AND table_type = 'BASE TABLE'
+        WHERE table_schema = #{0} AND table_type = 'BASE TABLE'
 
       tableInfo: >
         SELECT table_name as "tableName", obj_description(pg_class.oid) AS "tableComment"
         FROM information_schema.tables
         JOIN pg_class ON information_schema.tables.table_name = pg_class.relname
-        WHERE table_schema = ? and table_name = ? and table_type = 'BASE TABLE'
+        WHERE table_schema = #{0} and table_name = #{1} and table_type = 'BASE TABLE'
 
       tableStructure: >
         SELECT cols.column_name as "columnName", cols.data_type as "columnType",
@@ -111,4 +111,39 @@ database:
              FROM pg_catalog.pg_class c
              WHERE c.relname = cols.table_name) AS "columnComment"
         FROM information_schema.columns cols
-        WHERE cols.table_schema = ? AND cols.table_name = ?
+        WHERE cols.table_schema = #{0} AND cols.table_name = #{1}
+
+    #########################################  sqlserver 数据库 #############################################
+    sqlserver:
+      driverClass: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      url: jdbc:sqlserver://${ip}:${port};DatabaseName=${database}
+
+      databases: >
+        SELECT name as schemaName FROM sys.databases
+
+      tables: >
+        SELECT t.name AS tableName, ISNULL(ep.value, '') AS tableComment
+        FROM ${0}.sys.tables AS t
+        LEFT JOIN ${0}.sys.extended_properties AS ep 
+        ON ep.major_id = t.object_id AND ep.minor_id = 0 AND ep.class = 1 AND ep.name = 'MS_Description'
+        ORDER BY
+        tableName;
+
+      tableInfo: >
+        SELECT t.name AS tableName,
+        m.value AS tableComment
+        FROM ${0}.sys.tables t
+        LEFT JOIN test.sys.extended_properties m ON t.object_id = m.major_id AND m.minor_id = 0
+        WHERE t.name = #{1}
+
+      tableStructure: >
+        SELECT col.name AS columnName, tp.name AS columnType, col.max_length AS length,
+               CASE WHEN col.default_object_id IS NOT NULL THEN def.definition ELSE NULL END AS columnDefault,
+               CASE WHEN col.is_nullable = 1 THEN 'YES' ELSE 'NO' END AS isNullable,
+               ep.[value] AS columnComment
+        FROM ${0}.sys.columns col
+        INNER JOIN ${0}.sys.types tp ON col.user_type_id = tp.user_type_id
+        LEFT JOIN ${0}.sys.default_constraints def ON col.default_object_id = def.object_id
+        LEFT JOIN ${0}.sys.extended_properties ep ON ep.major_id = col.object_id AND ep.minor_id = 0 AND ep.class = 1 AND ep.name = 'MS_Description'
+        INNER JOIN ${0}.sys.tables tbl ON col.object_id = tbl.object_id
+        WHERE tbl.name = #{1};

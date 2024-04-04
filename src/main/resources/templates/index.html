@@ -46,7 +46,8 @@
                     <tr>
                         <td><label for="ip">IP地址：</label></td>
                         <td>
-                            <el-input size="small" v-model="form.ip" id="ip" placeholder="请输入IP地址" required></el-input>
+                            <el-input size="small" v-model="form.ip" id="ip" placeholder="请输入IP地址"
+                                      required></el-input>
                         </td>
                     </tr>
                     <tr>
@@ -127,6 +128,10 @@
                 {
                     label: 'PostgreSQL',
                     value: 'postgresql'
+                },
+                {
+                    label: 'SqlServer',
+                    value: 'sqlserver'
                 }
             ],
             loading: false,
@@ -146,8 +151,11 @@
                 } else if (this.form.databaseType === 'oracle') {
                     this.form.port = 1521;
                     this.database = 'SID'
-                } else if (this.form.databaseType === 'postgresql'){
+                } else if (this.form.databaseType === 'postgresql') {
                     this.form.port = 5432;
+                    this.database = '数据库'
+                } else if (this.form.databaseType === 'sqlserver') {
+                    this.form.port = 1433;
                     this.database = '数据库'
                 } else {
                     this.form.port = 50000;
