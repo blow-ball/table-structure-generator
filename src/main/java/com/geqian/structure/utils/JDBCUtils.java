@@ -87,7 +87,6 @@ public class JDBCUtils {
             //预编译sql
             ps = connection.prepareStatement(sql);
 
-
             // 设置 sql 预编译参数
             for (int i = 0; i < placeholders.size(); i++) {
                 Map.Entry<String, String> entry = placeholders.get(i);
