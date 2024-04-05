@@ -78,17 +78,23 @@ public class JDBCUtils {
             throw new IllegalArgumentException("占位符个数与参数个数不一致！");
         }
 
+        // 填充参数后的 sql
+        String completeSQL = sql;
+
         //获取连接
         Connection connection = DruidConnectionManager.getConnection();
         try {
             //预编译sql
             ps = connection.prepareStatement(sql);
 
+
             // 设置 sql 预编译参数
             for (int i = 0; i < placeholders.size(); i++) {
                 Map.Entry<String, String> entry = placeholders.get(i);
                 int index = Integer.parseInt(entry.getValue());
-                ps.setObject(i + 1, args[index]);
+                Object arg = args[index];
+                ps.setObject(i + 1, arg);
+                completeSQL = replaceFirst(completeSQL, "?", arg.toString());
             }
 
             //执行并获取结果集
@@ -121,7 +127,7 @@ public class JDBCUtils {
             throw new RuntimeException("查询数据发生错误,", e);
         } finally {
             closeResource(ps, connection);
-            log.info("==> {}", sql);
+            log.info("\n==> {}", completeSQL);
         }
     }
 
@@ -194,6 +200,9 @@ public class JDBCUtils {
             throw new IllegalArgumentException("占位符个数与参数个数不一致！");
         }
 
+        // 填充参数后的 sql
+        String completeSQL = sql;
+
         //获取连接
         Connection connection = DruidConnectionManager.getConnection();
         try {
@@ -204,7 +213,9 @@ public class JDBCUtils {
             for (int i = 0; i < placeholders.size(); i++) {
                 Map.Entry<String, String> entry = placeholders.get(i);
                 int index = Integer.parseInt(entry.getKey());
-                ps.setObject(i + 1, args[index]);
+                Object arg = args[index];
+                ps.setObject(i + 1, arg);
+                completeSQL = replaceFirst(completeSQL, "?", arg.toString());
             }
 
             // 获取影响记录条数
@@ -214,7 +225,7 @@ public class JDBCUtils {
         } finally {
             //关闭资源
             closeResource(ps, connection);
-            log.info("==> {}", sql);
+            log.info("\n==> {}", completeSQL);
         }
         return affectedRows;
     }
