@@ -14,8 +14,8 @@
 - 采用 itextpdf 生成pdf文档
 
 ### 前端
-- Vue 基础框架
-- Element ui 组件库
+- 采用 Vue2 作为基础框架
+- 采用 Element ui 作为组件库
 <br>
 <br>
 
