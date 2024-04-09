@@ -39,7 +39,7 @@ public class ConsoleLogCharsetProcessor implements EnvironmentPostProcessor {
      *
      * @return
      */
-    public String getSystemDefaultCharsetName() {
+    private String getSystemDefaultCharsetName() {
         String os = System.getProperty("os.name").toLowerCase();
         return os.contains("win") ? "GBK" : "UTF-8";
     }

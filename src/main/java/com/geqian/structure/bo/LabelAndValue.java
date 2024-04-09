@@ -1,4 +1,4 @@
-package com.geqian.structure.pojo;
+package com.geqian.structure.bo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

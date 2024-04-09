@@ -1,4 +1,4 @@
-package com.geqian.structure.pojo;
+package com.geqian.structure.bo;
 
 import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableDefinition;

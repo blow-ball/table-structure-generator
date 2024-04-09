@@ -1,6 +1,6 @@
 package com.geqian.structure.common.vo;
 
-import com.geqian.structure.pojo.LabelAndValue;
+import com.geqian.structure.bo.LabelAndValue;
 import lombok.Data;
 
 import java.util.List;
