@@ -19,7 +19,7 @@
 <br>
 <br>
 
-### 支持数据库类型
+## 支持数据库类型
 - MySQL
 - Oracle
 - PostgreSQL
@@ -32,7 +32,7 @@
 <br>
 <br>
 
-### 支持文档类型
+## 支持文档类型
 - Word
 - PDF
 - Markdown
