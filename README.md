@@ -21,7 +21,7 @@
 
 ### 已支持数据库
 - MySQL
-- ORACLE
+- Oracle
 - PostgreSQL
 - Sql Server
 - DB2
