@@ -132,6 +132,10 @@
                 {
                     label: 'SqlServer',
                     value: 'sqlserver'
+                },
+                {
+                    label: 'MariaDB',
+                    value: 'mariadb'
                 }
             ],
             loading: false,
@@ -145,7 +149,7 @@
         },
         methods: {
             changeDatabase() {
-                if (this.form.databaseType === 'mysql') {
+                if (this.form.databaseType === 'mysql' || this.form.databaseType === 'mariadb') {
                     this.form.port = 3306;
                     this.database = '数据库'
                 } else if (this.form.databaseType === 'oracle') {

@@ -8,6 +8,38 @@ database:
 
       # 查询所有schemata
       databases: >
+          SELECT schema_name as schemaName FROM information_schema.schemata
+
+      # 查询指定schema下所有表
+      tables: >
+        select table_name as tableName, table_comment as tableComment
+        from information_schema.tables 
+        where table_schema = #{0}
+
+      # 查询指定schema下指定表信息
+      tableInfo: > # >表示多行，但忽略换行符
+        select table_name as tableName, table_comment as tableComment
+        from information_schema.tables 
+        where table_schema= #{0} and table_name = #{1}
+
+      # 查询指定schema下指定数据表字段信息
+      tableStructure: >
+        select column_name as columnName, data_type as columnType,
+               column_comment as columnComment, is_nullable as isNullable,
+               column_default as columnDefault, character_maximum_length as length,
+               column_key as columnKey, extra as extra
+        from information_schema.columns 
+        where table_schema = #{0} and table_name = #{1}
+        order by ordinal_position;
+
+    ######################################### mariadb 数据库 #############################################
+    mariadb:
+      driverClass: org.mariadb.jdbc.Driver
+
+      url: jdbc:mariadb://${ip}:${port}/${database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&ueSSL=false
+
+      # 查询所有schemata
+      databases: >
         SELECT schema_name as schemaName FROM information_schema.schemata
 
       # 查询指定schema下所有表
@@ -31,7 +63,6 @@ database:
         from information_schema.columns 
         where table_schema = #{0} and table_name = #{1}
         order by ordinal_position;
-    
 
     ######################################### Oracle数据库 #############################################
     oracle:
