@@ -9,9 +9,9 @@
 
 ## 技术栈
 ### 后端
-- SpringBoot 基础框架
-- Apache poi 生成word文档
-- itextpdf 实现生成pdf文档
+- 采用 SpringBoot 作为基础框架
+- 采用 apache poi 生成word文档
+- 采用 itextpdf 生成pdf文档
 
 ### 前端
 - Vue 基础框架
