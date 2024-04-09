@@ -189,3 +189,33 @@ database:
         LEFT JOIN ${0}.sys.extended_properties ep ON ep.major_id = col.object_id AND ep.minor_id = 0 AND ep.class = 1 AND ep.name = 'MS_Description'
         INNER JOIN ${0}.sys.tables tbl ON col.object_id = tbl.object_id
         WHERE tbl.name = #{1};
+
+    #########################################  clickhouse 数据库 #############################################
+    clickhouse:
+      driverClass: ru.yandex.clickhouse.ClickHouseDriver
+
+      url: jdbc:clickhouse://${ip}:${port}
+
+      # 查询所有数据库
+      databases: >
+        SELECT database as schemaName, comment as schemaComment FROM system.databases
+
+      # 查询指定schema下所有表
+      tables: >
+        select name as tableName, comment as tableComment
+        from system.tables
+        where database = #{0}
+
+      # 查询指定schema下指定表信息
+      tableInfo: > # >表示多行，但忽略换行符
+        select name as tableName, comment as tableComment
+        from system.tables
+        where database = #{0} and table = #{1};
+
+      # 查询指定schema下指定数据表字段信息
+      tableStructure: >
+        SELECT column_name as columnName, column_type as columnType, column_default as columnDefault,
+               CASE WHEN is_nullable = 1 THEN 'YES' ELSE 'NO' END AS isNullable,
+               character_maximum_length as length, column_comment as columnComment
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE COLUMNS.table_schema = #{0} and table_name = #{1}

@@ -136,6 +136,10 @@
                 {
                     label: 'MariaDB',
                     value: 'mariadb'
+                },
+                {
+                    label: 'Clickhouse',
+                    value: 'clickhouse'
                 }
             ],
             loading: false,
@@ -160,6 +164,9 @@
                     this.database = '数据库'
                 } else if (this.form.databaseType === 'sqlserver') {
                     this.form.port = 1433;
+                    this.database = '数据库'
+                } else if (this.form.databaseType === 'clickhouse') {
+                    this.form.port = 8123;
                     this.database = '数据库'
                 } else {
                     this.form.port = 50000;
