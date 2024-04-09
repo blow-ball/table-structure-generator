@@ -19,6 +19,15 @@
 <br>
 <br>
 
+### 已支持数据库
+- MySQL
+- ORACLE
+- PostgreSQL
+- Sql Server
+- DB2
+- MariaDB
+- Clickhouse
+
 
 ## 项目演示
 
