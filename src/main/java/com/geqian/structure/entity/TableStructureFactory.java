@@ -54,8 +54,8 @@ public class TableStructureFactory {
      * @return
      */
     public static Class<? extends TableStructure> getTableStructureType(String dbType) {
-        Class<? extends TableStructure> type = tableStructureMap.get(dbType.toLowerCase()).get();
-        return type == null ? tableStructureMap.get("default").get() : type;
+        Supplier<Class<? extends TableStructure>> supplier = tableStructureMap.get(dbType.toLowerCase());
+        return supplier == null ? tableStructureMap.get("default").get() : supplier.get();
     }
 
 
