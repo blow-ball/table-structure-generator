@@ -46,20 +46,19 @@ public class DruidConnectionManager {
             dataSource.setBreakAfterAcquireFailure(true);
             CurrentDatabaseManager.setDatabaseManager(databaseManager);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("初始化数据源失败," + e.getMessage());
+            throw new RuntimeException("初始化数据源失败," + e);
         }
     }
 
     public static Connection getConnection() {
-        try {
-            if (dataSource == null) {
-                synchronized (DruidConnectionManager.class) {
-                    if (dataSource == null) {
-                        initDataSource();
-                    }
+        if (dataSource == null) {
+            synchronized (DruidConnectionManager.class) {
+                if (dataSource == null) {
+                    initDataSource();
                 }
             }
+        }
+        try {
             return dataSource.getConnection();
         } catch (Exception e) {
             throw new RuntimeException("获取连接失败," + e.getMessage());
