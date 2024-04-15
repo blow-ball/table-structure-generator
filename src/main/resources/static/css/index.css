@@ -1,72 +1,43 @@
-* {
-    padding: 0;
-    margin: 0;
-}
-
-:root {
-    --box-width: 600px;
-}
-
-.container {
+.box-card {
     width: 100vw;
     height: 100vh;
+}
+
+.header {
+    height: 15vh;
+}
+
+.icon-grid {
     display: flex;
-    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: left;
     align-items: center;
-    background-color: #e0e0e7;
 }
 
-.container form {
+.icon-item {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: rtl;
     display: flex;
-    justify-content: center;
-    align-content: center;
+    flex-direction: column;
+    align-items: center;
+    font-size: 30px;
+    width: 300px;
+    height: 200px;
 }
 
-table td {
-    height: 40px;
+.icon-item:hover {
+    /* 鼠标移入时的样式 */
+    color: #299de5;
+    background-color: #f4f8fa;
 }
 
-/*.container table {*/
-/*    position: absolute;*/
-/*    top: 0;*/
-/*    bottom: 0;*/
-/*    left: 0;*/
-/*    right: 0;*/
-/*    margin: auto;*/
-/*}*/
-
-
-form .el-button {
-    cursor: pointer;
-    margin-top: 30px;
-    margin-left: 50px;
+.el-input {
+    width: 300px
 }
 
-
-.text {
-    font-size: 14px;
-}
-
-.item {
-    padding: 18px 0;
-}
-
-.box-card {
-    text-align: center;
-    width: var(--box-width);
-    height: calc(var(--box-width) * 0.75);
-}
-
-.box-card .title {
-    font-size: 25px;
-    font-weight: bold;
-    padding: 15px;
-    display: inline-block;
-}
-
-.box-card form .input {
-    font-size: 25px;
-    font-weight: bold;
-    padding: 15px;
-    display: inline-block;
+.el-form-item {
+    margin-left: 45px;
+    width: 560px;
 }
