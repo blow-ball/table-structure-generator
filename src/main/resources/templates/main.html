@@ -127,13 +127,28 @@
                 try {
                     this.loading = true;
                     if (node.level === 0) {
-                        this.loading = true;
                         let databases = await this.getDatabases();
-                        return resolve(databases);
-                    } else {
-                        this.loading = true;
+                        resolve(databases);
+                        this.$nextTick(() => {
+                            let structureTree = this.$refs.structureTree;
+                            for (let database of databases) {
+                                if (database.tableCount === 0) {
+                                    structureTree.getNode(database).isLeaf = true
+                                }
+                            }
+                        })
+                    } else if (node.level === 1) {
                         let tables = await this.getTables(node);
-                        return resolve(tables);
+                        resolve(tables);
+                        this.$nextTick(() => {
+                            let structureTree = this.$refs.structureTree;
+                            for (let table of tables) {
+                                structureTree.getNode(table).isLeaf = true
+                            }
+                        })
+
+                    } else {
+                        return resolve([]);
                     }
                 } catch (err) {
                     this.showMessage('error', err)
@@ -160,7 +175,7 @@
             getTables(node) {
                 let treeNode = node.data;
                 let schemaName = treeNode.schemaName;
-                let parentKey = treeNode.parentKey;
+                let parentKey = treeNode.key;
                 return new Promise((resolve, reject) => {
                     axios.get('/document/getTables', {params: {parentKey, schemaName}}).then(res => {
                         if (res.data.code === 200) {

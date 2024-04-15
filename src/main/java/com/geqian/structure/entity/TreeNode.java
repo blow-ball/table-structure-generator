@@ -22,4 +22,6 @@ public class TreeNode {
     private String tableName;
 
     private List<TreeNode> children;
+
+    private Integer tableCount;
 }

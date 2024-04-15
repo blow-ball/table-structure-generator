@@ -58,6 +58,7 @@ public class TableMapper {
             String key = UUIDUtils.generateUUID();
             treeNode.setKey(key);
             treeNode.setLabel(schemaName);
+            treeNode.setTableCount(getTableCount(schemaName));
         }
         return treeNodeList;
     }
@@ -82,6 +83,21 @@ public class TableMapper {
             treeNode.setLabel(treeNode.getTableName());
         }
         return tableNodeList;
+    }
+
+    /**
+     * 获取指定 database下所有表名
+     *
+     * @param schemaName
+     * @return
+     * @throws Exception
+     */
+    @SneakyThrows(Exception.class)
+    public Integer getTableCount(String schemaName) {
+        DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
+        String sql = databaseManager.getTables();
+        List<TreeNode> tableNodeList = JDBCHelper.selectList(sql, TreeNode.class, schemaName);
+        return tableNodeList.size();
     }
 
 
@@ -112,7 +128,7 @@ public class TableMapper {
     public List<? extends TableStructure> getTableStructureList(String schemaName, String tableName) {
         String databaseType = DruidConnectionManager.getConnectionInfo().getDatabaseType();
         Class<? extends TableStructure> classType = TableStructureFactory.getTableStructureType(databaseType);
-        if (classType != null){
+        if (classType != null) {
             DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
             String sql = databaseManager.getTableStructure();
             List<? extends TableStructure> tableStructures = JDBCHelper.selectList(sql, classType, schemaName, tableName);
