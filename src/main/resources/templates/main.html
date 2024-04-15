@@ -99,6 +99,7 @@
         el: '#app',
         data: {
             data: [],
+            loading: false,
             dialogVisible: false,
             allColumns: [],
             defaultColumns: [],
@@ -106,9 +107,7 @@
                 children: 'children',
                 label: 'label'
             },
-            pdf: '',
-            loading: false,
-            currentNodeLabel: '', // 当前节点的文字
+            pdf: ''
         },
         methods: {
             getTableTree() {
@@ -405,6 +404,7 @@
             },
         },
         mounted: function () {
+            this.getTableTree()
             this.getTableColumns();
             this.initChangeBoxWidthEvent()
         }
