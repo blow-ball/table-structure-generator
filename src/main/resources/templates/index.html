@@ -248,7 +248,7 @@
                 this.loading = true
                 axios.post('/dataSource/connection', this.form).then(res => {
                     if (res.data.code === 200) {
-                        window.location.href = '/main';
+                        window.location.href = '/generator';
                         this.showMessage('success', res.data.message)
                     } else {
                         this.showMessage('error', res.data.message)
