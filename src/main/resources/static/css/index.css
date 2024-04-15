@@ -1,4 +1,4 @@
-.header {
+.action-items {
     height: 100px;
     text-align: right;
     display: flex;
@@ -6,7 +6,7 @@
     justify-content: right;
 }
 
-.header .el-tooltip {
+.action-items .el-tooltip {
     margin-right: 20px;
 }
 
