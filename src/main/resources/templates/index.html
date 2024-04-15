@@ -44,7 +44,8 @@
             </el-tooltip>
         </div>
         <div class="icon-grid">
-            <div v-if="item.developed" class="icon-item unselectable" @click="selectDatabase(item)" v-for="(item, index) in options"
+            <div v-if="item.developed" class="icon-item unselectable" @click="selectDatabase(item)"
+                 v-for="(item, index) in options"
                  :key="index">
                 <img :src="renderIcon(item.icon)" alt=""/>
                 <span>{{ item.label }}</span>
