@@ -1,10 +1,13 @@
-.box-card {
-    width: 100vw;
-    height: 100vh;
+.header {
+    height: 100px;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: right;
 }
 
-.header {
-    height: 15vh;
+.header .el-tooltip {
+    margin-right: 20px;
 }
 
 .icon-grid {

@@ -20,8 +20,29 @@
 </head>
 <body>
 <div id="app">
-    <div class="box">
-        <div class="header"></div>
+    <div class="container">
+        <div class="header">
+            <el-tooltip class="item" effect="dark" content="前往Gitee" placement="bottom">
+                <a href="https://gitee.com/geqian618/table-structure-generator">
+                    <svg t="1709805331298" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="4226" width="50" height="50">
+                        <path d="M512 512m-494.933333 0a494.933333 494.933333 0 1 0 989.866666 0 494.933333 494.933333 0 1 0-989.866666 0Z"
+                              fill="#C71D23" p-id="4227"></path>
+                        <path d="M762.538667 457.045333h-281.088a24.4736 24.4736 0 0 0-24.439467 24.405334v61.098666c-0.034133 13.5168 10.922667 24.439467 24.405333 24.439467h171.1104c13.5168 0 24.439467 10.922667 24.439467 24.439467v12.219733a73.3184 73.3184 0 0 1-73.3184 73.3184h-232.209067a24.439467 24.439467 0 0 1-24.439466-24.439467v-232.174933a73.3184 73.3184 0 0 1 73.3184-73.3184h342.152533c13.482667 0 24.405333-10.922667 24.439467-24.439467l0.034133-61.098666a24.405333 24.405333 0 0 0-24.405333-24.439467H420.352a183.296 183.296 0 0 0-183.296 183.296V762.538667c0 13.482667 10.922667 24.439467 24.405333 24.439466h360.516267a164.9664 164.9664 0 0 0 165.000533-165.000533v-140.526933a24.439467 24.439467 0 0 0-24.439466-24.439467z"
+                              fill="#FFFFFF" p-id="4228"></path>
+                    </svg>
+                </a>
+            </el-tooltip>
+            <el-tooltip class="item" effect="dark" content="前往Github" placement="bottom">
+                <a href="https://github.com/2254324470/table-structure-generator">
+                    <svg t="1709805572886" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                         xmlns="http://www.w3.org/2000/svg" p-id="4228" width="50" height="50">
+                        <path d="M64 512c0 195.2 124.8 361.6 300.8 422.4 22.4 6.4 19.2-9.6 19.2-22.4v-76.8c-134.4 16-140.8-73.6-150.4-89.6-19.2-32-60.8-38.4-48-54.4 32-16 64 3.2 99.2 57.6 25.6 38.4 76.8 32 105.6 25.6 6.4-22.4 19.2-44.8 35.2-60.8-144-22.4-201.6-108.8-201.6-211.2 0-48 16-96 48-131.2-22.4-60.8 0-115.2 3.2-121.6 57.6-6.4 118.4 41.6 124.8 44.8 32-9.6 70.4-12.8 112-12.8 41.6 0 80 6.4 112 12.8 12.8-9.6 67.2-48 121.6-44.8 3.2 6.4 25.6 57.6 6.4 118.4 32 38.4 48 83.2 48 131.2 0 102.4-57.6 188.8-201.6 214.4 22.4 22.4 38.4 54.4 38.4 92.8v112c0 9.6 0 19.2 16 19.2C832 876.8 960 710.4 960 512c0-246.4-201.6-448-448-448S64 265.6 64 512z"
+                              fill="#040000" p-id="4229"></path>
+                    </svg>
+                </a>
+            </el-tooltip>
+        </div>
         <div class="icon-grid">
             <div class="icon-item" @click="selectDatabase(item.value)" v-for="(item, index) in options" :key="index">
                 <img :src="renderIcon(item.icon)" alt=""/>
@@ -30,36 +51,39 @@
         </div>
     </div>
     <el-dialog
+            v-loading="loading"
+            element-loading-text="正在加载中..."
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"
             width="600px"
             title="数据源"
             :visible.sync="dialogFormVisible">
         <el-form :model="form">
-
-            <el-form-item label="IP地址" :label-width="formLabelWidth">
-                <el-input v-model="form.ip" id="ip" placeholder="请输入IP地址" required></el-input>
+            <el-form-item label="IP地址" :label-width="formLabelWidth" prop="ip">
+                <el-input v-model="form.ip" placeholder="请输入IP地址" required></el-input>
             </el-form-item>
 
-            <el-form-item label="端 口" :label-width="formLabelWidth">
-                <el-input v-model="form.port" id="ip" placeholder="请输入IP地址" required></el-input>
+            <el-form-item label="端口号" :label-width="formLabelWidth" prop="port">
+                <el-input v-model="form.port" placeholder="请输入IP地址" required></el-input>
             </el-form-item>
 
-            <el-form-item :label="form.label" :label-width="formLabelWidth">
-                <el-input v-model="form.database" id="ip" placeholder="请输入数据库名称" required></el-input>
+            <el-form-item :label="form.label" :label-width="formLabelWidth" prop="database">
+                <el-input v-model="form.database" placeholder="请输入数据库名称" required></el-input>
             </el-form-item>
 
-            <el-form-item label="用户名" :label-width="formLabelWidth">
-                <el-input v-model="form.username" id="ip" placeholder="请输入用户名" required></el-input>
+            <el-form-item label="用户名" :label-width="formLabelWidth" prop="username">
+                <el-input v-model="form.username" placeholder="请输入用户名" required></el-input>
             </el-form-item>
 
-            <el-form-item label="密码" :label-width="formLabelWidth">
-                <el-input v-model="form.password" id="ip" placeholder="请输入密码" required></el-input>
+            <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
+                <el-input v-model="form.password" placeholder="请输入密码" required></el-input>
             </el-form-item>
 
         </el-form>
 
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button type="primary" @click="connection">确 定</el-button>
         </div>
     </el-dialog>
 </div>
@@ -74,7 +98,7 @@
             loading: false,
             form: {
                 label: '数据库',
-                databaseType: 'mysql',
+                databaseType: '',
                 ip: '127.0.0.1',
                 port: 3306,
                 username: '',
@@ -132,8 +156,10 @@
                 return URL.createObjectURL(blob);
             },
             selectDatabase(databaseType) {
-                this.form = {ip: '127.0.0.1'}
                 this.dialogFormVisible = true;
+                this.form.username = ''
+                this.form.password = ''
+                this.form.database = ''
                 this.form.databaseType = databaseType;
                 if (databaseType === 'mysql' || databaseType === 'mariadb') {
                     this.form.port = 3306;
