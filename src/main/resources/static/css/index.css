@@ -37,6 +37,10 @@
     background-color: #f4f8fa;
 }
 
+.el-dialog__body {
+    padding: 20px 20px;
+}
+
 .el-input {
     width: 300px
 }
