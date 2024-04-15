@@ -117,14 +117,14 @@ iframe {
 }
 
 
-.box-card .tool .el-button,svg {
+.box-card .action-items .el-button,svg {
     padding: 0;
     margin: 0;
     margin-right: 20px;
 
 }
 
-.box-card .tool {
+.box-card .action-items {
     height: 45px;
     display: flex;
     align-items: center;
