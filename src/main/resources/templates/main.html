@@ -30,6 +30,7 @@
                     style="margin: 10px"
                     ref="structureTree"
                     :load="loadNode"
+                    @check-change="selectNode"
                     lazy
                     show-checkbox
                     node-key="key"
@@ -123,6 +124,25 @@
                     this.loading = false
                 })
             },
+            async selectNode(data, selected) {
+                let structureTree = this.$refs.structureTree;
+                let node = structureTree.getNode(data)
+                if (selected && data.childrenCount !== 0 && node.level === 1) {
+                    let tables = await this.getTables(data)
+                    // 新增子节点
+                    structureTree.updateKeyChildren(data.key, tables)
+                    this.$nextTick(() => {
+                        for (let table of tables) {
+                            structureTree.setChecked(table, true)
+                            structureTree.getNode(table).isLeaf = true
+                        }
+                    })
+                } else if (!selected && data.childrenCount !== 0 && node.level === 1) {
+                    for (let childNode of node.childNodes) {
+                        structureTree.setChecked(childNode.data, false)
+                    }
+                }
+            },
             async loadNode(node, resolve) {
                 try {
                     this.loading = true;
@@ -136,7 +156,7 @@
                             }
                         })
                     } else if (node.level === 1) {
-                        let tables = await this.getTables(node);
+                        let tables = await this.getTables(node.data);
                         resolve(tables);
                         this.$nextTick(() => {
                             let structureTree = this.$refs.structureTree;
@@ -144,8 +164,6 @@
                                 structureTree.getNode(table).isLeaf = true
                             }
                         })
-                    } else {
-                        return resolve([]);
                     }
                 } catch (err) {
                     this.showMessage('error', err)
@@ -162,17 +180,14 @@
                         } else {
                             reject("数据加载失败");
                         }
-                        this.loading = false;
                     }).catch(err => {
-                        this.loading = false;
                         reject(err);
                     });
                 });
             },
-            getTables(node) {
-                let treeNode = node.data;
-                let schemaName = treeNode.schemaName;
-                let parentKey = treeNode.key;
+            getTables(data) {
+                let schemaName = data.schemaName;
+                let parentKey = data.key;
                 return new Promise((resolve, reject) => {
                     axios.get('/document/getTables', {params: {parentKey, schemaName}}).then(res => {
                         if (res.data.code === 200) {
@@ -416,7 +431,6 @@
             },
         },
         mounted: function () {
-            this.getTableTree()
             this.getTableColumns();
             this.initChangeBoxWidthEvent()
         }
