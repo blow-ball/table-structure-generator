@@ -132,9 +132,7 @@
                         this.$nextTick(() => {
                             let structureTree = this.$refs.structureTree;
                             for (let database of databases) {
-                                if (database.tableCount === 0) {
-                                    structureTree.getNode(database).isLeaf = true
-                                }
+                                database.tableCount === 0 && (structureTree.getNode(database).isLeaf = true)
                             }
                         })
                     } else if (node.level === 1) {
@@ -146,7 +144,6 @@
                                 structureTree.getNode(table).isLeaf = true
                             }
                         })
-
                     } else {
                         return resolve([]);
                     }
