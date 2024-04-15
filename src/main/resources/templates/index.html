@@ -96,7 +96,7 @@
             formLabelWidth: '120px',
             loading: false,
             form: {
-                label: '数据库名称',
+                label: '数据库',
                 databaseType: '',
                 ip: '127.0.0.1',
                 port: 0,
@@ -198,22 +198,22 @@
                 this.form.databaseType = databaseType;
                 if (databaseType === 'mysql' || databaseType === 'mariadb') {
                     this.form.port = 3306;
-                    this.form.label = '数据库名称'
+                    this.form.label = '数据库'
                 } else if (databaseType === 'oracle') {
                     this.form.port = 1521;
                     this.form.label = 'SID'
                 } else if (databaseType === 'postgresql') {
                     this.form.port = 5432;
-                    this.form.label = '数据库名称'
+                    this.form.label = '数据库'
                 } else if (databaseType === 'sqlserver') {
                     this.form.port = 1433;
-                    this.form.label = '数据库名称'
+                    this.form.label = '数据库'
                 } else if (databaseType === 'clickhouse') {
                     this.form.port = 8123;
-                    this.form.label = '数据库名称'
+                    this.form.label = '数据库'
                 } else {
                     this.form.port = 50000;
-                    this.form.label = '数据库名称'
+                    this.form.label = '数据库'
                 }
             },
             connection() {
