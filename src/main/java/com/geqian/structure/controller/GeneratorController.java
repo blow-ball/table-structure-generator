@@ -16,7 +16,7 @@ import java.util.List;
  * @date 12:01 2023/7/12
  */
 @RestController
-@RequestMapping("/generate")
+@RequestMapping("/document")
 public class GeneratorController {
 
     @Resource
@@ -41,23 +41,23 @@ public class GeneratorController {
     }
 
 
-    @PostMapping("/pdf/downloadPdf")
+    @PostMapping("/pdf/download")
     public void downloadPdf(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadPdf(targetTableDto, response);
     }
 
 
-    @PostMapping("/word/downloadWord")
+    @PostMapping("/word/download")
     public void downloadWord(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadWord(targetTableDto, response);
     }
 
-    @PostMapping("/html/downloadHtml")
+    @PostMapping("/html/download")
     public void downloadHtml(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadHtml(targetTableDto, response);
     }
 
-    @PostMapping("/markdown/downloadMarkdown")
+    @PostMapping("/markdown/download")
     public void downloadMd(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadMarkdown(targetTableDto, response);
     }

@@ -112,7 +112,7 @@
         methods: {
             getTableTree() {
                 this.loading = true
-                axios.get('/generate/getTableTree').then(res => {
+                axios.get('/document/getTableTree').then(res => {
                     if (res.data.code === 200) {
                         this.data = res.data.data
                     } else {
@@ -124,7 +124,7 @@
                 })
             },
             getTableColumns() {
-                axios.get('/generate/getTableColumnInfo').then(res => {
+                axios.get('/document/getTableColumnInfo').then(res => {
                     if (res.data.code === 200) {
                         this.allColumns = res.data.data.allColumns;
                         this.defaultColumns = res.data.data.defaultColumns;
@@ -143,7 +143,7 @@
                 this.loading = true
                 axios({
                     method: 'post',
-                    url: '/generate/pdf/preview',
+                    url: '/document/pdf/preview',
                     responseType: 'arraybuffer', // 指定响应类型为二进制流
                     data: {dataList: this.getCheckedNodes(), defaultColumns: this.defaultColumns}
                 }).then(res => {
@@ -167,7 +167,7 @@
                 this.loading = true
                 axios({
                     method: 'post',
-                    url: '/generate/word/downloadWord',
+                    url: '/document/word/download',
                     responseType: 'blob', // 指定响应类型为二进制流
                     data: {
                         dataList: this.getCheckedNodes(),
@@ -204,7 +204,7 @@
                 this.loading = true
                 axios({
                     method: 'post',
-                    url: '/generate/pdf/downloadPdf',
+                    url: '/document/pdf/download',
                     responseType: 'blob', // 指定响应类型为二进制流
                     data: {
                         dataList: this.getCheckedNodes(),
@@ -241,7 +241,7 @@
                 this.loading = true
                 axios({
                     method: 'post',
-                    url: '/generate/markdown/downloadMarkdown',
+                    url: '/document/markdown/download',
                     responseType: 'blob', // 指定响应类型为二进制流
                     data: {
                         dataList: this.getCheckedNodes(),
@@ -278,7 +278,7 @@
                 this.loading = true
                 axios({
                     method: 'post',
-                    url: '/generate/html/downloadHtml',
+                    url: '/document/html/download',
                     responseType: 'blob', // 指定响应类型为二进制流
                     data: {
                         dataList: this.getCheckedNodes(),
