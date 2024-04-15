@@ -20,7 +20,11 @@
 </head>
 <body>
 <div id="app">
-    <div class="box">
+    <div class="container"
+         v-loading="loading"
+         element-loading-text="正在加载中..."
+         element-loading-spinner="el-icon-loading"
+         element-loading-background="rgba(0, 0, 0, 0.8)">
         <div class="header"></div>
         <div class="icon-grid">
             <div class="icon-item" @click="selectDatabase(item.value)" v-for="(item, index) in options" :key="index">
@@ -34,25 +38,24 @@
             title="数据源"
             :visible.sync="dialogFormVisible">
         <el-form :model="form">
-
             <el-form-item label="IP地址" :label-width="formLabelWidth">
-                <el-input v-model="form.ip" id="ip" placeholder="请输入IP地址" required></el-input>
+                <el-input v-model="form.ip" placeholder="请输入IP地址" required></el-input>
             </el-form-item>
 
             <el-form-item label="端 口" :label-width="formLabelWidth">
-                <el-input v-model="form.port" id="ip" placeholder="请输入IP地址" required></el-input>
+                <el-input v-model="form.port" placeholder="请输入端口号" required></el-input>
             </el-form-item>
 
             <el-form-item :label="form.label" :label-width="formLabelWidth">
-                <el-input v-model="form.database" id="ip" placeholder="请输入数据库名称" required></el-input>
+                <el-input v-model="form.database" placeholder="请输入数据库名称" required></el-input>
             </el-form-item>
 
             <el-form-item label="用户名" :label-width="formLabelWidth">
-                <el-input v-model="form.username" id="ip" placeholder="请输入用户名" required></el-input>
+                <el-input v-model="form.username" placeholder="请输入用户名" required></el-input>
             </el-form-item>
 
             <el-form-item label="密码" :label-width="formLabelWidth">
-                <el-input v-model="form.password" id="ip" placeholder="请输入密码" required></el-input>
+                <el-input v-model="form.password" placeholder="请输入密码" required></el-input>
             </el-form-item>
 
         </el-form>
