@@ -127,7 +127,6 @@
             async selectNode(data, selected) {
                 let structureTree = this.$refs.structureTree;
                 let node = structureTree.getNode(data)
-                let halfCheckedKeys = structureTree.getHalfCheckedKeys;
                 if (selected && data.childrenCount !== 0 && node.level === 1) {
                     let tables = await this.getTables(data)
                     // 新增子节点
@@ -138,9 +137,9 @@
                             structureTree.getNode(table).isLeaf = true
                         }
                     })
-                } else if (!selected && node.level !== 1) {
+                } else if (!selected && node.level === 2) {
                     structureTree.setChecked(data, false)
-                } else if (!selected && node.level === 1 && !halfCheckedKeys.includes(data.key)) {
+                } else if (!selected && node.level === 1 && !structureTree.getHalfCheckedKeys().includes(data.key)) {
                     for (let childNode of node.childNodes) {
                         structureTree.setChecked(childNode.data, false)
                     }
