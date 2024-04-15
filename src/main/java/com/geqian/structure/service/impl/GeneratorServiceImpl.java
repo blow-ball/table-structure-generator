@@ -11,6 +11,7 @@ import com.geqian.document4j.pdf.PdfStyle;
 import com.geqian.document4j.word.WordBuilder;
 import com.geqian.document4j.word.WordStyle;
 import com.geqian.structure.common.ResponseResult;
+import com.geqian.structure.common.dto.TableSelectDto;
 import com.geqian.structure.common.dto.TargetTableDto;
 import com.geqian.structure.common.vo.ColumnsVo;
 import com.geqian.structure.db.DefaultColumnManager;
@@ -127,6 +128,18 @@ public class GeneratorServiceImpl implements GeneratorService {
         //文件设置为附件
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
         IoUtil.write(response.getOutputStream(), true, mdBytes);
+    }
+
+    @Override
+    public ResponseResult<List<TreeNode>> getDatabases() {
+        List<TreeNode> databases = tableMapper.getDatabases();
+        return ResponseResult.success(databases);
+    }
+
+    @Override
+    public ResponseResult<List<TreeNode>> getTables(TableSelectDto dto) {
+        List<TreeNode> tables = tableMapper.getTables(dto.getSchemaName(), dto.getParentKey());
+        return ResponseResult.success(tables);
     }
 
 

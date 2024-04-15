@@ -1,6 +1,7 @@
 package com.geqian.structure.controller;
 
 import com.geqian.structure.common.ResponseResult;
+import com.geqian.structure.common.dto.TableSelectDto;
 import com.geqian.structure.common.dto.TargetTableDto;
 import com.geqian.structure.common.vo.ColumnsVo;
 import com.geqian.structure.entity.TreeNode;
@@ -60,6 +61,17 @@ public class GeneratorController {
     @PostMapping("/markdown/download")
     public void downloadMd(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadMarkdown(targetTableDto, response);
+    }
+
+    @GetMapping("/getDatabases")
+    public ResponseResult<List<TreeNode>> getDatabases() throws Exception {
+        return generatorService.getDatabases();
+    }
+
+
+    @GetMapping("/getTables")
+    public ResponseResult<List<TreeNode>> getTables(TableSelectDto dto) throws Exception {
+        return generatorService.getTables(dto);
     }
 
 }

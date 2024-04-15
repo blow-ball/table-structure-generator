@@ -36,7 +36,6 @@ public class TableMapper {
             String schemaName = treeNode.getSchemaName();
             String key = UUIDUtils.generateUUID();
             treeNode.setKey(key);
-            treeNode.setSchemaName(schemaName);
             treeNode.setLabel(schemaName);
             List<TreeNode> tables = getTables(schemaName, key);
             treeNode.setChildren(tables);
@@ -44,9 +43,28 @@ public class TableMapper {
         return treeNodeList;
     }
 
+    /**
+     * 获取所有Databases
+     *
+     * @return
+     * @throws Exception
+     */
+    public List<TreeNode> getDatabases() {
+        DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
+        String sql = databaseManager.getDatabases();
+        List<TreeNode> treeNodeList = JDBCHelper.selectList(sql, TreeNode.class);
+        for (TreeNode treeNode : treeNodeList) {
+            String schemaName = treeNode.getSchemaName();
+            String key = UUIDUtils.generateUUID();
+            treeNode.setKey(key);
+            treeNode.setLabel(schemaName);
+        }
+        return treeNodeList;
+    }
+
 
     /**
-     * 获取指定schema下所有表名
+     * 获取指定 database下所有表名
      *
      * @param schemaName
      * @return

@@ -29,7 +29,8 @@
             <el-tree
                     style="margin: 10px"
                     ref="structureTree"
-                    :data="data"
+                    :load="loadNode"
+                    lazy
                     show-checkbox
                     node-key="key"
                     :props="defaultProps">
@@ -122,6 +123,56 @@
                 }).catch(err => {
                     this.loading = false
                 })
+            },
+            async loadNode(node, resolve) {
+                try {
+                    this.loading = true;
+                    if (node.level === 0) {
+                        this.loading = true;
+                        let databases = await this.getDatabases();
+                        return resolve(databases);
+                    } else {
+                        this.loading = true;
+                        let tables = await this.getTables(node);
+                        return resolve(tables);
+                    }
+                } catch (err) {
+                    this.showMessage('error', err)
+                    resolve([])
+                } finally {
+                    this.loading = false;
+                }
+            },
+            getDatabases() {
+                return new Promise((resolve, reject) => {
+                    axios.get('/document/getDatabases').then(res => {
+                        if (res.data.code === 200) {
+                            resolve(res.data.data);
+                        } else {
+                            reject("数据加载失败");
+                        }
+                        this.loading = false;
+                    }).catch(err => {
+                        this.loading = false;
+                        reject(err);
+                    });
+                });
+            },
+            getTables(node) {
+                let treeNode = node.data;
+                let schemaName = treeNode.schemaName;
+                let parentKey = treeNode.parentKey;
+                return new Promise((resolve, reject) => {
+                    axios.get('/document/getTables', {params: {parentKey, schemaName}}).then(res => {
+                        if (res.data.code === 200) {
+                            resolve(res.data.data);
+                        } else {
+                            reject("数据加载失败");
+                        }
+                    }).catch(err => {
+                        reject(err);
+                    });
+                });
             },
             getTableColumns() {
                 axios.get('/document/getTableColumnInfo').then(res => {
@@ -354,7 +405,6 @@
             },
         },
         mounted: function () {
-            this.getTableTree();
             this.getTableColumns();
             this.initChangeBoxWidthEvent()
         }
