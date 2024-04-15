@@ -140,6 +140,7 @@
                 } else if (!selected && node.level === 2) {
                     structureTree.setChecked(data, false)
                 } else if (!selected && node.level === 1 && !structureTree.getHalfCheckedKeys().includes(data.key)) {
+                    structureTree.setChecked(data, false)
                     for (let childNode of node.childNodes) {
                         structureTree.setChecked(childNode.data, false)
                     }
@@ -240,7 +241,7 @@
             },
             downloadWord() {
                 if (this.getCheckedNodes().length === 0) {
-                    this.showMessage("error", "当前未选中任何数据表!")
+                    this.showMessage("error", "当前未选中任何数据表")
                     return;
                 }
                 this.loading = true
