@@ -57,8 +57,9 @@
             element-loading-background="rgba(0, 0, 0, 0.8)"
             width="600px"
             title="数据源"
+            @close="closeDialog"
             :visible.sync="dialogFormVisible">
-        <el-form :model="form">
+        <el-form :model="form" :rules="rules" ref="ruleForm">
             <el-form-item label="IP地址" :label-width="formLabelWidth" prop="ip">
                 <el-input v-model="form.ip" placeholder="请输入IP地址" required></el-input>
             </el-form-item>
@@ -82,7 +83,7 @@
 
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="connection">确 定</el-button>
+            <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
         </div>
     </el-dialog>
 </div>
@@ -103,6 +104,20 @@
                 username: '',
                 password: '',
                 database: ''
+            },
+            rules: {
+                ip: [
+                    {required: true, message: 'ip地址不能为空', trigger: 'blur'}
+                ],
+                port: [
+                    {required: true, message: '端口号不能为空', trigger: 'blur'}
+                ],
+                database: [
+                    {required: true, message: '数据库名称/SID不能为空', trigger: 'blur'}
+                ],
+                username: [
+                    {required: true, message: '用户名不能为空', trigger: 'blur'}
+                ],
             },
             options: [
                 {
@@ -209,11 +224,23 @@
                 this.form.database = ''
                 this.form.databaseType = item.value;
                 this.form.port = item.defaultPort
-                if (item.value === 'oracle'){
+                if (item.value === 'oracle') {
                     this.form.label = 'SID'
                 } else {
                     this.form.label = '数据库'
                 }
+            },
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.connection()
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            closeDialog() {
+                this.$refs['ruleForm'].resetFields();
             },
             connection() {
                 this.loading = true
