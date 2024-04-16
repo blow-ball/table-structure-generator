@@ -1,4 +1,5 @@
 .action-items {
+    padding-right: 30px;
     height: 100px;
     text-align: right;
     display: flex;
@@ -6,7 +7,7 @@
     justify-content: right;
 }
 
-.action-items .el-tooltip {
+.action-items svg {
     margin-right: 20px;
 }
 
@@ -55,4 +56,12 @@
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE 10+ */
     user-select: none; /* Standard syntax */
+}
+
+.el-dialog {
+    scale: 0.9;
+}
+
+.el-popover {
+    padding: 0;
 }
