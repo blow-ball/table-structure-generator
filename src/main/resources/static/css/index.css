@@ -30,6 +30,7 @@
     font-size: 25px;
     width: 200px;
     height: 150px;
+    border-radius: 15px;
 }
 
 .icon-item:hover {
