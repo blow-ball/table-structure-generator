@@ -19,15 +19,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>dm.jdbc</groupId>
-            <artifactId>DmJdbcDriver18</artifactId>
-            <version>8.1.1.87</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/lib/DmJdbcDriver18.jar</systemPath>
-        </dependency>
-
-
-        <dependency>
             <groupId>com.geqian</groupId>
             <artifactId>document4j</artifactId>
             <version>1.0.0</version>
@@ -86,6 +77,12 @@
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dameng</groupId>
+            <artifactId>Dm8JdbcDriver18</artifactId>
+            <version>8.1.1.49</version>
         </dependency>
 
 
