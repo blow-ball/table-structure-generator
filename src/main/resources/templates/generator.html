@@ -33,7 +33,7 @@
                     @check-change="selectNode"
                     lazy
                     show-checkbox
-                    node-key="key"
+                    node-key="nodeId"
                     :props="defaultProps">
             </el-tree>
         </el-aside>
@@ -111,26 +111,13 @@
             pdf: ''
         },
         methods: {
-            getTableTree() {
-                this.loading = true
-                axios.get('/document/getTableTree').then(res => {
-                    if (res.data.code === 200) {
-                        this.data = res.data.data
-                    } else {
-                        this.showMessage("error", "数据加载失败")
-                    }
-                    this.loading = false
-                }).catch(err => {
-                    this.loading = false
-                })
-            },
             async selectNode(data, selected) {
                 let structureTree = this.$refs.structureTree;
                 let node = structureTree.getNode(data)
                 if (selected && data.childrenCount !== 0 && node.level === 1) {
                     let tables = await this.getTables(data)
                     // 新增子节点
-                    structureTree.updateKeyChildren(data.key, tables)
+                    structureTree.updateKeyChildren(data.nodeId, tables)
                     this.$nextTick(() => {
                         for (let table of tables) {
                             structureTree.setChecked(table, true)
@@ -139,7 +126,7 @@
                     })
                 } else if (!selected && node.level === 2) {
                     structureTree.setChecked(data, false)
-                } else if (!selected && node.level === 1 && !structureTree.getHalfCheckedKeys().includes(data.key)) {
+                } else if (!selected && node.level === 1 && !structureTree.getHalfCheckedKeys().includes(data.nodeId)) {
                     structureTree.setChecked(data, false)
                     for (let childNode of node.childNodes) {
                         structureTree.setChecked(childNode.data, false)
@@ -155,7 +142,7 @@
                         this.$nextTick(() => {
                             let structureTree = this.$refs.structureTree;
                             for (let database of databases) {
-                                database.tableCount === 0 && (structureTree.getNode(database).isLeaf = true)
+                                database.childrenCount === 0 && (structureTree.getNode(database).isLeaf = true)
                             }
                         })
                     } else if (node.level === 1) {
@@ -189,10 +176,10 @@
                 });
             },
             getTables(data) {
-                let schemaName = data.schemaName;
-                let parentKey = data.key;
+                let schemaName = data.label;
+                let parentNodeId = data.nodeId;
                 return new Promise((resolve, reject) => {
-                    axios.get('/document/getTables', {params: {parentKey, schemaName}}).then(res => {
+                    axios.get('/document/getTables', {params: {parentNodeId, schemaName}}).then(res => {
                         if (res.data.code === 200) {
                             resolve(res.data.data);
                         } else {
@@ -390,9 +377,9 @@
             getCheckedNodes() {
                 let tree = this.$refs.structureTree;
                 let checkedNodes = tree.getCheckedNodes();
-                let parentKeys = new Set(checkedNodes.filter(node => node.parentKey != null).map(node => node.parentKey));
-                for (let parentKey of parentKeys) {
-                    let node = tree.getNode(parentKey).data;
+                let parentNodeIds = new Set(checkedNodes.filter(node => node.parentNodeId != null).map(node => node.parentNodeId));
+                for (let parentNodeId of parentNodeIds) {
+                    let node = tree.getNode(parentNodeId).data;
                     if (!checkedNodes.includes(node)) {
                         checkedNodes.push(node)
                     }

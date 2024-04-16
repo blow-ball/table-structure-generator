@@ -60,7 +60,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public ResponseResult<List<TreeNode>> selectTableStructure() {
-        return ResponseResult.success(tableMapper.getTableTree());
+        return ResponseResult.success("");
     }
 
 
@@ -138,7 +138,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public ResponseResult<List<TreeNode>> getTables(TableSelectDto dto) {
-        List<TreeNode> tables = tableMapper.getTables(dto.getSchemaName(), dto.getParentKey());
+        List<TreeNode> tables = tableMapper.getTables(dto.getSchemaName(), dto.getParentNodeId());
         return ResponseResult.success(tables);
     }
 
@@ -185,7 +185,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (!CollectionUtils.isEmpty(treeNodeList)) {
 
             //过滤出全部 Schema节点
-            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(TreeNode::isSchemaNode).collect(Collectors.toList());
 
             WordStyle.Font calibri = WordStyle.Font.fontFamily("Calibri");
             WordStyle.Font bold = WordStyle.Font.BOLD;
@@ -194,22 +194,27 @@ public class GeneratorServiceImpl implements GeneratorService {
             WordStyle.Font cellFontSize = WordStyle.Font.fontSize(10);
 
             for (TreeNode schemaNode : schemaNodes) {
-                String schemaName = schemaNode.getSchemaName();
+
+                String schemaName = schemaNode.getLabel();
 
                 wordBuilder.addParagraph("数据库名称 " + schemaName, calibri, bold, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
-                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .filter(data -> !data.isSchemaNode() && Objects.equals(data.getParentNodeId(), schemaNode.getNodeId()))
                         .collect(Collectors.toList());
 
                 List<Future<TableInfo>> futureList = new ArrayList<>();
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                String tableName = tableNode.getLabel();
+                                String tableComment = tableNode.getComment();
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
+                                tableDefinition.setTableName(tableName);
+                                tableDefinition.setTableComment(tableComment);
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -243,7 +248,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (!CollectionUtils.isEmpty(treeNodeList)) {
 
             //过滤出全部 Schema节点
-            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(TreeNode::isSchemaNode).collect(Collectors.toList());
 
             PdfStyle.Font bold = PdfStyle.Font.BOLD;
 
@@ -257,22 +262,25 @@ public class GeneratorServiceImpl implements GeneratorService {
 
 
             for (TreeNode schemaNode : schemaNodes) {
-                String schemaName = schemaNode.getSchemaName();
+
+                String schemaName = schemaNode.getLabel();
 
                 pdfBuilder.addParagraph("数据库名称 " + schemaName, bold, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
-                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .filter(data -> !data.isSchemaNode() && Objects.equals(data.getParentNodeId(), schemaNode.getNodeId()))
                         .collect(Collectors.toList());
 
                 List<Future<TableInfo>> futureList = new ArrayList<>();
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                String tableName = tableNode.getLabel();
+                                String tableComment = tableNode.getComment();
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -311,26 +319,28 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (!CollectionUtils.isEmpty(treeNodeList)) {
 
             //过滤出全部 Schema节点
-            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(TreeNode::isSchemaNode).collect(Collectors.toList());
 
             for (TreeNode schemaNode : schemaNodes) {
 
-                String schemaName = schemaNode.getSchemaName();
+                String schemaName = schemaNode.getLabel();
 
                 markDownBuilder.title("数据库名称 " + schemaName, MarkDownStyle.Title.THIRD);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
-                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .filter(data -> !data.isSchemaNode() && Objects.equals(data.getParentNodeId(), schemaNode.getNodeId()))
                         .collect(Collectors.toList());
 
                 List<Future<TableInfo>> futureList = new ArrayList<>();
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                String tableName = tableNode.getLabel();
+                                String tableComment = tableNode.getComment();
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -374,26 +384,28 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (!CollectionUtils.isEmpty(treeNodeList)) {
 
             //过滤出全部 Schema节点
-            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(TreeNode::isSchemaNode).collect(Collectors.toList());
 
             for (TreeNode schemaNode : schemaNodes) {
 
-                String schemaName = schemaNode.getSchemaName();
+                String schemaName = schemaNode.getLabel();
 
                 htmlBuilder.addParagraph("数据库名称 " + schemaName, bold, schemaNameFontSize, paddingBottom);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
-                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .filter(data -> !data.isSchemaNode() && Objects.equals(data.getParentNodeId(), schemaNode.getNodeId()))
                         .collect(Collectors.toList());
 
                 List<Future<TableInfo>> futureList = new ArrayList<>();
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                String tableName = tableNode.getLabel();
+                                String tableComment = tableNode.getComment();
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;

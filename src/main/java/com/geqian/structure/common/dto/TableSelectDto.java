@@ -1,5 +1,6 @@
 package com.geqian.structure.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -9,9 +10,11 @@ import lombok.Data;
 @Data
 public class TableSelectDto {
 
+    @JsonProperty("schemaName")
     private String schemaName;
 
-    private String parentKey;
+    @JsonProperty("parentNodeId")
+    private String parentNodeId;
 
 }
 

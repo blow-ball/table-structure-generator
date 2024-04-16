@@ -2,12 +2,11 @@ package com.geqian.structure.entity;
 
 /**
  * 数据库表基本信息
+ *
  * @author geqian
  * @date 21:13 2023/1/4
  */
 public class TableDefinition {
-
-    private String tableSchema;
 
     private String tableName;
 
@@ -16,19 +15,11 @@ public class TableDefinition {
     public TableDefinition() {
     }
 
-    public TableDefinition(String tableSchema, String tableName, String tableComment) {
-        this.tableSchema = tableSchema;
+    public TableDefinition(String tableName, String tableComment) {
         this.tableName = tableName;
         this.tableComment = tableComment;
     }
 
-    public String getTableSchema() {
-        return tableSchema;
-    }
-
-    public void setTableSchema(String tableSchema) {
-        this.tableSchema = tableSchema;
-    }
 
     public String getTableName() {
         return tableName;
@@ -48,8 +39,7 @@ public class TableDefinition {
 
     @Override
     public String toString() {
-        return "TableInfo{" +
-                "tableSchema='" + tableSchema + '\'' +
+        return "TableDefinition{" +
                 ", tableName='" + tableName + '\'' +
                 ", tableComment='" + tableComment + '\'' +
                 '}';

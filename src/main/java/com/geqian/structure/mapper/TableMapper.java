@@ -23,27 +23,6 @@ import java.util.List;
 public class TableMapper {
 
     /**
-     * 获取所有schema
-     *
-     * @return
-     * @throws Exception
-     */
-    public List<TreeNode> getTableTree() {
-        DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
-        String sql = databaseManager.getDatabases();
-        List<TreeNode> treeNodeList = JDBCHelper.selectList(sql, TreeNode.class);
-        for (TreeNode treeNode : treeNodeList) {
-            String schemaName = treeNode.getSchemaName();
-            String key = UUIDUtils.generateUUID();
-            treeNode.setKey(key);
-            treeNode.setLabel(schemaName);
-            List<TreeNode> tables = getTables(schemaName, key);
-            treeNode.setChildren(tables);
-        }
-        return treeNodeList;
-    }
-
-    /**
      * 获取所有Databases
      *
      * @return
@@ -54,11 +33,9 @@ public class TableMapper {
         String sql = databaseManager.getDatabases();
         List<TreeNode> treeNodeList = JDBCHelper.selectList(sql, TreeNode.class);
         for (TreeNode treeNode : treeNodeList) {
-            String schemaName = treeNode.getSchemaName();
-            String key = UUIDUtils.generateUUID();
-            treeNode.setKey(key);
-            treeNode.setLabel(schemaName);
-            treeNode.setTableCount(getTableCount(schemaName));
+            treeNode.setSchemaNode(true);
+            treeNode.setNodeId(UUIDUtils.generateUUID());
+            treeNode.setChildrenCount(getTableCount(treeNode.getLabel()));
         }
         return treeNodeList;
     }
@@ -72,15 +49,14 @@ public class TableMapper {
      * @throws Exception
      */
     @SneakyThrows(Exception.class)
-    public List<TreeNode> getTables(String schemaName, String parentKey) {
+    public List<TreeNode> getTables(String schemaName, String parentNodeId) {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTables();
         List<TreeNode> tableNodeList = JDBCHelper.selectList(sql, TreeNode.class, schemaName);
         for (TreeNode treeNode : tableNodeList) {
-            treeNode.setKey(UUIDUtils.generateUUID());
-            treeNode.setSchemaName(schemaName);
-            treeNode.setParentKey(parentKey);
-            treeNode.setLabel(treeNode.getTableName());
+            treeNode.setSchemaNode(false);
+            treeNode.setNodeId(UUIDUtils.generateUUID());
+            treeNode.setParentNodeId(parentNodeId);
         }
         return tableNodeList;
     }
