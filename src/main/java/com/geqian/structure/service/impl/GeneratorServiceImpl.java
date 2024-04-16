@@ -1,6 +1,5 @@
 package com.geqian.structure.service.impl;
 
-import cn.hutool.core.io.IoUtil;
 import com.geqian.document4j.common.annotation.TableField;
 import com.geqian.document4j.html.HTMLBuilder;
 import com.geqian.document4j.html.HTMLStyle;
@@ -10,6 +9,8 @@ import com.geqian.document4j.pdf.PDFBuilder;
 import com.geqian.document4j.pdf.PdfStyle;
 import com.geqian.document4j.word.WordBuilder;
 import com.geqian.document4j.word.WordStyle;
+import com.geqian.structure.bo.LabelAndValue;
+import com.geqian.structure.bo.TableInfo;
 import com.geqian.structure.common.ResponseResult;
 import com.geqian.structure.common.dto.TableSelectDto;
 import com.geqian.structure.common.dto.TargetTableDto;
@@ -21,8 +22,6 @@ import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TreeNode;
 import com.geqian.structure.mapper.TableMapper;
-import com.geqian.structure.bo.LabelAndValue;
-import com.geqian.structure.bo.TableInfo;
 import com.geqian.structure.service.GeneratorService;
 import com.geqian.structure.utils.ReflectionUtils;
 import com.itextpdf.text.PageSize;
@@ -35,6 +34,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.*;
@@ -58,12 +58,6 @@ public class GeneratorServiceImpl implements GeneratorService {
     private TableMapper tableMapper;
 
 
-    @Override
-    public ResponseResult<List<TreeNode>> selectTableStructure() {
-        return ResponseResult.success("");
-    }
-
-
     @SneakyThrows(Exception.class)
     @Override
     public void downloadPdf(TargetTableDto targetTableDto, HttpServletResponse response) {
@@ -76,58 +70,66 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         byte[] pdfBytes = buildPdfDocument(targetTableDto);
 
-        String filename = "表结构" + new Date().getTime() + ".pdf";
+        try (OutputStream out = response.getOutputStream()) {
 
-        //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
-        response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
-        //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-        IoUtil.write(response.getOutputStream(), true, pdfBytes);
+            String filename = "表结构" + new Date().getTime() + ".pdf";
+
+            //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
+            response.setHeader("content-type", "application/octet-stream");
+            response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+            //文件设置为附件
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+            out.write(pdfBytes);
+        }
     }
 
     @SneakyThrows(Exception.class)
     @Override
     public void downloadWord(TargetTableDto targetTableDto, HttpServletResponse response) {
-
         byte[] wordBytes = buildWordDocument(targetTableDto);
-
-        String filename = "表结构" + new Date().getTime() + ".docx";
-
-        response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
-        //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-        IoUtil.write(response.getOutputStream(), true, wordBytes);
+        try (OutputStream out = response.getOutputStream()) {
+            String filename = "表结构" + new Date().getTime() + ".docx";
+            response.setHeader("content-type", "application/octet-stream");
+            response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+            //文件设置为附件
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+            out.write(wordBytes);
+        }
     }
 
     @SneakyThrows(Exception.class)
     @Override
     public void downloadHtml(TargetTableDto targetTableDto, HttpServletResponse response) {
 
-        byte[] wordBytes = buildHtmlDocument(targetTableDto);
+        byte[] htmlBytes = buildHtmlDocument(targetTableDto);
 
-        String filename = "表结构" + new Date().getTime() + ".html";
+        try (OutputStream out = response.getOutputStream()) {
 
-        response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
-        //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-        IoUtil.write(response.getOutputStream(), true, wordBytes);
+            String filename = "表结构" + new Date().getTime() + ".html";
+
+            response.setHeader("content-type", "application/octet-stream");
+            response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+            //文件设置为附件
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+
+            out.write(htmlBytes);
+        }
     }
 
     @SneakyThrows(Exception.class)
     @Override
     public void downloadMarkdown(TargetTableDto targetTableDto, HttpServletResponse response) {
 
-        byte[] mdBytes = buildMdDocument(targetTableDto);
-        String filename = "表结构" + new Date().getTime() + ".md";
+        try (OutputStream out = response.getOutputStream()) {
+            byte[] mdBytes = buildMdDocument(targetTableDto);
+            String filename = "表结构" + new Date().getTime() + ".md";
 
-        response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
-        //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-        IoUtil.write(response.getOutputStream(), true, mdBytes);
+            response.setHeader("content-type", "application/octet-stream");
+            response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+            //文件设置为附件
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+            out.write(mdBytes);
+        }
     }
 
     @Override
@@ -195,7 +197,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             for (TreeNode schemaNode : schemaNodes) {
 
-                String schemaName = schemaNode.getLabel();
+                String schemaName = schemaNode.getLabelName();
 
                 wordBuilder.addParagraph("数据库名称 " + schemaName, calibri, bold, titleFontSize);
 
@@ -208,8 +210,8 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
-                                String tableName = tableNode.getLabel();
-                                String tableComment = tableNode.getComment();
+                                String tableName = tableNode.getLabelName();
+                                String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
                                 TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
                                 tableDefinition.setTableName(tableName);
@@ -263,7 +265,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             for (TreeNode schemaNode : schemaNodes) {
 
-                String schemaName = schemaNode.getLabel();
+                String schemaName = schemaNode.getLabelName();
 
                 pdfBuilder.addParagraph("数据库名称 " + schemaName, bold, titleFontSize);
 
@@ -276,8 +278,8 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
-                                String tableName = tableNode.getLabel();
-                                String tableComment = tableNode.getComment();
+                                String tableName = tableNode.getLabelName();
+                                String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
                                 TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
                                 List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
@@ -323,7 +325,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             for (TreeNode schemaNode : schemaNodes) {
 
-                String schemaName = schemaNode.getLabel();
+                String schemaName = schemaNode.getLabelName();
 
                 markDownBuilder.title("数据库名称 " + schemaName, MarkDownStyle.Title.THIRD);
 
@@ -336,8 +338,8 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
-                                String tableName = tableNode.getLabel();
-                                String tableComment = tableNode.getComment();
+                                String tableName = tableNode.getLabelName();
+                                String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
                                 TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
                                 List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
@@ -388,7 +390,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
             for (TreeNode schemaNode : schemaNodes) {
 
-                String schemaName = schemaNode.getLabel();
+                String schemaName = schemaNode.getLabelName();
 
                 htmlBuilder.addParagraph("数据库名称 " + schemaName, bold, schemaNameFontSize, paddingBottom);
 
@@ -401,8 +403,8 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
-                                String tableName = tableNode.getLabel();
-                                String tableComment = tableNode.getComment();
+                                String tableName = tableNode.getLabelName();
+                                String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
                                 TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
                                 List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);

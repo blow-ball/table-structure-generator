@@ -15,8 +15,6 @@ import java.util.List;
  */
 public interface GeneratorService {
 
-    ResponseResult<List<TreeNode>> selectTableStructure();
-
     void preview(TargetTableDto targetTableDto, HttpServletResponse response);
 
     void downloadPdf(TargetTableDto targetTableDto, HttpServletResponse response);

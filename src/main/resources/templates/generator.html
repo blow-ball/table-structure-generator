@@ -106,7 +106,7 @@
             defaultColumns: [],
             defaultProps: {
                 children: 'children',
-                label: 'label'
+                label: 'labelName'
             },
             pdf: ''
         },
@@ -176,7 +176,7 @@
                 });
             },
             getTables(data) {
-                let schemaName = data.label;
+                let schemaName = data.labelName;
                 let parentNodeId = data.nodeId;
                 return new Promise((resolve, reject) => {
                     axios.get('/document/getTables', {params: {parentNodeId, schemaName}}).then(res => {

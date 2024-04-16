@@ -37,7 +37,7 @@ public abstract class TableStructure implements WordTableInterceptor, PDFTableIn
     private String columnType;
 
 
-    @TableField(value = "允许空值", order = 4, exclude = true)
+    @TableField(value = "允许空值", order = 4, exclude = true, enums = {"Y->YES", "N->NO"})
     private String isNullable;
 
 

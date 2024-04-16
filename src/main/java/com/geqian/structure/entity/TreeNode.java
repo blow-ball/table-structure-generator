@@ -17,9 +17,9 @@ public class TreeNode {
 
     private String parentNodeId;
 
-    private String label;
+    private String labelName;
 
-    private String comment;
+    private String description;
 
     private List<TreeNode> children;
 

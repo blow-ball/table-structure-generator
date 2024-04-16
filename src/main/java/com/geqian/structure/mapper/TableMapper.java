@@ -35,7 +35,7 @@ public class TableMapper {
         for (TreeNode treeNode : treeNodeList) {
             treeNode.setSchemaNode(true);
             treeNode.setNodeId(UUIDUtils.generateUUID());
-            treeNode.setChildrenCount(getTableCount(treeNode.getLabel()));
+            treeNode.setChildrenCount(getTableCount(treeNode.getLabelName()));
         }
         return treeNodeList;
     }

@@ -111,7 +111,7 @@ public class JDBCHelper {
                     Field field = entry.getValue();
                     Object value = null;
                     try {
-                        value = resultSet.getObject(columnName);
+                        value = resultSet.getObject(columnName, field.getType());
                         field.set(instance, value);
                     } catch (IllegalArgumentException e) {
                         field.set(instance, Convert.convert(field.getType(), value));

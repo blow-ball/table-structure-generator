@@ -23,13 +23,6 @@ public class GeneratorController {
     @Resource
     private GeneratorService generatorService;
 
-    @ResponseBody
-    @GetMapping("/getTableTree")
-    public ResponseResult<List<TreeNode>> getTableTree() {
-        return generatorService.selectTableStructure();
-    }
-
-
     @GetMapping("/getTableColumnInfo")
     public ResponseResult<ColumnsVo> getTableColumnInfo() {
         return generatorService.getTableColumnInfo();

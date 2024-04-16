@@ -19,6 +19,15 @@
     <dependencies>
 
         <dependency>
+            <groupId>dm.jdbc</groupId>
+            <artifactId>DmJdbcDriver18</artifactId>
+            <version>8.1.1.87</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/DmJdbcDriver18.jar</systemPath>
+        </dependency>
+
+
+        <dependency>
             <groupId>com.geqian</groupId>
             <artifactId>document4j</artifactId>
             <version>1.0.0</version>
@@ -79,11 +88,6 @@
             <artifactId>mariadb-java-client</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.7.22</version>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -96,6 +100,11 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.22</version>
+        </dependency>
 
         <dependency>
             <groupId>org.yaml</groupId>
