@@ -1,6 +1,6 @@
 package com.geqian.structure.entity;
 
-import com.geqian.structure.utils.PackageScanner;
+import com.geqian.structure.utils.ClassResourceScanner;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
@@ -24,25 +24,18 @@ public class TableStructureFactory {
 
     private static void init() {
 
-        PackageScanner packageScanner = new PackageScanner();
+        ClassResourceScanner classScanner = new ClassResourceScanner();
 
-        Predicate<String> typeFilter = className -> {
-            try {
-                return Class.forName(className).getSuperclass() == TableStructure.class;
-            } catch (ClassNotFoundException e) {
-                return false;
-            }
-        };
-        List<String> classes = packageScanner.scanPackage("com.geqian.structure.entity", typeFilter);
-        if (!CollectionUtils.isEmpty(classes)) {
+        Predicate<ClassResourceScanner.ClassResourceWrapper> typeFilter = wrapper -> wrapper.isClass() && TableStructure.class.isAssignableFrom(wrapper.getType());
+
+        List<ClassResourceScanner.ClassResourceWrapper> wrappers = classScanner.doScan("com.geqian.structure.entity", typeFilter);
+
+        if (!CollectionUtils.isEmpty(wrappers)) {
             tableStructureMap = new HashMap<>();
-            for (String className : classes) {
-                try {
-                    Class<? extends TableStructure> type = (Class<? extends TableStructure>) Class.forName(className);
-                    String key = type.getSimpleName().replace("TableStructure", "").toLowerCase();
-                    tableStructureMap.put(key, () -> type);
-                } catch (ClassNotFoundException ignored) {
-                }
+            for (ClassResourceScanner.ClassResourceWrapper wrapper : wrappers) {
+                Class<? extends TableStructure> type = (Class<? extends TableStructure>) wrapper.getType();
+                String key = type.getSimpleName().replace("TableStructure", "").toLowerCase();
+                tableStructureMap.put(key, () -> type);
             }
         }
     }
