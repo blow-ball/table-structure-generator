@@ -1,6 +1,5 @@
 package com.geqian.structure.utils;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-@Slf4j
 public class ClassResourceScanner {
 
     /**
@@ -133,15 +131,9 @@ public class ClassResourceScanner {
             if (resource != null) {
                 try {
                     String classpath = Objects.requireNonNull(this.getClass().getResource("/")).getPath();
-
-                    log.info("类型路径:{}", classpath);
-
                     String path = resource.getURL().getPath().substring(classpath.length()).replace("/", ".");
                     String fullClassName = path.substring(0, path.length() - 6);
                     this.type = Class.forName(fullClassName);
-
-                    log.info("加载bean:{}", fullClassName);
-
                 } catch (Exception ignore) {
                 }
             }
