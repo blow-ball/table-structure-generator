@@ -71,17 +71,15 @@ public abstract class TableStructure implements WordTableInterceptor, PDFTableIn
         return getFields(type);
     }
 
+
+
     private List<Field> getFields(Class<?> objectType) {
-
         List<Class<?>> classes = new ArrayList<>();
-
         Class<?> classType = objectType;
-
         while (!Objects.equals(classType, Object.class)) {
             classes.add(classType);
             classType = classType.getSuperclass();
         }
-
         return classes.stream()
                 .map(pojoClass -> Stream.of(pojoClass.getDeclaredFields()).collect(Collectors.toList()))
                 .flatMap(Collection::stream)
