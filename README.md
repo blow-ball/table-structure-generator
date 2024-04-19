@@ -19,8 +19,8 @@
 
 - 采用 Vue2 作为基础框架
 - 采用 Element ui 作为组件库
-<br>
-<br>
+  <br>
+  <br>
 
 ## 优势
 
@@ -53,7 +53,7 @@
 - PDF
 - Markdown
 - HTML
-<br>
+  <br>
 
 ## 项目演示
 
@@ -108,16 +108,24 @@
 <br>
 <br>
 
-
 ## 赞赏
-<img src="./src/main/resources/static/images/appreciation-code.jpg" alt="赞赏码" height="240">
+
+<div style="border: 1px solid #e5e5e4;">
+<img src="./src/main/resources/static/images/appreciation-code.jpg" alt="赞赏码" width="300">
+</div>
+
 <br>
 <br>
 
 ## 联系我
-<img src="./src/main/resources/static/images/wechat.jpg" alt="微信二维码" height="300">
+
+<div style="border: 1px solid #e5e5e4;">
+<img src="./src/main/resources/static/images/wechat.jpg" alt="微信二维码" width="300">
+</div>
+
 <br>
 <br>
 
 ## 参考说明
+
 数据库连接页面布局参考至：https://gitee.com/pomz/database-export
