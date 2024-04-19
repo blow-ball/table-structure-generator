@@ -110,18 +110,14 @@
 
 ## 赞赏
 
-<div style="border: 1px solid #e5e5e4;">
-<img src="./src/main/resources/static/images/appreciation-code.jpg" alt="赞赏码" width="300">
-</div>
+<img src="./src/main/resources/static/images/appreciation-code.jpg" style="border: 1px solid #e5e5e4;" alt="赞赏码" height="270">
 
 <br>
 <br>
 
 ## 联系我
 
-<div style="border: 1px solid #e5e5e4;">
-<img src="./src/main/resources/static/images/wechat.jpg" alt="微信二维码" width="300">
-</div>
+<img src="./src/main/resources/static/images/wechat.jpg" style="border: 1px solid #e5e5e4;" alt="微信二维码" height="300">
 
 <br>
 <br>
