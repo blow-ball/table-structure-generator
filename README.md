@@ -59,31 +59,35 @@
 
 **1. 数据库连接**
 
-![image-20230719021014570](./src/main/resources/static/images/数据库连接.png)  
-<br>
+![image-20230719021014570](./src/main/resources/static/images/数据库连接.png)
 
 **2. 文档预览**
 ![image-20230719021014570](./src/main/resources/static/images/文档预览.png)
+<br>
 <br>
 
 **3. 选择导出列名**
 
 ![image-20230719013433699](./src/main/resources/static/images/选择列名.png)  
 <br>
+<br>
 
 **4. 下载pdf文档**
 
 ![image-20230719013337074](./src/main/resources/static/images/pdf文档.png)
+<br>
 <br>
 
 **5. 下载word文档**
 
 ![image-20230719013403179](./src/main/resources/static/images/word文档.png)  
 <br>
+<br>
 
 **6. 下载markdown文档**
 
 ![image-20230719013403179](./src/main/resources/static/images/markdown文档.png)  
+<br>
 <br>
 
 **7. 下载HTML文档**
