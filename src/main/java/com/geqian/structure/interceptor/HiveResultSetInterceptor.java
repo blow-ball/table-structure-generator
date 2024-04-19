@@ -4,6 +4,7 @@ import com.geqian.structure.entity.TreeNode;
 import com.geqian.structure.jdbc.ResultSetInterceptor;
 
 import java.sql.ResultSet;
+import java.util.List;
 
 /**
  * @author geqian
@@ -20,7 +21,7 @@ public class HiveResultSetInterceptor implements ResultSetInterceptor<TreeNode> 
 
 
     @Override
-    public TreeNode intercept(ResultSet resultSet) {
+    public List<TreeNode> intercept(ResultSet resultSet) {
         return null;
     }
 
