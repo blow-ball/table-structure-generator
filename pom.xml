@@ -26,7 +26,6 @@
             <systemPath>${project.basedir}/src/main/resources/lib/document4j-1.0.0.jar</systemPath>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -103,10 +102,6 @@
             <version>5.7.22</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-        </dependency>
 
     </dependencies>
 
