@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -67,13 +68,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     @SneakyThrows(Exception.class)
     @Override
     public void preview(TargetTableDto targetTableDto, HttpServletResponse response) {
-
         byte[] pdfBytes = buildPdfDocument(targetTableDto);
-
         try (OutputStream out = response.getOutputStream()) {
-
-            String filename = "表结构" + new Date().getTime() + ".pdf";
-
+            String filename = "表结构文档_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".pdf";
             //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
             response.setHeader("content-type", "application/octet-stream");
             response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
@@ -88,7 +85,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     public void downloadWord(TargetTableDto targetTableDto, HttpServletResponse response) {
         byte[] wordBytes = buildWordDocument(targetTableDto);
         try (OutputStream out = response.getOutputStream()) {
-            String filename = "表结构" + new Date().getTime() + ".docx";
+            String filename = "表结构文档_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".docx";
             response.setHeader("content-type", "application/octet-stream");
             response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
             //文件设置为附件
@@ -100,13 +97,9 @@ public class GeneratorServiceImpl implements GeneratorService {
     @SneakyThrows(Exception.class)
     @Override
     public void downloadHtml(TargetTableDto targetTableDto, HttpServletResponse response) {
-
         byte[] htmlBytes = buildHtmlDocument(targetTableDto);
-
         try (OutputStream out = response.getOutputStream()) {
-
-            String filename = "表结构" + new Date().getTime() + ".html";
-
+            String filename = "表结构文档_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".html";
             response.setHeader("content-type", "application/octet-stream");
             response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
             //文件设置为附件
@@ -116,14 +109,13 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
     }
 
+
     @SneakyThrows(Exception.class)
     @Override
     public void downloadMarkdown(TargetTableDto targetTableDto, HttpServletResponse response) {
-
         try (OutputStream out = response.getOutputStream()) {
             byte[] mdBytes = buildMdDocument(targetTableDto);
-            String filename = "表结构" + new Date().getTime() + ".md";
-
+            String filename = "表结构文档_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".md";
             response.setHeader("content-type", "application/octet-stream");
             response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
             //文件设置为附件
@@ -228,7 +220,9 @@ public class GeneratorServiceImpl implements GeneratorService {
                 for (Future<TableInfo> future : futureList) {
                     TableInfo tableInfo = future.get();
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
-                    wordBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment()) ? tableDefinition.getTableName() : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), calibri, tableNameFontSize);
+                    wordBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
+                            ? tableDefinition.getTableName()
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), calibri, tableNameFontSize);
                     wordBuilder.addTable(tableInfo.getDataList(), calibri, cellFontSize);
                     wordBuilder.addCarriageReturn().addCarriageReturn();
                 }
@@ -297,8 +291,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                     pdfBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableNameFontSize, paragraphSpacing);
-
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), tableNameFontSize, paragraphSpacing);
                     pdfBuilder.addTable(tableInfo.getDataList(), cellFontSize);
                     pdfBuilder.addCarriageReturn();
                     pdfBuilder.addCarriageReturn();
@@ -356,7 +349,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
                     markDownBuilder.text(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), MarkDownStyle.Font.BOLD);
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), MarkDownStyle.Font.BOLD);
                     markDownBuilder.table(tableInfo.getDataList(), MarkDownStyle.CellAlignment.LEFT);
                     markDownBuilder.blankRow();
                     markDownBuilder.blankRow();
@@ -421,7 +414,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
                     htmlBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), bold, tableNameFontSize, paddingBottom);
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), bold, tableNameFontSize, paddingBottom);
                     htmlBuilder.addTable(tableInfo.getDataList());
                     htmlBuilder.blankRow();
                     htmlBuilder.blankRow();
