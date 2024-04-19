@@ -15,13 +15,13 @@ public class HiveResultSetInterceptor implements ResultSetInterceptor<TreeNode> 
 
     @Override
     public boolean support(String sql) {
-        return sql.matches("");
+        return false;
     }
+
 
     @Override
     public TreeNode intercept(ResultSet resultSet) {
         return null;
     }
-
 
 }
