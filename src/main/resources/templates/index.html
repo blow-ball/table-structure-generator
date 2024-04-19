@@ -239,7 +239,7 @@
         mounted() {
             document.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
-                    this.connection();
+                    this.submitForm('ruleForm')
                 }
             });
         },
@@ -277,8 +277,10 @@
                 this.loading = true
                 axios.post('/dataSource/connection', this.form).then(res => {
                     if (res.data.code === 200) {
-                        window.location.href = '/generator';
                         this.showMessage('success', res.data.message)
+                        setTimeout(() => {
+                            window.location.href = '/generator';
+                        }, 500)
                     } else {
                         this.showMessage('error', res.data.message)
                     }
