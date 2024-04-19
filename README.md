@@ -19,8 +19,8 @@
 
 - 采用 Vue2 作为基础框架
 - 采用 Element ui 作为组件库
-  <br>
-  <br>
+<br>
+<br>
 
 ## 优势
 
@@ -53,7 +53,7 @@
 - PDF
 - Markdown
 - HTML
-  <br>
+<br>
 
 ## 项目演示
 
@@ -109,17 +109,13 @@
 <br>
 
 
-## 赞赏与联系我
+## 赞赏
+<img src="./src/main/resources/static/images/appreciation-code.jpg" alt="赞赏码" height="240">
+<br>
+<br>
 
-<div>
-    <div style="border: 1px solid #e5e5e4;display: inline-block">
-        <img src="./src/main/resources/static/images/appreciation-code.jpg" alt="赞赏码" height="300">
-    </div>
-    <div style="border: 1px solid #e5e5e4;display: inline-block;margin-left: 50px">
-        <img src="./src/main/resources/static/images/wechat.jpg" alt="微信二维码" height="300">
-    </div>
-</div>
-
+## 联系我
+<img src="./src/main/resources/static/images/wechat.jpg" alt="微信二维码" height="300">
 <br>
 <br>
 
