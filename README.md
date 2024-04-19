@@ -110,7 +110,8 @@
 
 ## 赞赏
 
-<img src="./src/main/resources/static/images/appreciation-code.jpg" style="border: 1px solid #e5e5e4;" alt="赞赏码" height="270">
+![Example Image](./src/main/resources/static/images/appreciation-code.jpg){width=300px height=200px}
+
 
 <br>
 <br>
