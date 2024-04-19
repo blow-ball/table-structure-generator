@@ -2,7 +2,7 @@ package com.geqian.structure.service.impl;
 
 import com.geqian.structure.common.ResponseResult;
 import com.geqian.structure.common.dto.ConnectionInfoDto;
-import com.geqian.structure.db.DruidConnectionManager;
+import com.geqian.structure.jdbc.DruidConnectionManager;
 import com.geqian.structure.service.ConnectionService;
 import org.springframework.stereotype.Service;
 

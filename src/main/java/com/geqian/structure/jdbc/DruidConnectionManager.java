@@ -1,8 +1,11 @@
-package com.geqian.structure.db;
+package com.geqian.structure.jdbc;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.geqian.structure.common.dto.ConnectionInfoDto;
+import com.geqian.structure.db.CurrentDatabaseManager;
+import com.geqian.structure.db.DatabaseManager;
+import com.geqian.structure.db.DatabaseManagerFactory;
 
 import java.sql.Connection;
 import java.util.Properties;

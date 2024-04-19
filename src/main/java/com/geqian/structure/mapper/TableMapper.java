@@ -2,8 +2,8 @@ package com.geqian.structure.mapper;
 
 import com.geqian.structure.db.CurrentDatabaseManager;
 import com.geqian.structure.db.DatabaseManager;
-import com.geqian.structure.db.DruidConnectionManager;
-import com.geqian.structure.utils.JDBCHelper;
+import com.geqian.structure.jdbc.DruidConnectionManager;
+import com.geqian.structure.jdbc.JDBCHelper;
 import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TableDefinition;
@@ -12,6 +12,7 @@ import com.geqian.structure.utils.UUIDUtils;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +23,10 @@ import java.util.List;
 @Component
 public class TableMapper {
 
+
+    @Resource
+    private JDBCHelper jdbcHelper;
+
     /**
      * 获取所有Databases
      *
@@ -31,7 +36,7 @@ public class TableMapper {
     public List<TreeNode> getDatabases() {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getDatabases();
-        List<TreeNode> treeNodeList = JDBCHelper.selectList(sql, TreeNode.class);
+        List<TreeNode> treeNodeList = jdbcHelper.selectList(sql, TreeNode.class);
         for (TreeNode treeNode : treeNodeList) {
             treeNode.setSchemaNode(true);
             treeNode.setNodeId(UUIDUtils.generateUUID());
@@ -52,7 +57,7 @@ public class TableMapper {
     public List<TreeNode> getTables(String schemaName, String parentNodeId) {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTables();
-        List<TreeNode> tableNodeList = JDBCHelper.selectList(sql, TreeNode.class, schemaName);
+        List<TreeNode> tableNodeList = jdbcHelper.selectList(sql, TreeNode.class, schemaName);
         for (TreeNode treeNode : tableNodeList) {
             treeNode.setSchemaNode(false);
             treeNode.setNodeId(UUIDUtils.generateUUID());
@@ -72,7 +77,7 @@ public class TableMapper {
     public Integer getTableCount(String schemaName) {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTables();
-        List<TreeNode> tableNodeList = JDBCHelper.selectList(sql, TreeNode.class, schemaName);
+        List<TreeNode> tableNodeList = jdbcHelper.selectList(sql, TreeNode.class, schemaName);
         return tableNodeList.size();
     }
 
@@ -88,7 +93,7 @@ public class TableMapper {
     public TableDefinition getTableInfo(String schemaName, String tableName) {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTableInfo();
-        return JDBCHelper.selectOne(sql, TableDefinition.class, schemaName, tableName);
+        return jdbcHelper.selectOne(sql, TableDefinition.class, schemaName, tableName);
     }
 
 
@@ -107,7 +112,7 @@ public class TableMapper {
         if (classType != null) {
             DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
             String sql = databaseManager.getTableStructure();
-            List<? extends TableStructure> tableStructures = JDBCHelper.selectList(sql, classType, schemaName, tableName);
+            List<? extends TableStructure> tableStructures = jdbcHelper.selectList(sql, classType, schemaName, tableName);
             for (int i = 0; i < tableStructures.size(); i++) {
                 tableStructures.get(i).setNumber(i + 1);
             }

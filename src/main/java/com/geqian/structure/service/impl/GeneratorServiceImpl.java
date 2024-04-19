@@ -16,7 +16,7 @@ import com.geqian.structure.common.dto.TableSelectDto;
 import com.geqian.structure.common.dto.TargetTableDto;
 import com.geqian.structure.common.vo.ColumnsVo;
 import com.geqian.structure.db.DefaultColumnManager;
-import com.geqian.structure.db.DruidConnectionManager;
+import com.geqian.structure.jdbc.DruidConnectionManager;
 import com.geqian.structure.entity.TableDefinition;
 import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;

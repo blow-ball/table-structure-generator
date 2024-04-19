@@ -1,11 +1,13 @@
-package com.geqian.structure.utils;
+package com.geqian.structure.jdbc;
 
 import cn.hutool.core.convert.Convert;
 import com.geqian.structure.annotation.Column;
-import com.geqian.structure.db.DruidConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.*;
@@ -22,9 +24,27 @@ import java.util.stream.Stream;
  * @author geqian
  * @date 18:06 2023/11/11
  */
+@Component
 public class JDBCHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(JDBCHelper.class);
+    private final Logger log = LoggerFactory.getLogger(JDBCHelper.class);
+
+    @Autowired(required = false)
+    private List<JDBCInterceptor> interceptors;
+
+
+    @PostConstruct
+    public void init() {
+        if (interceptors == null) {
+            interceptors = Collections.emptyList();
+        }
+    }
+
+    public void addInterceptor(JDBCInterceptor interceptor) {
+        interceptors.add(interceptor);
+    }
+
+
 
     /**
      * 通用查询单条数据方法
@@ -33,7 +53,7 @@ public class JDBCHelper {
      * @param args       参数
      * @param resultType 返回值类型
      */
-    public static <T> T selectOne(String sql, Class<T> resultType, Object... args) {
+    public <T> T selectOne(String sql, Class<T> resultType, Object... args) {
         List<T> results = selectList(sql, resultType, args);
         if (results.isEmpty()) {
             return null;
@@ -50,7 +70,7 @@ public class JDBCHelper {
      * @param args       参数列表
      * @param resultType 返回值类型
      */
-    public static <T> List<T> selectList(String sql, Class<T> resultType, Object... args) {
+    public <T> List<T> selectList(String sql, Class<T> resultType, Object... args) {
 
         PreparedStatement ps = null;
 
@@ -98,6 +118,16 @@ public class JDBCHelper {
 
             //执行并获取结果集
             ResultSet resultSet = ps.executeQuery();
+
+            for (JDBCInterceptor interceptor : interceptors) {
+                if (interceptor instanceof ResultSetInterceptor) {
+                    ResultSetInterceptor<?> resultSetInterceptor = (ResultSetInterceptor<?>) interceptor;
+                    if (resultSetInterceptor.support(sql)) {
+                        return (List<T>) resultSetInterceptor.intercept(resultSet);
+                    }
+                }
+            }
+
             //获取结果集元数据
             ResultSetMetaData metaData = resultSet.getMetaData();
             //列名与属性映射关系
@@ -137,7 +167,7 @@ public class JDBCHelper {
      * @param sql  sql语句
      * @param args 参数
      */
-    public static int update(String sql, Object... args) {
+    public int update(String sql, Object... args) {
         return executeUpdate(sql, args);
     }
 
@@ -147,7 +177,7 @@ public class JDBCHelper {
      * @param sql  sql语句
      * @param args 参数
      */
-    public static int delete(String sql, Object... args) {
+    public int delete(String sql, Object... args) {
         return executeUpdate(sql, args);
     }
 
@@ -158,7 +188,7 @@ public class JDBCHelper {
      * @param sql  sql语句
      * @param args 参数
      */
-    public static int insert(String sql, Object... args) {
+    public int insert(String sql, Object... args) {
         return executeUpdate(sql, args);
     }
 
@@ -169,7 +199,7 @@ public class JDBCHelper {
      * @param sql  sql语句
      * @param args 参数
      */
-    private static int executeUpdate(String sql, Object... args) {
+    private int executeUpdate(String sql, Object... args) {
         PreparedStatement ps = null;
         //影响数据条数
         int affectedRows = 0;
@@ -237,7 +267,7 @@ public class JDBCHelper {
      * @param metaData    表元信息
      * @return
      */
-    private static Map<String, Field> columnFieldMapping(Class<?> objectClass, ResultSetMetaData metaData) {
+    private Map<String, Field> columnFieldMapping(Class<?> objectClass, ResultSetMetaData metaData) {
 
         // 保证遍历时的顺序添加数据顺序（标注 Column 的注解的列名获取的值为映射属性的最终结果）
         Map<String, Field> columnFieldMapping = new LinkedHashMap<>();
@@ -277,7 +307,7 @@ public class JDBCHelper {
      * @param input
      * @return
      */
-    private static String underlineToSmallHump(String input) {
+    private String underlineToSmallHump(String input) {
         StringBuilder sb = new StringBuilder();
         String[] parts = input.split("_");
         for (int i = 0; i < parts.length; i++) {
@@ -297,7 +327,7 @@ public class JDBCHelper {
      *
      * @param statement
      */
-    private static void closeResource(Statement statement, Connection connection) {
+    private void closeResource(Statement statement, Connection connection) {
         try {
             if (statement != null) {
                 statement.close();
@@ -311,7 +341,7 @@ public class JDBCHelper {
     }
 
 
-    private static int getCharacterCount(String str, char target) {
+    private int getCharacterCount(String str, char target) {
         int count = 0;
         for (char c : str.toCharArray()) {
             if (c == target) {
@@ -329,7 +359,7 @@ public class JDBCHelper {
      * @param condition
      * @return
      */
-    private static Map<String, Field> getFieldMapContainSuperclass(Class<?> classType, Predicate<Field> condition) {
+    private Map<String, Field> getFieldMapContainSuperclass(Class<?> classType, Predicate<Field> condition) {
 
         List<Class<?>> classes = new ArrayList<>();
 
@@ -356,7 +386,7 @@ public class JDBCHelper {
      * @param valueGroupIndex 值分组下标
      * @return
      */
-    public static List<Map.Entry<String, String>> findExpressions(String str, String regex, int keyGroupIndex, int valueGroupIndex) {
+    public List<Map.Entry<String, String>> findExpressions(String str, String regex, int keyGroupIndex, int valueGroupIndex) {
         Pattern compile = Pattern.compile(regex);
         Matcher matcher = compile.matcher(str);
         List<Map.Entry<String, String>> expressions = new ArrayList<>();
@@ -376,10 +406,9 @@ public class JDBCHelper {
      * @param replacement 替换字符串
      * @return
      */
-    private static String replaceFirst(String original, String search, String replacement) {
+    private String replaceFirst(String original, String search, String replacement) {
         // 寻找第一个匹配的字符串的位置
         int index = original.indexOf(search);
-
         // 如果找不到匹配的字符串，则返回原始字符串
         if (index == -1) {
             return original;
