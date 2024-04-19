@@ -1,6 +1,7 @@
 package com.geqian.structure.jdbc;
 
 import java.sql.ResultSet;
+import java.util.List;
 
 /**
  * @author geqian
@@ -8,8 +9,17 @@ import java.sql.ResultSet;
  */
 public interface ResultSetInterceptor<T> extends JDBCInterceptor {
 
+    /**
+     * @param productName 数据库产品名称
+     * @param sql         执行的sql语句
+     * @return
+     */
     boolean support(String productName, String sql);
 
-    T intercept(ResultSet resultSet);
+    /**
+     * @param resultSet sql执行结果集
+     * @return 最终查询结果
+     */
+    List<T> intercept(ResultSet resultSet);
 
 }
