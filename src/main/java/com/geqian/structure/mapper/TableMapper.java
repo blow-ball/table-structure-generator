@@ -3,7 +3,7 @@ package com.geqian.structure.mapper;
 import com.geqian.structure.db.CurrentDatabaseManager;
 import com.geqian.structure.db.DatabaseManager;
 import com.geqian.structure.db.DruidConnectionManager;
-import com.geqian.structure.utils.JDBCUtils;
+import com.geqian.structure.utils.JDBCHelper;
 import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TableDefinition;
@@ -23,47 +23,57 @@ import java.util.List;
 public class TableMapper {
 
     /**
-     * 获取所有schema
+     * 获取所有Databases
      *
      * @return
      * @throws Exception
      */
-    public List<TreeNode> getTableTree() {
+    public List<TreeNode> getDatabases() {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getDatabases();
-        List<TreeNode> treeNodeList = JDBCUtils.selectList(sql, TreeNode.class);
+        List<TreeNode> treeNodeList = JDBCHelper.selectList(sql, TreeNode.class);
         for (TreeNode treeNode : treeNodeList) {
-            String schemaName = treeNode.getSchemaName();
-            String key = UUIDUtils.generateUUID();
-            treeNode.setKey(key);
-            treeNode.setSchemaName(schemaName);
-            treeNode.setLabel(schemaName);
-            List<TreeNode> tables = getTables(schemaName, key);
-            treeNode.setChildren(tables);
+            treeNode.setSchemaNode(true);
+            treeNode.setNodeId(UUIDUtils.generateUUID());
+            treeNode.setChildrenCount(getTableCount(treeNode.getLabelName()));
         }
         return treeNodeList;
     }
 
 
     /**
-     * 获取指定schema下所有表名
+     * 获取指定 database下所有表名
      *
      * @param schemaName
      * @return
      * @throws Exception
      */
     @SneakyThrows(Exception.class)
-    public List<TreeNode> getTables(String schemaName, String parentKey) {
+    public List<TreeNode> getTables(String schemaName, String parentNodeId) {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTables();
-        List<TreeNode> tableNodeList = JDBCUtils.selectList(sql, TreeNode.class, schemaName);
+        List<TreeNode> tableNodeList = JDBCHelper.selectList(sql, TreeNode.class, schemaName);
         for (TreeNode treeNode : tableNodeList) {
-            treeNode.setKey(UUIDUtils.generateUUID());
-            treeNode.setSchemaName(schemaName);
-            treeNode.setParentKey(parentKey);
-            treeNode.setLabel(treeNode.getTableName());
+            treeNode.setSchemaNode(false);
+            treeNode.setNodeId(UUIDUtils.generateUUID());
+            treeNode.setParentNodeId(parentNodeId);
         }
         return tableNodeList;
+    }
+
+    /**
+     * 获取指定 database下所有表名
+     *
+     * @param schemaName
+     * @return
+     * @throws Exception
+     */
+    @SneakyThrows(Exception.class)
+    public Integer getTableCount(String schemaName) {
+        DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
+        String sql = databaseManager.getTables();
+        List<TreeNode> tableNodeList = JDBCHelper.selectList(sql, TreeNode.class, schemaName);
+        return tableNodeList.size();
     }
 
 
@@ -78,7 +88,7 @@ public class TableMapper {
     public TableDefinition getTableInfo(String schemaName, String tableName) {
         DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
         String sql = databaseManager.getTableInfo();
-        return JDBCUtils.selectOne(sql, TableDefinition.class, schemaName, tableName);
+        return JDBCHelper.selectOne(sql, TableDefinition.class, schemaName, tableName);
     }
 
 
@@ -94,10 +104,10 @@ public class TableMapper {
     public List<? extends TableStructure> getTableStructureList(String schemaName, String tableName) {
         String databaseType = DruidConnectionManager.getConnectionInfo().getDatabaseType();
         Class<? extends TableStructure> classType = TableStructureFactory.getTableStructureType(databaseType);
-        if (classType != null){
+        if (classType != null) {
             DatabaseManager databaseManager = CurrentDatabaseManager.getDatabaseManager();
             String sql = databaseManager.getTableStructure();
-            List<? extends TableStructure> tableStructures = JDBCUtils.selectList(sql, classType, schemaName, tableName);
+            List<? extends TableStructure> tableStructures = JDBCHelper.selectList(sql, classType, schemaName, tableName);
             for (int i = 0; i < tableStructures.size(); i++) {
                 tableStructures.get(i).setNumber(i + 1);
             }

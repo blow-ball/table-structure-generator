@@ -26,7 +26,6 @@
             <systemPath>${project.basedir}/src/main/resources/lib/document4j-1.0.0.jar</systemPath>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -80,10 +79,11 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.7.22</version>
+            <groupId>com.dameng</groupId>
+            <artifactId>Dm8JdbcDriver18</artifactId>
+            <version>8.1.1.49</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -96,11 +96,12 @@
             <optional>true</optional>
         </dependency>
 
-
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.22</version>
         </dependency>
+
 
     </dependencies>
 

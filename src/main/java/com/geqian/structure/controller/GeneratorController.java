@@ -1,6 +1,7 @@
 package com.geqian.structure.controller;
 
 import com.geqian.structure.common.ResponseResult;
+import com.geqian.structure.common.dto.TableSelectDto;
 import com.geqian.structure.common.dto.TargetTableDto;
 import com.geqian.structure.common.vo.ColumnsVo;
 import com.geqian.structure.entity.TreeNode;
@@ -16,18 +17,11 @@ import java.util.List;
  * @date 12:01 2023/7/12
  */
 @RestController
-@RequestMapping("/generate")
+@RequestMapping("/document")
 public class GeneratorController {
 
     @Resource
     private GeneratorService generatorService;
-
-    @ResponseBody
-    @GetMapping("/getTableTree")
-    public ResponseResult<List<TreeNode>> getTableTree() {
-        return generatorService.selectTableStructure();
-    }
-
 
     @GetMapping("/getTableColumnInfo")
     public ResponseResult<ColumnsVo> getTableColumnInfo() {
@@ -41,25 +35,36 @@ public class GeneratorController {
     }
 
 
-    @PostMapping("/pdf/downloadPdf")
+    @PostMapping("/pdf/download")
     public void downloadPdf(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadPdf(targetTableDto, response);
     }
 
 
-    @PostMapping("/word/downloadWord")
+    @PostMapping("/word/download")
     public void downloadWord(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadWord(targetTableDto, response);
     }
 
-    @PostMapping("/html/downloadHtml")
+    @PostMapping("/html/download")
     public void downloadHtml(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadHtml(targetTableDto, response);
     }
 
-    @PostMapping("/markdown/downloadMarkdown")
+    @PostMapping("/markdown/download")
     public void downloadMd(@RequestBody TargetTableDto targetTableDto, HttpServletResponse response) throws Exception {
         generatorService.downloadMarkdown(targetTableDto, response);
+    }
+
+    @GetMapping("/getDatabases")
+    public ResponseResult<List<TreeNode>> getDatabases() throws Exception {
+        return generatorService.getDatabases();
+    }
+
+
+    @GetMapping("/getTables")
+    public ResponseResult<List<TreeNode>> getTables(TableSelectDto dto) throws Exception {
+        return generatorService.getTables(dto);
     }
 
 }

@@ -11,15 +11,17 @@ import java.util.List;
 @Data
 public class TreeNode {
 
-    private String parentKey;
+    private boolean schemaNode;
 
-    private String key;
+    private String nodeId;
 
-    private String label;
+    private String parentNodeId;
 
-    private String schemaName;
+    private String labelName;
 
-    private String tableName;
+    private String description;
 
     private List<TreeNode> children;
+
+    private Integer childrenCount;
 }

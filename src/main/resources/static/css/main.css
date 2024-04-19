@@ -30,7 +30,7 @@ html {
 
 .el-aside .title {
     user-select: none;
-    margin-left: calc((270px - 20 * 7px) / 2);
+    margin-left: calc((270px - 9 * 19px) / 2);
     margin-top: 10px;
     line-height: 30px;
     height: 25px;
@@ -117,19 +117,18 @@ iframe {
 }
 
 
-.box-card .tool .el-button,svg {
+.box-card .action-items .el-button,svg {
     padding: 0;
     margin: 0;
-    margin-right: 20px;
+    margin-right: 15px;
 
 }
 
-.box-card .tool {
+.box-card .action-items {
     height: 45px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
 }
 
 

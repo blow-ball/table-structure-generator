@@ -4,23 +4,17 @@ database:
     mysql:
       driverClass: com.mysql.cj.jdbc.Driver
 
-      url: jdbc:mysql://@${ip}:${port}/${database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false
+      url: jdbc:mysql://@${ip}:${port}/${database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&&allowPublicKeyRetrieval=true
 
       # 查询所有schemata
       databases: >
-          SELECT schema_name as schemaName FROM information_schema.schemata
+        SELECT schema_name as labelName FROM information_schema.schemata
 
       # 查询指定schema下所有表
       tables: >
-        select table_name as tableName, table_comment as tableComment
+        select table_name as labelName, table_comment as description
         from information_schema.tables 
         where table_schema = #{0}
-
-      # 查询指定schema下指定表信息
-      tableInfo: > # >表示多行，但忽略换行符
-        select table_name as tableName, table_comment as tableComment
-        from information_schema.tables 
-        where table_schema= #{0} and table_name = #{1}
 
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
@@ -40,19 +34,13 @@ database:
 
       # 查询所有schemata
       databases: >
-        SELECT schema_name as schemaName FROM information_schema.schemata
+        SELECT schema_name as labelName FROM information_schema.schemata
 
       # 查询指定schema下所有表
       tables: >
-        select table_name as tableName, table_comment as tableComment
+        select table_name as labelName, table_comment as description
         from information_schema.tables 
         where table_schema = #{0}
-
-      # 查询指定schema下指定表信息
-      tableInfo: > # >表示多行，但忽略换行符
-        select table_name as tableName, table_comment as tableComment
-        from information_schema.tables 
-        where table_schema= #{0} and table_name = #{1}
 
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
@@ -71,21 +59,14 @@ database:
       url: jdbc:oracle:thin:@${ip}:${port}:${database}
 
       databases: >
-        SELECT USERNAME as "schemaName" FROM ALL_USERS
+        SELECT USERNAME as "labelName" FROM ALL_USERS
 
       tables: >
-        SELECT comm.TABLE_NAME as "tableName", comm.COMMENTS as "tableComment"
+        SELECT comm.TABLE_NAME as "labelName", comm.COMMENTS as "description"
         FROM all_tables tab 
         inner join all_tab_comments comm 
         on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
         WHERE tab.OWNER = #{0}
-
-      tableInfo: >
-        SELECT comm.TABLE_NAME as "tableName", comm.COMMENTS as "tableComment"
-        FROM all_tables tab 
-        inner join all_tab_comments comm 
-        on tab.OWNER = comm.OWNER and tab.TABLE_NAME = comm.TABLE_NAME 
-        WHERE tab.OWNER = #{0} and tab.TABLE_NAME = #{1}
 
       tableStructure: >
         SELECT col.COLUMN_NAME as "columnName", col.DATA_TYPE as "columnType",
@@ -103,16 +84,11 @@ database:
       url: jdbc:db2://${ip}:${port}/${database}
 
       databases: >
-        SELECT SCHEMANAME as "schemaName" FROM SYSCAT.SCHEMATA
+        SELECT SCHEMANAME as "labelName" FROM SYSCAT.SCHEMATA
 
       tables: >
-        SELECT TABNAME as "tableName", REMARKS as "tableComment"
+        SELECT TABNAME as "labelName", REMARKS as "description"
         FROM SYSCAT.TABLES WHERE TABSCHEMA = #{0}
-
-      tableInfo: >
-        SELECT TABNAME as "tableName", REMARKS as "tableComment"
-        FROM SYSCAT.TABLES 
-        WHERE TABSCHEMA= #{0} AND TABNAME= #{1}
 
       tableStructure: >
         SELECT COLNAME as "columnName", TYPENAME "columnType",
@@ -129,19 +105,13 @@ database:
       url: jdbc:postgresql://${ip}:${port}/${database}
 
       databases: >
-        SELECT schema_name AS "schemaName" FROM information_schema.schemata;
+        SELECT schema_name AS "labelName" FROM information_schema.schemata;
 
       tables: >
-        SELECT table_name as "tableName", obj_description(pg_class.oid) AS "tableComment"
+        SELECT table_name as "labelName", obj_description(pg_class.oid) AS "description"
         FROM information_schema.tables
         JOIN pg_class ON information_schema.tables.table_name = pg_class.relname
         WHERE table_schema = #{0} AND table_type = 'BASE TABLE'
-
-      tableInfo: >
-        SELECT table_name as "tableName", obj_description(pg_class.oid) AS "tableComment"
-        FROM information_schema.tables
-        JOIN pg_class ON information_schema.tables.table_name = pg_class.relname
-        WHERE table_schema = #{0} and table_name = #{1} and table_type = 'BASE TABLE'
 
       tableStructure: >
         SELECT cols.column_name as "columnName", cols.data_type as "columnType",
@@ -161,22 +131,14 @@ database:
       url: jdbc:sqlserver://${ip}:${port};DatabaseName=${database}
 
       databases: >
-        SELECT name as schemaName FROM sys.databases
+        SELECT name as labelName FROM sys.databases
 
       tables: >
-        SELECT t.name AS tableName, ISNULL(ep.value, '') AS tableComment
+        SELECT t.name AS labelName, ISNULL(ep.value, '') AS description
         FROM ${0}.sys.tables AS t
         LEFT JOIN ${0}.sys.extended_properties AS ep 
         ON ep.major_id = t.object_id AND ep.minor_id = 0 AND ep.class = 1 AND ep.name = 'MS_Description'
-        ORDER BY
-        tableName;
 
-      tableInfo: >
-        SELECT t.name AS tableName,
-        m.value AS tableComment
-        FROM ${0}.sys.tables t
-        LEFT JOIN test.sys.extended_properties m ON t.object_id = m.major_id AND m.minor_id = 0
-        WHERE t.name = #{1}
 
       tableStructure: >
         SELECT col.name AS columnName, tp.name AS columnType, col.max_length AS length,
@@ -198,19 +160,13 @@ database:
 
       # 查询所有数据库
       databases: >
-        SELECT database as schemaName, comment as schemaComment FROM system.databases
+        SELECT database as labelName, comment as description FROM system.databases
 
       # 查询指定schema下所有表
       tables: >
-        select name as tableName, comment as tableComment
+        select name as labelName, comment as description
         from system.tables
         where database = #{0}
-
-      # 查询指定schema下指定表信息
-      tableInfo: > # >表示多行，但忽略换行符
-        select name as tableName, comment as tableComment
-        from system.tables
-        where database = #{0} and table = #{1};
 
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
@@ -219,3 +175,37 @@ database:
                character_maximum_length as length, column_comment as columnComment
         FROM INFORMATION_SCHEMA.COLUMNS
         WHERE COLUMNS.table_schema = #{0} and table_name = #{1}
+
+    #########################################  达梦数据库 #############################################
+    dm8:
+      driverClass: dm.jdbc.driver.DmDriver
+
+      url: jdbc:dm://${ip}:${port}/${database}
+
+      # 查询所有数据库
+      databases: >
+        select owner as labelName, comments as description
+        from all_tab_comments
+        where owner not in ('sys', 'system')
+
+      # 查询指定schema下所有表
+      tables: >
+        select table_name as labelName, comments as description
+        from all_tab_comments
+        where owner = #{0}
+
+      # 查询指定schema下指定数据表字段信息
+      tableStructure: >
+        select atc.column_name  as columnName,
+            atc.data_type    as columnType,
+            atc.data_length  as length,
+            atc.nullable     as isNullable,
+            atc.data_default as columnDefault,
+            ucc.comments     as columnComment
+        from all_tab_columns atc
+        inner join user_col_comments ucc
+        on atc.owner = ucc.owner and atc.table_name = ucc.table_name
+        and atc.column_name = ucc.column_name
+        where atc.owner = #{0}
+        and atc.table_name = #{1}
+        order by atc.column_id;

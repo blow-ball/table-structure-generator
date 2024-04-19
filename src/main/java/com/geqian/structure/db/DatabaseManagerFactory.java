@@ -1,8 +1,8 @@
 package com.geqian.structure.db;
 
-import org.yaml.snakeyaml.Yaml;
+import org.springframework.beans.factory.config.YamlMapFactoryBean;
+import org.springframework.core.io.ClassPathResource;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -22,11 +22,7 @@ public class DatabaseManagerFactory {
 
     private static void init() {
 
-        Yaml yaml = new Yaml();
-
-        InputStream inputStream = DatabaseManagerFactory.class.getClassLoader().getResourceAsStream("application.yml");
-
-        Map<String, Object> map = yaml.load(inputStream);
+        Map<String, Object> map = parseYml();
 
         Map<String, Map<String, Map>> databaseConfig = (Map<String, Map<String, Map>>) map.get("database");
 
@@ -65,5 +61,12 @@ public class DatabaseManagerFactory {
      */
     public static DatabaseManager getDatabaseManager(String databaseType) {
         return DatabaseManagerFactory.databaseManagerMap.get(databaseType);
+    }
+
+
+    private static Map<String, Object> parseYml() {
+        YamlMapFactoryBean yamlMapFactoryBean = new YamlMapFactoryBean();
+        yamlMapFactoryBean.setResources(new ClassPathResource("application.yml"));
+        return yamlMapFactoryBean.getObject();
     }
 }

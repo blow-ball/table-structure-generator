@@ -28,9 +28,9 @@ public class ConnectionController {
     }
 
 
-    @GetMapping("/main")
-    public String main() {
-        return "main";
+    @GetMapping("/generator")
+    public String generator() {
+        return "generator";
     }
 
     @ResponseBody

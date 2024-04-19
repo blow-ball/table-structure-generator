@@ -1,6 +1,5 @@
 package com.geqian.structure.service.impl;
 
-import cn.hutool.core.io.IoUtil;
 import com.geqian.document4j.common.annotation.TableField;
 import com.geqian.document4j.html.HTMLBuilder;
 import com.geqian.document4j.html.HTMLStyle;
@@ -10,7 +9,10 @@ import com.geqian.document4j.pdf.PDFBuilder;
 import com.geqian.document4j.pdf.PdfStyle;
 import com.geqian.document4j.word.WordBuilder;
 import com.geqian.document4j.word.WordStyle;
+import com.geqian.structure.bo.LabelAndValue;
+import com.geqian.structure.bo.TableInfo;
 import com.geqian.structure.common.ResponseResult;
+import com.geqian.structure.common.dto.TableSelectDto;
 import com.geqian.structure.common.dto.TargetTableDto;
 import com.geqian.structure.common.vo.ColumnsVo;
 import com.geqian.structure.db.DefaultColumnManager;
@@ -20,8 +22,6 @@ import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TreeNode;
 import com.geqian.structure.mapper.TableMapper;
-import com.geqian.structure.bo.LabelAndValue;
-import com.geqian.structure.bo.TableInfo;
 import com.geqian.structure.service.GeneratorService;
 import com.geqian.structure.utils.ReflectionUtils;
 import com.itextpdf.text.PageSize;
@@ -34,8 +34,10 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -57,12 +59,6 @@ public class GeneratorServiceImpl implements GeneratorService {
     private TableMapper tableMapper;
 
 
-    @Override
-    public ResponseResult<List<TreeNode>> selectTableStructure() {
-        return ResponseResult.success(tableMapper.getTableTree());
-    }
-
-
     @SneakyThrows(Exception.class)
     @Override
     public void downloadPdf(TargetTableDto targetTableDto, HttpServletResponse response) {
@@ -72,61 +68,72 @@ public class GeneratorServiceImpl implements GeneratorService {
     @SneakyThrows(Exception.class)
     @Override
     public void preview(TargetTableDto targetTableDto, HttpServletResponse response) {
-
         byte[] pdfBytes = buildPdfDocument(targetTableDto);
-
-        String filename = "表结构" + new Date().getTime() + ".pdf";
-
-        //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
-        response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
-        //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-        IoUtil.write(response.getOutputStream(), true, pdfBytes);
+        try (OutputStream out = response.getOutputStream()) {
+            String filename = "表结构文档_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".pdf";
+            //byte[] pdfBytes = WordToPdfUtils.word2007ToPdf(wordBytes);
+            response.setHeader("content-type", "application/octet-stream");
+            response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+            //文件设置为附件
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+            out.write(pdfBytes);
+        }
     }
 
     @SneakyThrows(Exception.class)
     @Override
     public void downloadWord(TargetTableDto targetTableDto, HttpServletResponse response) {
-
         byte[] wordBytes = buildWordDocument(targetTableDto);
-
-        String filename = "表结构" + new Date().getTime() + ".docx";
-
-        response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
-        //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-        IoUtil.write(response.getOutputStream(), true, wordBytes);
+        try (OutputStream out = response.getOutputStream()) {
+            String filename = "表结构文档_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".docx";
+            response.setHeader("content-type", "application/octet-stream");
+            response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+            //文件设置为附件
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+            out.write(wordBytes);
+        }
     }
 
     @SneakyThrows(Exception.class)
     @Override
     public void downloadHtml(TargetTableDto targetTableDto, HttpServletResponse response) {
+        byte[] htmlBytes = buildHtmlDocument(targetTableDto);
+        try (OutputStream out = response.getOutputStream()) {
+            String filename = "表结构文档_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".html";
+            response.setHeader("content-type", "application/octet-stream");
+            response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+            //文件设置为附件
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
 
-        byte[] wordBytes = buildHtmlDocument(targetTableDto);
-
-        String filename = "表结构" + new Date().getTime() + ".html";
-
-        response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
-        //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-        IoUtil.write(response.getOutputStream(), true, wordBytes);
+            out.write(htmlBytes);
+        }
     }
+
 
     @SneakyThrows(Exception.class)
     @Override
     public void downloadMarkdown(TargetTableDto targetTableDto, HttpServletResponse response) {
+        try (OutputStream out = response.getOutputStream()) {
+            byte[] mdBytes = buildMdDocument(targetTableDto);
+            String filename = "表结构文档_" + new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".md";
+            response.setHeader("content-type", "application/octet-stream");
+            response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
+            //文件设置为附件
+            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+            out.write(mdBytes);
+        }
+    }
 
-        byte[] mdBytes = buildMdDocument(targetTableDto);
-        String filename = "表结构" + new Date().getTime() + ".md";
+    @Override
+    public ResponseResult<List<TreeNode>> getDatabases() {
+        List<TreeNode> databases = tableMapper.getDatabases();
+        return ResponseResult.success(databases);
+    }
 
-        response.setHeader("content-type", "application/octet-stream");
-        response.setHeader("filename", URLEncoder.encode(filename, "UTF-8"));
-        //文件设置为附件
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-        IoUtil.write(response.getOutputStream(), true, mdBytes);
+    @Override
+    public ResponseResult<List<TreeNode>> getTables(TableSelectDto dto) {
+        List<TreeNode> tables = tableMapper.getTables(dto.getSchemaName(), dto.getParentNodeId());
+        return ResponseResult.success(tables);
     }
 
 
@@ -172,7 +179,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (!CollectionUtils.isEmpty(treeNodeList)) {
 
             //过滤出全部 Schema节点
-            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(TreeNode::isSchemaNode).collect(Collectors.toList());
 
             WordStyle.Font calibri = WordStyle.Font.fontFamily("Calibri");
             WordStyle.Font bold = WordStyle.Font.BOLD;
@@ -181,22 +188,27 @@ public class GeneratorServiceImpl implements GeneratorService {
             WordStyle.Font cellFontSize = WordStyle.Font.fontSize(10);
 
             for (TreeNode schemaNode : schemaNodes) {
-                String schemaName = schemaNode.getSchemaName();
+
+                String schemaName = schemaNode.getLabelName();
 
                 wordBuilder.addParagraph("数据库名称 " + schemaName, calibri, bold, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
-                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .filter(data -> !data.isSchemaNode() && Objects.equals(data.getParentNodeId(), schemaNode.getNodeId()))
                         .collect(Collectors.toList());
 
                 List<Future<TableInfo>> futureList = new ArrayList<>();
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                String tableName = tableNode.getLabelName();
+                                String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
+                                tableDefinition.setTableName(tableName);
+                                tableDefinition.setTableComment(tableComment);
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -208,7 +220,9 @@ public class GeneratorServiceImpl implements GeneratorService {
                 for (Future<TableInfo> future : futureList) {
                     TableInfo tableInfo = future.get();
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
-                    wordBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment()) ? tableDefinition.getTableName() : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), calibri, tableNameFontSize);
+                    wordBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
+                            ? tableDefinition.getTableName()
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), calibri, tableNameFontSize);
                     wordBuilder.addTable(tableInfo.getDataList(), calibri, cellFontSize);
                     wordBuilder.addCarriageReturn().addCarriageReturn();
                 }
@@ -230,7 +244,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (!CollectionUtils.isEmpty(treeNodeList)) {
 
             //过滤出全部 Schema节点
-            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(TreeNode::isSchemaNode).collect(Collectors.toList());
 
             PdfStyle.Font bold = PdfStyle.Font.BOLD;
 
@@ -244,22 +258,25 @@ public class GeneratorServiceImpl implements GeneratorService {
 
 
             for (TreeNode schemaNode : schemaNodes) {
-                String schemaName = schemaNode.getSchemaName();
+
+                String schemaName = schemaNode.getLabelName();
 
                 pdfBuilder.addParagraph("数据库名称 " + schemaName, bold, titleFontSize);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
-                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .filter(data -> !data.isSchemaNode() && Objects.equals(data.getParentNodeId(), schemaNode.getNodeId()))
                         .collect(Collectors.toList());
 
                 List<Future<TableInfo>> futureList = new ArrayList<>();
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                String tableName = tableNode.getLabelName();
+                                String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -274,8 +291,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
                     pdfBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), tableNameFontSize, paragraphSpacing);
-
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), tableNameFontSize, paragraphSpacing);
                     pdfBuilder.addTable(tableInfo.getDataList(), cellFontSize);
                     pdfBuilder.addCarriageReturn();
                     pdfBuilder.addCarriageReturn();
@@ -298,26 +314,28 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (!CollectionUtils.isEmpty(treeNodeList)) {
 
             //过滤出全部 Schema节点
-            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(TreeNode::isSchemaNode).collect(Collectors.toList());
 
             for (TreeNode schemaNode : schemaNodes) {
 
-                String schemaName = schemaNode.getSchemaName();
+                String schemaName = schemaNode.getLabelName();
 
                 markDownBuilder.title("数据库名称 " + schemaName, MarkDownStyle.Title.THIRD);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
-                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .filter(data -> !data.isSchemaNode() && Objects.equals(data.getParentNodeId(), schemaNode.getNodeId()))
                         .collect(Collectors.toList());
 
                 List<Future<TableInfo>> futureList = new ArrayList<>();
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                String tableName = tableNode.getLabelName();
+                                String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -331,7 +349,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
                     markDownBuilder.text(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), MarkDownStyle.Font.BOLD);
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), MarkDownStyle.Font.BOLD);
                     markDownBuilder.table(tableInfo.getDataList(), MarkDownStyle.CellAlignment.LEFT);
                     markDownBuilder.blankRow();
                     markDownBuilder.blankRow();
@@ -361,26 +379,28 @@ public class GeneratorServiceImpl implements GeneratorService {
         if (!CollectionUtils.isEmpty(treeNodeList)) {
 
             //过滤出全部 Schema节点
-            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(data -> Objects.isNull(data.getTableName())).collect(Collectors.toList());
+            List<TreeNode> schemaNodes = targetTableDto.getDataList().stream().filter(TreeNode::isSchemaNode).collect(Collectors.toList());
 
             for (TreeNode schemaNode : schemaNodes) {
 
-                String schemaName = schemaNode.getSchemaName();
+                String schemaName = schemaNode.getLabelName();
 
                 htmlBuilder.addParagraph("数据库名称 " + schemaName, bold, schemaNameFontSize, paddingBottom);
 
                 //过滤出指定 Schema节点下的全部 table节点
                 List<TreeNode> tableNodes = treeNodeList.stream()
-                        .filter(data -> Objects.equals(data.getSchemaName(), schemaName) && !Objects.equals(data.getTableName(), null))
+                        .filter(data -> !data.isSchemaNode() && Objects.equals(data.getParentNodeId(), schemaNode.getNodeId()))
                         .collect(Collectors.toList());
 
                 List<Future<TableInfo>> futureList = new ArrayList<>();
 
                 for (TreeNode tableNode : tableNodes) {
                     Future<TableInfo> future = threadPoolExecutor.submit(() -> {
+                                String tableName = tableNode.getLabelName();
+                                String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
-                                TableDefinition tableDefinition = tableMapper.getTableInfo(schemaName, tableNode.getTableName());
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableNode.getTableName());
+                                TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
+                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -394,7 +414,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
                     htmlBuilder.addParagraph(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableComment() + "  " + tableDefinition.getTableName(), bold, tableNameFontSize, paddingBottom);
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), bold, tableNameFontSize, paddingBottom);
                     htmlBuilder.addTable(tableInfo.getDataList());
                     htmlBuilder.blankRow();
                     htmlBuilder.blankRow();

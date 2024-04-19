@@ -22,9 +22,9 @@ import java.util.stream.Stream;
  * @author geqian
  * @date 18:06 2023/11/11
  */
-public class JDBCUtils {
+public class JDBCHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(JDBCUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(JDBCHelper.class);
 
     /**
      * 通用查询单条数据方法
