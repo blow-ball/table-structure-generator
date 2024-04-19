@@ -18,7 +18,7 @@ html {
 .el-aside {
     color: #333;
     height: 100vh;
-    width: 270px;
+    width: 300px;
     overflow-y: visible;
     overflow-x: hidden; /* 隐藏水平滚动条 */
 }
@@ -30,7 +30,7 @@ html {
 
 .el-aside .title {
     user-select: none;
-    margin-left: calc((270px - 9 * 19px) / 2);
+    margin-left: calc((300px - 9 * 19px) / 2);
     margin-top: 10px;
     line-height: 30px;
     height: 25px;
