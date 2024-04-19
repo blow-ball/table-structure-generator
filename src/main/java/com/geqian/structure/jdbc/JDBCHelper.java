@@ -45,7 +45,6 @@ public class JDBCHelper {
     }
 
 
-
     /**
      * 通用查询单条数据方法
      *
@@ -122,7 +121,8 @@ public class JDBCHelper {
             for (JDBCInterceptor interceptor : interceptors) {
                 if (interceptor instanceof ResultSetInterceptor) {
                     ResultSetInterceptor<?> resultSetInterceptor = (ResultSetInterceptor<?>) interceptor;
-                    if (resultSetInterceptor.support(sql)) {
+                    String productName = connection.getMetaData().getDatabaseProductName();
+                    if (resultSetInterceptor.support(productName, sql)) {
                         return (List<T>) resultSetInterceptor.intercept(resultSet);
                     }
                 }

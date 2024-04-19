@@ -8,7 +8,7 @@ import java.sql.ResultSet;
  */
 public interface ResultSetInterceptor<T> extends JDBCInterceptor {
 
-    boolean support(String sql);
+    boolean support(String productName, String sql);
 
     T intercept(ResultSet resultSet);
 

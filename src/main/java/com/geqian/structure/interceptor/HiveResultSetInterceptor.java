@@ -14,7 +14,7 @@ public class HiveResultSetInterceptor implements ResultSetInterceptor<TreeNode> 
 
 
     @Override
-    public boolean support(String sql) {
+    public boolean support(String productName, String sql) {
         return false;
     }
 
