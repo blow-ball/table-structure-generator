@@ -19,7 +19,7 @@ public class ConsoleLogCharsetProcessor implements EnvironmentPostProcessor {
         //设置控制台日志输出字符编码
         properties.put("logging.charset.console", charsetName);
 
-        PropertiesPropertySource extendPropertySource = new PropertiesPropertySource("application-extend.properties", properties);
+        PropertiesPropertySource extendPropertySource = new PropertiesPropertySource("extendProperties", properties);
         MutablePropertySources propertySources = environment.getPropertySources();
         /**
          * get 获取属性源
