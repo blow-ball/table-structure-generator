@@ -108,10 +108,6 @@
 <br>
 <br>
 
-## 特别说明
-页面布局参考：https://gitee.com/pomz/database-export
-<br>
-<br>
 
 ## 赞赏与联系我
 
@@ -124,3 +120,8 @@
     </div>
 </div>
 
+<br>
+<br>
+
+## 
+数据库连接页面布局参考至：https://gitee.com/pomz/database-export
