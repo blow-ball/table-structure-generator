@@ -1,4 +1,4 @@
-package com.geqian.structure.listener;
+package com.geqian.structure.actuator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +20,9 @@ import java.net.UnknownHostException;
  */
 @Component
 @ConditionalOnProperty(prefix = "spring.application.start.openBrowser", name = "enable", havingValue = "true")
-public class OpenBrowserListener implements ApplicationListener<ContextRefreshedEvent> {
+public class OpenBrowserActuator implements ApplicationListener<ContextRefreshedEvent> {
 
-    private final Logger log = LoggerFactory.getLogger(OpenBrowserListener.class);
+    private final Logger log = LoggerFactory.getLogger(OpenBrowserActuator.class);
 
     @Value("${server.port}")
     private String port;
