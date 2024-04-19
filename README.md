@@ -7,19 +7,23 @@
 <br>
 
 ## 技术栈
+
 ### 后端
+
 - 采用 SpringBoot 作为基础框架
 - 采用 apache poi 生成word文档
 - 采用 itextpdf 生成pdf文档
 - 采用 snakeyaml 解析yaml文件
 
 ### 前端
+
 - 采用 Vue2 作为基础框架
 - 采用 Element ui 作为组件库
-<br>
-<br>
+  <br>
+  <br>
 
 ### 优势
+
 - 灵活性高，可根据需求灵活选择导出的表列数据
 - 扩展性良好，适配新的数据库类型，只需提供对应的查询SQL语句，几乎不需要额外的编码
 - 树形控件采用懒加载模式加载数据，避免数据量太大时，一次性加载全部数据，造成严重卡顿
@@ -28,6 +32,7 @@
 <br>
 
 ## 支持数据库类型
+
 - MySQL
 - Oracle
 - PostgreSQL
@@ -36,18 +41,19 @@
 - MariaDB
 - Clickhouse
 - 达梦
-> 导出数据通过 SQL 查询的方式获取，本人技术水平有限，对许多数据库并不熟悉，绝大部分 SQL 语句都是通过网络搜索获取的。如果导出的数据存在错误或不符合预期，望海涵，可以积极提出反馈哦。
+
+> 导出数据通过 SQL 查询的方式获取，本人技术水平有限，对许多数据库并不熟悉，绝大部分 SQL
+> 语句都是通过网络搜索获取的。如果导出的数据存在错误或不符合预期，望海涵，可以积极提出反馈哦。
 
 <br>
 
-
 ## 支持文档类型
+
 - Word
 - PDF
 - Markdown
 - HTML
-<br>
-
+  <br>
 
 ## 项目演示
 
@@ -65,7 +71,6 @@
 ![image-20230719013433699](https://gitee.com/geqian618/resource/raw/master/images/table-structure/选择列名.png)  
 <br>
 
-
 **4. 下载pdf文档**
 
 ![image-20230719013337074](https://gitee.com/geqian618/resource/raw/master/images/table-structure/pdf文档.png)
@@ -81,26 +86,41 @@
 ![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/table-structure/markdown文档.png)  
 <br>
 
-
 **7. 下载HTML文档**
 
 ![image-20230719013403179](https://gitee.com/geqian618/resource/raw/master/images/table-structure/html文档.png)  
 <br>
 <br>
 
-
-
-
 ## 使用说明
 
-**默认访问地址：http://localhost:8888/**  
+**默认访问地址：http://localhost:8888/**
 > 项目启成功后自动打开浏览器进行访问
 
 <br>
-
 
 ## windows下载
 
 链接：https://pan.baidu.com/s/1XgEMOwAxNGvFjt46v1-Aow
 提取码：ywap
+> 由于安装包内置 JDK 环境，体积有点大，无法上传到 Gitee
+
+<br>
+<br>
+
+## 特别说明
+页面布局参考：https://gitee.com/pomz/database-export
+<br>
+<br>
+
+## 赞赏与联系我
+
+<div>
+    <div style="border: 1px solid #e5e5e4;display: inline-block">
+        <img src="./src/main/resources/static/images/appreciation-code.jpg" alt="赞赏码" height="300">
+    </div>
+    <div style="border: 1px solid #e5e5e4;display: inline-block;margin-left: 50px">
+        <img src="./src/main/resources/static/images/wechat.jpg" alt="微信二维码" height="300">
+    </div>
+</div>
 
