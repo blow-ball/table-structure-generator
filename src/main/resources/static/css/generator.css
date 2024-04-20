@@ -7,14 +7,6 @@ html {
     overflow: hidden;
 }
 
-
-.el-header {
-    text-align: right;
-    display: flex;
-    align-items: center;
-    justify-content: right;
-}
-
 .el-aside {
     color: #333;
     height: 100vh;
@@ -86,9 +78,9 @@ html {
 iframe {
     user-select: none;
     position: relative;
-    background: #f0f0f3;
-    left: 3px;
-    width: 100%;
+    background: transparent;
+    left: -2px;
+    width: calc(100% - 3px);
     height: 700px;
     display: block;
     border: 1px solid #e0e0e7;
@@ -130,6 +122,8 @@ iframe {
     display: flex;
     align-items: center;
     justify-content: flex-end;
+    border-right: 1px solid #e0e0e7;
+    margin-right: 3px;
 }
 
 
