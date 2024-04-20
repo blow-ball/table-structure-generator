@@ -53,7 +53,6 @@
         </el-aside>
         <el-container id="container">
             <div id="context">
-                <div id="dragHandle"></div>
                 <el-main>
                     <el-card class="box-card">
                         <div class="action-items">
@@ -65,7 +64,9 @@
                             <el-button @click="downloadHtml" type="text">下载HTML文档</el-button>
                         </div>
                         <iframe id="iframe" :src="pdf"></iframe>
-                        <div id="overIframeDiv"></div>
+                        <div id="overIframeDiv">
+                            <div id="drag-tip"></div>
+                        </div>
                     </el-card>
                 </el-main>
             </div>
@@ -386,7 +387,7 @@
                 });
             },
             initChangeBoxWidthEvent() {
-                let dragHandle = document.getElementById("dragHandle");
+                let dragHandle = document.getElementById("drag-tip");
                 let startX, startWidth;
                 dragHandle.addEventListener("mousedown", function (e) {
                     startX = e.clientX;

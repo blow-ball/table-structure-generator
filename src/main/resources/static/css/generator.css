@@ -8,6 +8,7 @@ html {
 }
 
 .el-aside {
+    min-width: 300px;
     color: #333;
     height: 100vh;
     width: 300px;
@@ -32,13 +33,27 @@ html {
     font-weight: bold;
 }
 
-#dragHandle {
+#overIframeDiv {
+    position: absolute;
+    top: 105px;
+    left: -5%;
+    width: 10%;
+    height: 100%;
+    display: block;
+    background: transparent;
+}
+
+#drag-tip {
     position: absolute;
     top: 0;
-    width: 1px;
+    left: calc(50% - 5px);
+    width: 10px;
     height: 100%;
-    background-color: #ccc;
-    cursor: col-resize; /* 设置鼠标样式为水平调整 */
+    background-color: transparent;
+}
+
+#drag-tip:hover {
+    cursor: w-resize; /* 设置鼠标样式为水平调整 */
 }
 
 .el-main {
@@ -86,15 +101,6 @@ iframe {
     border: 1px solid #e0e0e7;
 }
 
-#overIframeDiv {
-    position: absolute;
-    top: 105px;
-    left: 3px;
-    width: 6%;
-    height: 100%;
-    display: block;
-    background: transparent;
-}
 
 #app > .el-container {
     overflow: hidden;
