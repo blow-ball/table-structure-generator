@@ -26,6 +26,7 @@ html {
 .el-aside .el-tree {
     margin: 10px;
     user-select: none;
+    font-size: 13px;
 }
 
 .el-aside .title {
