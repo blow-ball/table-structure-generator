@@ -15,12 +15,12 @@ import com.geqian.structure.common.ResponseResult;
 import com.geqian.structure.common.dto.TableSelectDto;
 import com.geqian.structure.common.dto.TargetTableDto;
 import com.geqian.structure.common.vo.ColumnsVo;
-import com.geqian.structure.db.DefaultColumnManager;
-import com.geqian.structure.jdbc.DruidConnectionManager;
+import com.geqian.structure.db.DefaultColumnHolder;
 import com.geqian.structure.entity.TableDefinition;
 import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TreeNode;
+import com.geqian.structure.jdbc.DruidConnectionManager;
 import com.geqian.structure.mapper.TableMapper;
 import com.geqian.structure.service.GeneratorService;
 import com.geqian.structure.utils.ReflectionUtils;
@@ -170,7 +170,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     @SneakyThrows(Exception.class)
     public byte[] buildWordDocument(TargetTableDto targetTableDto) {
 
-        DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
+        DefaultColumnHolder.setDefaultColumns(targetTableDto.getDefaultColumns());
 
         WordBuilder wordBuilder = WordBuilder.create();
 
@@ -235,7 +235,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     @SneakyThrows(Exception.class)
     public byte[] buildPdfDocument(TargetTableDto targetTableDto) {
 
-        DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
+        DefaultColumnHolder.setDefaultColumns(targetTableDto.getDefaultColumns());
 
         PDFBuilder pdfBuilder = PDFBuilder.create(PageSize.A4, 90, 90, 36, 36);
 
@@ -305,7 +305,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     @SneakyThrows(Exception.class)
     public byte[] buildMdDocument(TargetTableDto targetTableDto) {
 
-        DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
+        DefaultColumnHolder.setDefaultColumns(targetTableDto.getDefaultColumns());
 
         MarkDownBuilder markDownBuilder = MarkDownBuilder.create();
 
@@ -364,7 +364,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     @SneakyThrows(Exception.class)
     public byte[] buildHtmlDocument(TargetTableDto targetTableDto) {
 
-        DefaultColumnManager.setDefaultColumns(targetTableDto.getDefaultColumns());
+        DefaultColumnHolder.setDefaultColumns(targetTableDto.getDefaultColumns());
 
         HTMLBuilder htmlBuilder = HTMLBuilder.create("2%", "2%", "20%", "20%");
         htmlBuilder.setInnerCssStyle("table{font-size:12px}");

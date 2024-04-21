@@ -3,7 +3,7 @@ package com.geqian.structure.jdbc;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.geqian.structure.common.dto.ConnectionInfoDto;
-import com.geqian.structure.db.CurrentDatabaseManager;
+import com.geqian.structure.db.CurrentDatabaseHolder;
 import com.geqian.structure.db.DatabaseManager;
 import com.geqian.structure.db.DatabaseManagerFactory;
 
@@ -47,7 +47,7 @@ public class DruidConnectionManager {
             dataSource.setConnectionErrorRetryAttempts(0);
             //请求失败之后中断
             dataSource.setBreakAfterAcquireFailure(true);
-            CurrentDatabaseManager.setDatabaseManager(databaseManager);
+            CurrentDatabaseHolder.setDatabaseManager(databaseManager);
         } catch (Exception e) {
             throw new RuntimeException("初始化数据源失败," + e);
         }

@@ -5,7 +5,7 @@ import com.geqian.document4j.html.HTMLTableInterceptor;
 import com.geqian.document4j.md.MarkdownTableInterceptor;
 import com.geqian.document4j.pdf.PDFTableInterceptor;
 import com.geqian.document4j.word.WordTableInterceptor;
-import com.geqian.structure.db.DefaultColumnManager;
+import com.geqian.structure.db.DefaultColumnHolder;
 import lombok.Data;
 
 import java.lang.reflect.Field;
@@ -83,7 +83,7 @@ public abstract class TableStructure implements WordTableInterceptor, PDFTableIn
         return classes.stream()
                 .map(pojoClass -> Stream.of(pojoClass.getDeclaredFields()).collect(Collectors.toList()))
                 .flatMap(Collection::stream)
-                .filter(field -> field.isAnnotationPresent(TableField.class) && DefaultColumnManager.getDefaultColumns().contains(field.getName()))
+                .filter(field -> field.isAnnotationPresent(TableField.class) && DefaultColumnHolder.getDefaultColumns().contains(field.getName()))
                 .collect(Collectors.toList());
     }
 

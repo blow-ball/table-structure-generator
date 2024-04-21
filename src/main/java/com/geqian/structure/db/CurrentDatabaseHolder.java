@@ -6,7 +6,7 @@ package com.geqian.structure.db;
  * @author geqian
  * @date 16:00 2023/11/11
  */
-public class CurrentDatabaseManager {
+public class CurrentDatabaseHolder {
 
     private static DatabaseManager databaseManager;
 
@@ -15,6 +15,6 @@ public class CurrentDatabaseManager {
     }
 
     public static void setDatabaseManager(DatabaseManager databaseManager) {
-        CurrentDatabaseManager.databaseManager = databaseManager;
+        CurrentDatabaseHolder.databaseManager = databaseManager;
     }
 }
