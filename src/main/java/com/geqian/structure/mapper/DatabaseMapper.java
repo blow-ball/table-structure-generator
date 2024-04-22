@@ -21,7 +21,7 @@ import java.util.List;
  * @date 15:56 2023/11/11
  */
 @Component
-public class TableMapper {
+public class DatabaseMapper {
 
 
     @Resource

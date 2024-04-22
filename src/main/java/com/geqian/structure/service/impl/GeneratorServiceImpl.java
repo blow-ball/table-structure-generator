@@ -21,7 +21,7 @@ import com.geqian.structure.entity.TableStructure;
 import com.geqian.structure.entity.TableStructureFactory;
 import com.geqian.structure.entity.TreeNode;
 import com.geqian.structure.jdbc.DruidConnectionManager;
-import com.geqian.structure.mapper.TableMapper;
+import com.geqian.structure.mapper.DatabaseMapper;
 import com.geqian.structure.service.GeneratorService;
 import com.geqian.structure.utils.ReflectionUtils;
 import com.itextpdf.text.PageSize;
@@ -56,7 +56,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     private ThreadPoolExecutor threadPoolExecutor;
 
     @Resource
-    private TableMapper tableMapper;
+    private DatabaseMapper databaseMapper;
 
 
     @SneakyThrows(Exception.class)
@@ -126,13 +126,13 @@ public class GeneratorServiceImpl implements GeneratorService {
 
     @Override
     public ResponseResult<List<TreeNode>> getDatabases() {
-        List<TreeNode> databases = tableMapper.getDatabases();
+        List<TreeNode> databases = databaseMapper.getDatabases();
         return ResponseResult.success(databases);
     }
 
     @Override
     public ResponseResult<List<TreeNode>> getTables(TableSelectDto dto) {
-        List<TreeNode> tables = tableMapper.getTables(dto.getSchemaName(), dto.getParentNodeId());
+        List<TreeNode> tables = databaseMapper.getTables(dto.getSchemaName(), dto.getParentNodeId());
         return ResponseResult.success(tables);
     }
 
@@ -208,7 +208,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                                 TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
                                 tableDefinition.setTableName(tableName);
                                 tableDefinition.setTableComment(tableComment);
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
+                                List<? extends TableStructure> tableStructures = databaseMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -276,7 +276,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                                 String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
                                 TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
+                                List<? extends TableStructure> tableStructures = databaseMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -335,7 +335,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                                 String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
                                 TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
+                                List<? extends TableStructure> tableStructures = databaseMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
@@ -400,7 +400,7 @@ public class GeneratorServiceImpl implements GeneratorService {
                                 String tableComment = tableNode.getDescription();
                                 TableInfo tableInfo = new TableInfo();
                                 TableDefinition tableDefinition = new TableDefinition(tableName, tableComment);
-                                List<? extends TableStructure> tableStructures = tableMapper.getTableStructureList(schemaName, tableName);
+                                List<? extends TableStructure> tableStructures = databaseMapper.getTableStructureList(schemaName, tableName);
                                 tableInfo.setTableDefinition(tableDefinition);
                                 tableInfo.setDataList(tableStructures);
                                 return tableInfo;
