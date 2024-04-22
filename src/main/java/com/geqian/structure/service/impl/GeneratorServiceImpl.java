@@ -309,6 +309,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 
         MarkDownBuilder markDownBuilder = MarkDownBuilder.create();
 
+
         List<TreeNode> treeNodeList = targetTableDto.getDataList();
 
         if (!CollectionUtils.isEmpty(treeNodeList)) {
@@ -349,11 +350,11 @@ public class GeneratorServiceImpl implements GeneratorService {
                     TableDefinition tableDefinition = tableInfo.getTableDefinition();
                     markDownBuilder.text(!StringUtils.hasText(tableDefinition.getTableComment())
                             ? tableDefinition.getTableName()
-                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(), MarkDownStyle.Font.BOLD);
+                            : tableDefinition.getTableName() + "  " + tableDefinition.getTableComment(),4, MarkDownStyle.Font.BOLD);
                     markDownBuilder.table(tableInfo.getDataList(), MarkDownStyle.CellAlignment.LEFT);
                     markDownBuilder.blankRow();
-                    markDownBuilder.blankRow();
                 }
+                markDownBuilder.blankRow();
                 markDownBuilder.blankRow();
             }
         }
@@ -372,7 +373,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         HTMLStyle.Font bold = HTMLStyle.Font.BOLD;
         HTMLStyle.Font schemaNameFontSize = HTMLStyle.Font.fontsize("25px");
         HTMLStyle.Font tableNameFontSize = HTMLStyle.Font.fontsize("20px");
-        HTMLStyle.Common paddingBottom = HTMLStyle.Common.paddingBottom("10px");
+        HTMLStyle.Common paddingBottom = HTMLStyle.Common.paddingBottom("15px");
 
         List<TreeNode> treeNodeList = targetTableDto.getDataList();
 
@@ -419,6 +420,8 @@ public class GeneratorServiceImpl implements GeneratorService {
                     htmlBuilder.blankRow();
                     htmlBuilder.blankRow();
                 }
+                htmlBuilder.blankRow();
+                htmlBuilder.blankRow();
                 htmlBuilder.blankRow();
                 htmlBuilder.blankRow();
             }
