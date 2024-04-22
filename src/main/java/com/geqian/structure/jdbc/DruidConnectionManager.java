@@ -3,9 +3,9 @@ package com.geqian.structure.jdbc;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.geqian.structure.common.dto.ConnectionInfoDto;
-import com.geqian.structure.db.CurrentDatabaseHolder;
-import com.geqian.structure.db.DatabaseManager;
-import com.geqian.structure.db.DatabaseManagerFactory;
+import com.geqian.structure.db.CurrentDatabaseMetadataHolder;
+import com.geqian.structure.db.DatabaseMetaData;
+import com.geqian.structure.db.DatabaseMetadataFactory;
 
 import java.sql.Connection;
 import java.util.Properties;
@@ -27,9 +27,9 @@ public class DruidConnectionManager {
 
     public static void initDataSource() {
         try {
-            DatabaseManager databaseManager = DatabaseManagerFactory.getDatabaseManager(connectionInfo.getDatabaseType());
-            Class.forName(databaseManager.getDriverClass());
-            String url = databaseManager.getUrl(connectionInfo.getDatabase(), connectionInfo.getIp(), connectionInfo.getPort());
+            DatabaseMetaData metadata = DatabaseMetadataFactory.getMetaData(connectionInfo.getDatabaseType());
+            Class.forName(metadata.getDriverClass());
+            String url = metadata.getUrl(connectionInfo.getDatabase(), connectionInfo.getIp(), connectionInfo.getPort());
             Properties properties = new Properties();
             String threadSize = String.valueOf(Runtime.getRuntime().availableProcessors() + 1);
             //初始化连接数量
@@ -38,7 +38,7 @@ public class DruidConnectionManager {
             properties.setProperty("maxActive", threadSize);
             //最大等待时间
             properties.setProperty("maxWait", "30000");
-            properties.setProperty("driverClassName", databaseManager.getDriverClass());
+            properties.setProperty("driverClassName", metadata.getDriverClass());
             properties.setProperty("url", url);
             properties.setProperty("username", connectionInfo.getUsername());
             properties.setProperty("password", connectionInfo.getPassword());
@@ -47,7 +47,7 @@ public class DruidConnectionManager {
             dataSource.setConnectionErrorRetryAttempts(0);
             //请求失败之后中断
             dataSource.setBreakAfterAcquireFailure(true);
-            CurrentDatabaseHolder.setDatabaseManager(databaseManager);
+            CurrentDatabaseMetadataHolder.setMetaData(metadata);
         } catch (Exception e) {
             throw new RuntimeException("初始化数据源失败," + e);
         }

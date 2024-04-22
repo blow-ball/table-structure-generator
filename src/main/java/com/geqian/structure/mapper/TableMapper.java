@@ -1,7 +1,7 @@
 package com.geqian.structure.mapper;
 
-import com.geqian.structure.db.CurrentDatabaseHolder;
-import com.geqian.structure.db.DatabaseManager;
+import com.geqian.structure.db.CurrentDatabaseMetadataHolder;
+import com.geqian.structure.db.DatabaseMetaData;
 import com.geqian.structure.jdbc.DruidConnectionManager;
 import com.geqian.structure.jdbc.JDBCHelper;
 import com.geqian.structure.entity.TableStructure;
@@ -34,8 +34,8 @@ public class TableMapper {
      * @throws Exception
      */
     public List<TreeNode> getDatabases() {
-        DatabaseManager databaseManager = CurrentDatabaseHolder.getDatabaseManager();
-        String sql = databaseManager.getDatabases();
+        DatabaseMetaData metadata = CurrentDatabaseMetadataHolder.getMetaData();
+        String sql = metadata.getDatabases();
         List<TreeNode> treeNodeList = jdbcHelper.selectList(sql, TreeNode.class);
         for (TreeNode treeNode : treeNodeList) {
             treeNode.setSchemaNode(true);
@@ -55,8 +55,8 @@ public class TableMapper {
      */
     @SneakyThrows(Exception.class)
     public List<TreeNode> getTables(String schemaName, String parentNodeId) {
-        DatabaseManager databaseManager = CurrentDatabaseHolder.getDatabaseManager();
-        String sql = databaseManager.getTables();
+        DatabaseMetaData metadata = CurrentDatabaseMetadataHolder.getMetaData();
+        String sql = metadata.getTables();
         List<TreeNode> tableNodeList = jdbcHelper.selectList(sql, TreeNode.class, schemaName);
         for (TreeNode treeNode : tableNodeList) {
             treeNode.setSchemaNode(false);
@@ -75,8 +75,8 @@ public class TableMapper {
      */
     @SneakyThrows(Exception.class)
     public Integer getTableCount(String schemaName) {
-        DatabaseManager databaseManager = CurrentDatabaseHolder.getDatabaseManager();
-        String sql = databaseManager.getTables();
+        DatabaseMetaData metadata = CurrentDatabaseMetadataHolder.getMetaData();
+        String sql = metadata.getTables();
         List<TreeNode> tableNodeList = jdbcHelper.selectList(sql, TreeNode.class, schemaName);
         return tableNodeList.size();
     }
@@ -91,8 +91,8 @@ public class TableMapper {
      */
     @SneakyThrows(Exception.class)
     public TableDefinition getTableInfo(String schemaName, String tableName) {
-        DatabaseManager databaseManager = CurrentDatabaseHolder.getDatabaseManager();
-        String sql = databaseManager.getTableInfo();
+        DatabaseMetaData metadata = CurrentDatabaseMetadataHolder.getMetaData();
+        String sql = metadata.getTableInfo();
         return jdbcHelper.selectOne(sql, TableDefinition.class, schemaName, tableName);
     }
 
@@ -110,8 +110,8 @@ public class TableMapper {
         String databaseType = DruidConnectionManager.getConnectionInfo().getDatabaseType();
         Class<? extends TableStructure> classType = TableStructureFactory.getTableStructureType(databaseType);
         if (classType != null) {
-            DatabaseManager databaseManager = CurrentDatabaseHolder.getDatabaseManager();
-            String sql = databaseManager.getTableStructure();
+            DatabaseMetaData metadata = CurrentDatabaseMetadataHolder.getMetaData();
+            String sql = metadata.getTableStructure();
             List<? extends TableStructure> tableStructures = jdbcHelper.selectList(sql, classType, schemaName, tableName);
             for (int i = 0; i < tableStructures.size(); i++) {
                 tableStructures.get(i).setNumber(i + 1);

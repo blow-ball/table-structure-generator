@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 12:55 2023/7/12
  */
 @Data
-public class DatabaseManager {
+public class DatabaseMetaData {
 
     private String driverClass;
     private String url;

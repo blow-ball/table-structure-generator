@@ -12,9 +12,9 @@ import java.util.Set;
  * @date 16:12 2023/9/11
  */
 
-public class DatabaseManagerFactory {
+public class DatabaseMetadataFactory {
 
-    private final static Map<String, DatabaseManager> databaseManagerMap = new HashMap<>();
+    private final static Map<String, DatabaseMetaData> databaseMetaDatas = new HashMap<>();
 
     static {
         init();
@@ -32,25 +32,25 @@ public class DatabaseManagerFactory {
 
         for (String key : keySet) {
             Map<String, String> database = databaseMap.get(key);
-            DatabaseManager databaseManager = new DatabaseManager();
-            databaseManager.setDriverClass(database.get("driverClass"));
-            databaseManager.setUrl(database.get("url"));
-            databaseManager.setDatabases(database.get("databases"));
-            databaseManager.setTables(database.get("tables"));
-            databaseManager.setTableInfo(database.get("tableInfo"));
-            databaseManager.setTableStructure(database.get("tableStructure"));
-            registerDatabaseManager(key.toLowerCase(), databaseManager);
+            DatabaseMetaData metaData = new DatabaseMetaData();
+            metaData.setDriverClass(database.get("driverClass"));
+            metaData.setUrl(database.get("url"));
+            metaData.setDatabases(database.get("databases"));
+            metaData.setTables(database.get("tables"));
+            metaData.setTableInfo(database.get("tableInfo"));
+            metaData.setTableStructure(database.get("tableStructure"));
+            register(key.toLowerCase(), metaData);
         }
     }
 
     /**
-     * 注册 DatabaseManager
+     * 注册 DatabaseMetaData
      *
      * @param key
-     * @param databaseManager
+     * @param metadata
      */
-    private static void registerDatabaseManager(String key, DatabaseManager databaseManager) {
-        DatabaseManagerFactory.databaseManagerMap.put(key, databaseManager);
+    private static void register(String key, DatabaseMetaData metadata) {
+        DatabaseMetadataFactory.databaseMetaDatas.put(key, metadata);
     }
 
     /**
@@ -59,8 +59,8 @@ public class DatabaseManagerFactory {
      * @param databaseType
      * @return
      */
-    public static DatabaseManager getDatabaseManager(String databaseType) {
-        return DatabaseManagerFactory.databaseManagerMap.get(databaseType);
+    public static DatabaseMetaData getMetaData(String databaseType) {
+        return DatabaseMetadataFactory.databaseMetaDatas.get(databaseType);
     }
 
 
