@@ -26,6 +26,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             DruidConnectionManager.getConnection();
         } catch (Exception e) {
             DruidConnectionManager.clearDatasource();
+            e.printStackTrace();
             return ResponseResult.fail(e.getMessage());
         }
         return ResponseResult.success("连接成功");
