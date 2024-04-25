@@ -14,9 +14,9 @@ public class ConnectionInfoDto {
 
     private Integer port;
 
-    private String username = "";
+    private String username;
 
-    private String password = "";
+    private String password;
 
     private String databaseType;
 
