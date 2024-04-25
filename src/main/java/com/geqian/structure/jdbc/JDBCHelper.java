@@ -295,7 +295,7 @@ public class JDBCHelper {
 
                 if (field.isAnnotationPresent(Columns.class) || field.isAnnotationPresent(Column.class)) {
                     Columns annotation = field.getAnnotation(Columns.class);
-                    Column[] columns = annotation != null ? annotation.columns() : new Column[0];
+                    Column[] columns = annotation != null ? annotation.value() : new Column[0];
                     if (columns.length > 1) {
                         for (Column column : columns) {
                             if (column != null) {

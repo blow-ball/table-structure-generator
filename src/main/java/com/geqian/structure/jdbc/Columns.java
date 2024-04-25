@@ -11,6 +11,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface Columns {
 
-    Column[] columns();
+    Column[] value();
 
 }
