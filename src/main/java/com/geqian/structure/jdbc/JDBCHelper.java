@@ -1,7 +1,6 @@
 package com.geqian.structure.jdbc;
 
 import cn.hutool.core.convert.Convert;
-import com.geqian.structure.annotation.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,7 +121,8 @@ public class JDBCHelper {
                 if (interceptor instanceof ResultSetInterceptor) {
                     ResultSetInterceptor<?> resultSetInterceptor = (ResultSetInterceptor<?>) interceptor;
                     String productName = connection.getMetaData().getDatabaseProductName();
-                    if (resultSetInterceptor.support(productName, sql)) {
+                    String formatSql = resultSetInterceptor.formatSql(sql);
+                    if (resultSetInterceptor.support(productName, formatSql)) {
                         return (List<T>) resultSetInterceptor.intercept(resultSet);
                     }
                 }
@@ -131,7 +131,7 @@ public class JDBCHelper {
             //获取结果集元数据
             ResultSetMetaData metaData = resultSet.getMetaData();
             //列名与属性映射关系
-            Map<String, Field> columnFieldMapping = columnFieldMapping(resultType, metaData);
+            Map<String, Field> columnFieldMapping = columnFieldMapping(connection.getMetaData(), resultType, metaData);
             //结果数据集
             List<T> results = new ArrayList<>();
             while (resultSet.next()) {
@@ -267,7 +267,7 @@ public class JDBCHelper {
      * @param metaData    表元信息
      * @return
      */
-    private Map<String, Field> columnFieldMapping(Class<?> objectClass, ResultSetMetaData metaData) {
+    private Map<String, Field> columnFieldMapping(DatabaseMetaData databaseMetaData, Class<?> objectClass, ResultSetMetaData metaData) throws SQLException {
 
         // 保证遍历时的顺序添加数据顺序（标注 Column 的注解的列名获取的值为映射属性的最终结果）
         Map<String, Field> columnFieldMapping = new LinkedHashMap<>();
@@ -275,6 +275,7 @@ public class JDBCHelper {
         Map<String, Field> fieldMap = getFieldMapContainSuperclass(objectClass, field -> true);
 
         Collection<Field> fields = fieldMap.values();
+
         // 根据数据表列名获取列与属性映射关系
         try {
             for (int i = 0; i < metaData.getColumnCount(); i++) {
@@ -289,9 +290,30 @@ public class JDBCHelper {
             }
             // 额外添加 Column 设置列名与属性映射关系
             for (Field field : fields) {
-                if (field.isAnnotationPresent(Column.class)) {
-                    String columnName = field.getAnnotation(Column.class).name();
-                    columnFieldMapping.put(columnName, field);
+                // 获取数据库类型
+                String productName = databaseMetaData.getDatabaseProductName();
+
+                if (field.isAnnotationPresent(Columns.class) || field.isAnnotationPresent(Column.class)) {
+                    Columns annotation = field.getAnnotation(Columns.class);
+                    Column[] columns = annotation != null ? annotation.columns() : new Column[0];
+                    if (columns.length > 1) {
+                        for (Column column : columns) {
+                            if (column != null) {
+                                if (column.type().equalsIgnoreCase(productName)) {
+                                    columnFieldMapping.put(column.name(), field);
+                                }
+                            }
+                        }
+                    } else if (columns.length == 1 || field.isAnnotationPresent(Column.class)) {
+                        Column column = columns.length == 1 ? columns[0] : field.getAnnotation(Column.class);
+                        if (column != null) {
+                            String columnName = column.name();
+                            String type = column.type();
+                            if (type.equalsIgnoreCase(productName) || type.isEmpty()) {
+                                columnFieldMapping.put(columnName, field);
+                            }
+                        }
+                    }
                 }
             }
             return columnFieldMapping;

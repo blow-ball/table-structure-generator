@@ -1,4 +1,4 @@
-package com.geqian.structure.annotation;
+package com.geqian.structure.jdbc;
 
 import java.lang.annotation.*;
 
@@ -12,5 +12,7 @@ import java.lang.annotation.*;
 public @interface Column {
 
     String name();
+
+    String type() default "";
 
 }

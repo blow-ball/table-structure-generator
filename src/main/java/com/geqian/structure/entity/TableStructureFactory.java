@@ -1,5 +1,6 @@
 package com.geqian.structure.entity;
 
+import com.geqian.structure.annotation.PackageScan;
 import com.geqian.structure.utils.ClassResourceScanner;
 import org.springframework.util.CollectionUtils;
 
@@ -13,6 +14,7 @@ import java.util.function.Supplier;
  * @author geqian
  * @date 3:13 2023/12/8
  */
+@PackageScan("com.geqian.structure.entity")
 public class TableStructureFactory {
 
     private static Map<String, Supplier<Class<? extends TableStructure>>> tableStructureMap;
@@ -28,7 +30,9 @@ public class TableStructureFactory {
 
         Predicate<ClassResourceScanner.ClassResourceWrapper> typeFilter = wrapper -> wrapper.isClass() && TableStructure.class.isAssignableFrom(wrapper.getType());
 
-        List<ClassResourceScanner.ClassResourceWrapper> wrappers = classScanner.doScan("com.geqian.structure.entity", typeFilter);
+        PackageScan packageScan = TableStructureFactory.class.getAnnotation(PackageScan.class);
+
+        List<ClassResourceScanner.ClassResourceWrapper> wrappers = classScanner.doScan(packageScan.value(), typeFilter);
 
         if (!CollectionUtils.isEmpty(wrappers)) {
             tableStructureMap = new HashMap<>();
