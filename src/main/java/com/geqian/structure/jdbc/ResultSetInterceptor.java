@@ -14,7 +14,8 @@ public interface ResultSetInterceptor<T> extends JDBCInterceptor {
                 .replaceAll("\\s{2,}=\\s{2,}", " = ")
                 .replaceAll("\\s{2,}=", " =")
                 .replaceAll("=\\s{2,}", "= ")
-                .replaceAll("([#$])\\s*\\{\\s*(\\d)\\s*}", "$1{$2}");
+                .replaceAll("([#$])\\s*\\{\\s*(\\d)\\s*}", "$1{$2}")
+                .trim();
     }
 
 

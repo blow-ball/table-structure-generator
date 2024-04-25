@@ -72,23 +72,25 @@ public class JDBCHelper {
 
         PreparedStatement ps = null;
 
+        String precompiledSql = sql;
+
         // 替换字符串映射
-        List<Map.Entry<String, String>> replaceSymbols = findExpressions(sql, "(\\$\\{(\\d+)})", 1, 2);
+        List<Map.Entry<String, String>> replaceSymbols = findExpressions(precompiledSql, "(\\$\\{(\\d+)})", 1, 2);
 
         // 占位符字符串映射
-        List<Map.Entry<String, String>> placeholders = findExpressions(sql, "(\\#\\{(\\d+)})", 1, 2);
+        List<Map.Entry<String, String>> placeholders = findExpressions(precompiledSql, "(\\#\\{(\\d+)})", 1, 2);
 
         // 处理替换字符串
         for (Map.Entry<String, String> entry : replaceSymbols) {
             String expression = entry.getKey();
             String value = args[Integer.parseInt(entry.getValue())].toString();
-            sql = replaceFirst(sql, expression, value);
+            precompiledSql = replaceFirst(precompiledSql, expression, value);
         }
 
         // 处理预编译字符串
         for (Map.Entry<String, String> entry : placeholders) {
             String expression = entry.getKey();
-            sql = replaceFirst(sql, expression, "?");
+            precompiledSql = replaceFirst(precompiledSql, expression, "?");
         }
 
         // 判断是否存在表达式，但没有参数
@@ -97,13 +99,13 @@ public class JDBCHelper {
         }
 
         // 填充参数后的 sql
-        String completeSQL = sql;
+        String completeSQL = precompiledSql;
 
         //获取连接
         Connection connection = DruidConnectionManager.getConnection();
         try {
             //预编译sql
-            ps = connection.prepareStatement(sql);
+            ps = connection.prepareStatement(precompiledSql);
 
             // 设置 sql 预编译参数
             for (int i = 0; i < placeholders.size(); i++) {
