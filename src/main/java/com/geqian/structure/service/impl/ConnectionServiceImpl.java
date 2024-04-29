@@ -4,6 +4,7 @@ import com.geqian.structure.common.ResponseResult;
 import com.geqian.structure.common.dto.ConnectionInfoDto;
 import com.geqian.structure.jdbc.DruidConnectionManager;
 import com.geqian.structure.service.ConnectionService;
+import org.apache.derby.iapi.error.StandardException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -26,7 +27,13 @@ public class ConnectionServiceImpl implements ConnectionService {
             DruidConnectionManager.getConnection();
         } catch (Exception e) {
             DruidConnectionManager.clearDatasource();
-            e.printStackTrace();
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                Throwable throwable = cause.getCause();
+                if (throwable instanceof StandardException) {
+                    return ResponseResult.fail("数据库已被另一个实例占用");
+                }
+            }
             return ResponseResult.fail(e.getMessage());
         }
         return ResponseResult.success("连接成功");

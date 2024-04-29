@@ -49,7 +49,7 @@ public class DruidConnectionManager {
             dataSource.setBreakAfterAcquireFailure(true);
             CurrentDatabaseMetadataHolder.setMetaData(metadata);
         } catch (Exception e) {
-            throw new RuntimeException("初始化数据源失败," + e);
+            throw new RuntimeException("初始化数据源失败", e);
         }
     }
 
@@ -64,7 +64,7 @@ public class DruidConnectionManager {
         try {
             return dataSource.getConnection();
         } catch (Exception e) {
-            throw new RuntimeException("获取连接失败," + e);
+            throw new RuntimeException("获取连接失败", e);
         }
     }
 
