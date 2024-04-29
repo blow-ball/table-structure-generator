@@ -212,7 +212,6 @@ database:
 
     ######################################### TIDB 数据库 #############################################
     tidb:
-
       driverClass: com.mysql.cj.jdbc.Driver
 
       url: jdbc:mysql://${ip}:${port}/${database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&&allowPublicKeyRetrieval=true
@@ -236,3 +235,26 @@ database:
         from information_schema.columns 
         where table_schema = #{0} and table_name = #{1}
         order by ordinal_position;
+
+    ######################################### Derby 数据库 #############################################
+    derby:
+      driverClass: org.apache.derby.jdbc.EmbeddedDriver
+
+      url: jdbc:derby:${database}
+
+      # 查询所有schemata
+      databases: >
+        SELECT SCHEMANAME as "labelName" FROM SYS.SYSSCHEMAS
+
+      # 查询指定schema下所有表
+      tables: >
+        SELECT t.TABLENAME as "labelName" 
+        FROM SYS.SYSTABLES t, SYS.SYSSCHEMAS s 
+        WHERE s.SCHEMANAME = #{0} AND s.SCHEMAID = t.SCHEMAID
+
+
+      # 查询指定schema下指定数据表字段信息
+      tableStructure: >
+        SELECT c.COLUMNNAME as "columnName", c.COLUMNDATATYPE as "columnType", c.COLUMNDEFAULT as "columnDefault"
+        FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c
+        WHERE c.REFERENCEID = t.TABLEID AND t.TABLENAME = #{1} ORDER BY c.COLUMNNUMBER

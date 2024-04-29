@@ -64,7 +64,7 @@ public class DruidConnectionManager {
         try {
             return dataSource.getConnection();
         } catch (Exception e) {
-            throw new RuntimeException("获取连接失败," + e.getMessage());
+            throw new RuntimeException("获取连接失败," + e);
         }
     }
 
