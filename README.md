@@ -62,10 +62,10 @@
 
 **1. 数据库连接**
 
-![image-20230719021014570](./src/main/resources/static/images/数据库连接.png)
+![image-20230719021014570](table-structure-generator/src/main/resources/static/images/数据库连接.png)
 
 **2. 文档预览**
-![image-20230719021014570](./src/main/resources/static/images/文档预览.png)
+![image-20230719021014570](table-structure-generator/src/main/resources/static/images/文档预览.png)
 <br>
 <br>
 
