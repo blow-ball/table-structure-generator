@@ -72,7 +72,7 @@ public class ThrowableUtils {
     public static boolean containsAnyOne(Throwable source, Class<? extends Throwable>... targetTypes) {
         if (targetTypes != null && targetTypes.length > 0) {
             List<Class<? extends Throwable>> types = Stream.of(targetTypes).collect(Collectors.toList());
-            return getThrowables(source).stream().anyMatch(types::contains);
+            return getThrowables(source).stream().anyMatch(throwable -> types.contains(throwable.getClass()));
         }
         return false;
     }
