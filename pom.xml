@@ -84,7 +84,6 @@
             <version>8.1.1.49</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -101,7 +100,6 @@
             <artifactId>hutool-all</artifactId>
             <version>5.7.22</version>
         </dependency>
-
 
     </dependencies>
 
