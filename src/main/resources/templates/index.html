@@ -282,8 +282,10 @@
                 }
                 if (item.value === 'oracle') {
                     this.form.label = 'SID'
-                } else if (item.embedded) {
-                    this.form.label = '路径'
+                } else if (item.value === 'h2') {
+                    this.form.label = '数据库文件'
+                } else if (item.value === 'derby') {
+                    this.form.label = '数据库路径'
                 } else {
                     this.form.label = '数据库'
                 }
