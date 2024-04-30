@@ -252,7 +252,6 @@ database:
         FROM SYS.SYSTABLES t, SYS.SYSSCHEMAS s 
         WHERE s.SCHEMANAME = #{0} AND s.SCHEMAID = t.SCHEMAID
 
-
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
         SELECT c.COLUMNNAME as "columnName", c.COLUMNDATATYPE as "columnType", c.COLUMNDEFAULT as "columnDefault"
@@ -274,7 +273,6 @@ database:
         SELECT TABLE_NAME as "labelName", REMARKS as "description"
         FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = #{0}
-
 
       # 查询指定schema下指定数据表字段信息
       tableStructure: >
