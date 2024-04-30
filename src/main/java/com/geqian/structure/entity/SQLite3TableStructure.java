@@ -8,7 +8,7 @@ import com.geqian.document4j.common.annotation.TableField;
  */
 public class SQLite3TableStructure extends TableStructure {
 
-    @TableField(value = "键类型", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
+    @TableField(value = "键", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
     private String columnKey;
 
     public String getColumnKey() {

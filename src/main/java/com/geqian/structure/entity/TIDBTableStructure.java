@@ -10,7 +10,7 @@ import com.geqian.document4j.common.annotation.TableField;
  */
 public class TIDBTableStructure extends TableStructure {
 
-    @TableField(value = "键类型", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
+    @TableField(value = "键", order = 6, exclude = true, enums = {"PRI->主键", "UNI->唯一键"})
     private String columnKey;
 
     @TableField(value = "长度", order = 7, exclude = true, enums = "null-> ")
