@@ -258,3 +258,32 @@ database:
         SELECT c.COLUMNNAME as "columnName", c.COLUMNDATATYPE as "columnType", c.COLUMNDEFAULT as "columnDefault"
         FROM SYS.SYSTABLES t, SYS.SYSCOLUMNS c
         WHERE c.REFERENCEID = t.TABLEID AND t.TABLENAME = #{1} ORDER BY c.COLUMNNUMBER
+
+    ######################################### H2 数据库 #############################################
+    H2:
+      driverClass: org.h2.Driver
+
+      url: jdbc:h2:${database};AUTO_SERVER=TRUE;DATABASE_TO_UPPER=FALSE
+
+      # 查询所有schemata
+      databases: >
+        SELECT SCHEMA_NAME as "labelName" FROM INFORMATION_SCHEMA.SCHEMATA
+
+      # 查询指定schema下所有表
+      tables: >
+        SELECT TABLE_NAME as "labelName", REMARKS as "description"
+        FROM INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA = #{0}
+
+
+      # 查询指定schema下指定数据表字段信息
+      tableStructure: >
+        SELECT COLUMN_NAME       as "columnName",
+        IS_NULLABLE              as "isNullable",
+        CHARACTER_MAXIMUM_LENGTH as "length",
+        TYPE_NAME                as "columnType",
+        REMARKS                  as "columnComment",
+        COLUMN_DEFAULT           as "columnDefault"
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = #{0}
+        AND TABLE_NAME = #{1}

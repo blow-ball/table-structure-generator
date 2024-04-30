@@ -9,7 +9,7 @@ import com.geqian.document4j.common.annotation.TableField;
  * @date 10:45 2023/1/5
  */
 
-public class SqlServerTableStructure extends TableStructure {
+public class H2TableStructure extends TableStructure {
 
     @TableField(value = "长度", order = 7, exclude = true, enums = "null-> ")
     private Long length;
