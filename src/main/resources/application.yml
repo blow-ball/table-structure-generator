@@ -260,7 +260,7 @@ database:
         WHERE c.REFERENCEID = t.TABLEID AND t.TABLENAME = #{1} ORDER BY c.COLUMNNUMBER
 
     ######################################### H2 数据库 #############################################
-    H2:
+    h2:
       driverClass: org.h2.Driver
 
       url: jdbc:h2:${database}
@@ -287,3 +287,21 @@ database:
         FROM INFORMATION_SCHEMA.COLUMNS
         WHERE TABLE_SCHEMA = #{0}
         AND TABLE_NAME = #{1}
+
+    ######################################### H2 数据库 #############################################
+    sqlite3:
+      driverClass: org.sqlite.JDBC
+
+      url: jdbc:sqlite:${database}
+
+      # 查询所有schemata
+      databases: >
+        PRAGMA database_list
+
+      # 查询指定schema下所有表
+      tables: >
+        SELECT name as labelName FROM ${0}.sqlite_master WHERE type='table'
+
+      # 查询指定schema下指定数据表字段信息
+      tableStructure: >
+        PRAGMA ${0}.table_info(${1})

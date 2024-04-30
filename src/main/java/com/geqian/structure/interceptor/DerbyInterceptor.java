@@ -32,7 +32,7 @@ public class DerbyInterceptor implements ResultSetInterceptor<TableStructure> {
         while (resultSet.next()) {
             String columnName = resultSet.getString("columNname");
             String columnDefault = resultSet.getString("columnDefault");
-            if (columnDefault != null && columnDefault.matches("^'.*'$")) {
+            if (columnDefault != null && columnDefault.matches("^'\\S+'$")) {
                 columnDefault = columnDefault.substring(1, columnDefault.length() - 1);
             }
             TypeDescriptor typeDescriptor = (TypeDescriptor) resultSet.getObject("columnType");
