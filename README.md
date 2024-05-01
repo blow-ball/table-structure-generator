@@ -111,9 +111,7 @@
 
 ## windows下载
 
-链接：https://pan.baidu.com/s/1XgEMOwAxNGvFjt46v1-Aow
-提取码：ywap
-> 由于安装包内置 JDK 环境，体积有点大，无法上传到 Gitee
+链接：[https://pan.baidu.com/s/1XgEMOwAxNGvFjt46v1-Aow](https://github.com/blow-ball/table-structure-generator/releases/download/v2.0/tableStructureGenerator.exe)
 
 <br>
 <br>
