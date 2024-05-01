@@ -111,7 +111,7 @@
 
 ## windows下载
 
-链接：[https://pan.baidu.com/s/1XgEMOwAxNGvFjt46v1-Aow](https://github.com/blow-ball/table-structure-generator/releases/download/v2.0/tableStructureGenerator.exe)
+链接：https://github.com/blow-ball/table-structure-generator/releases/download/v2.0/tableStructureGenerator.exe
 
 <br>
 <br>
