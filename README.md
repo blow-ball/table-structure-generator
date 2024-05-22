@@ -1,9 +1,23 @@
-# 数据库表结构文档生成工具
+<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">TableStructureGenerator</h1>
 
-## 开发缘由
+![SpringBoot 2.4.2](https://img.shields.io/badge/SpringBoot-2.4.2-blue)
+![Vue 2](https://img.shields.io/badge/VUE-2-blue)
+![element ui](https://img.shields.io/badge/ElementUI--blue)
+![MySQL 8](https://img.shields.io/badge/MySQL-8-blue)
+![Oracle 11g](https://img.shields.io/badge/Oracle-11g-blue)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL--blue)
+![Sql Server](https://img.shields.io/badge/SqlServer-2017-blue)
+![DB2](https://img.shields.io/badge/DB2--blue)
+![MariaDB](https://img.shields.io/badge/MariaDB--blue)
+![Clickhouse](https://img.shields.io/badge/Clickhouse--blue)
+![达梦](https://img.shields.io/badge/达梦-8-blue)
+![TIDB](https://img.shields.io/badge/TIDB--blue)
+![SQLite 3](https://img.shields.io/badge/SQLite-3-blue)
+![Derby](https://img.shields.io/badge/Derby--blue)
+![H2](https://img.shields.io/badge/H2--blue)
 
-在工作中编写开发文档时，通常会涉及到数据库表结构这个部分。最开始使用各类文档编辑软件新建表格，然后逐个复制和粘贴内容，屏幕来回切换到头昏眼花，CV操作到手抽筋，不注意还可能看错数据或填写表格时填错数据。之前也有尝试过编码+修改配置文件的方式，但是在更改数据库连接信息、导出哪些表及列信息时需要手动修改配置文件，使用起来并不是很方便。于是就萌生了开发该项目的想法，以简化数据库文档的编写。
-<br>
+## 简介
+一个简单易用且高效的数据库表结构文档生成工具，让编写数据库表结构文档变得简单
 <br>
 
 ## 技术栈
@@ -106,12 +120,6 @@
 
 **默认访问地址：http://localhost:8888/**
 > 项目启成功后自动打开浏览器进行访问
-
-<br>
-
-## windows下载
-
-链接：https://github.com/blow-ball/table-structure-generator/releases/download/v2.0/tableStructureGenerator.exe
 
 <br>
 <br>
